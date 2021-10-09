@@ -1,10 +1,11 @@
+import { loadEnv } from "@build/utils";
 import { AxiosRequestConfig } from "axios";
 import { excludeProps } from "./utils";
 /**
  * 默认配置
  */
 export const defaultConfig: AxiosRequestConfig = {
-  baseURL: "",
+  baseURL: loadEnv().VITE_APP_API || "",
   //10秒超时
   timeout: 10000,
   headers: {

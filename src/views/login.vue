@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { reactive, onBeforeMount } from "vue";
 import info, { ContextProps } from "../components/ReInfo/index.vue";
-import { getVerify, getLogin } from "/@/api/user";
-import { useRouter } from "vue-router";
-import { storageSession } from "/@/utils/storage";
-import { warnMessage, successMessage } from "/@/utils/message";
-
-const router = useRouter();
+import { getVerify } from "/@/api/user";
+import { tokenStoreHok } from "../store/modules/token";
 
 // 刷新验证码
 const refreshGetVerify = async () => {
@@ -21,26 +17,31 @@ const contextInfo: ContextProps = reactive({
   svg: null
 });
 
-const toPage = (info: Object): void => {
-  storageSession.setItem("info", info);
-  router.push("/");
-};
+// const toPage = (info: Object): void => {
+//   storageSession.setItem("info", info);
+//   router.push("/");
+// };
 
 // 登录
 const onLogin = async () => {
-  let { userName, passWord, verify } = contextInfo;
-  let { code, info, accessToken } = await getLogin({
+  // let { userName, passWord, verify } = contextInfo;
+  // let { code, info, accessToken } = await getLogin({
+  //   username: userName,
+  //   password: passWord,
+  //   verify: verify
+  // });
+  // code === 0
+  //   ? successMessage(info) &&
+  //     toPage({
+  //       username: userName,
+  //       accessToken
+  //     })
+  //   : warnMessage(info);
+  let { userName, passWord } = contextInfo;
+  await tokenStoreHok().login({
     username: userName,
-    password: passWord,
-    verify: verify
+    password: passWord
   });
-  code === 0
-    ? successMessage(info) &&
-      toPage({
-        username: userName,
-        accessToken
-      })
-    : warnMessage(info);
 };
 
 const refreshVerify = (): void => {

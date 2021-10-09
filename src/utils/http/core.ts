@@ -223,7 +223,12 @@ class EnclosureHttp {
           resolve(response);
         })
         .catch((error: any) => {
-          reject(error);
+          // reject(error);
+          if (error.response.data) {
+            resolve(error.response.data);
+          } else {
+            reject(error);
+          }
         });
     });
   }

@@ -31,6 +31,7 @@
     "element-plus": "1.1.0-beta.19",
     "element-resize-detector": "^1.2.3",
     "font-awesome": "^4.7.0",
+    "jsencrypt": "^3.2.1",
     "lodash-es": "^4.17.21",
     "lowdb": "^3.0.0",
     "mitt": "^3.0.0",

@@ -68,10 +68,10 @@ const onBehavior = (evt: Object): void => {
   });
 };
 
-// 刷新验证码
-const refreshVerify = (): void => {
-  emit("refreshVerify");
-};
+// // 刷新验证码
+// const refreshVerify = (): void => {
+//   emit("refreshVerify");
+// };
 
 // 表单重置
 const resetForm = (): void => {
@@ -115,7 +115,7 @@ const noSecret = (): void => {
           prefix-icon="el-icon-lock"
         ></el-input>
       </el-form-item>
-      <el-form-item prop="verify">
+      <!-- <el-form-item prop="verify">
         <el-input
           maxlength="2"
           onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
@@ -128,7 +128,7 @@ const noSecret = (): void => {
           v-html="model.svg"
           @click.prevent="refreshVerify"
         ></span>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click.prevent="onBehavior">{{
           tipsFalse

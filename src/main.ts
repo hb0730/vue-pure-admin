@@ -20,6 +20,7 @@ const app = createApp(App);
 
 // 自定义指令
 import * as directives from "/@/directives";
+import { optionStore } from "./store/modules/option";
 Object.keys(directives).forEach(key => {
   app.directive(key, (directives as { [key: string]: Directive })[key]);
 });
@@ -29,5 +30,8 @@ getServerConfig(app).then(async config => {
   setupStore(app);
   app.use(router).use(useElementPlus).use(useTable).use(usI18n);
   await router.isReady();
+
+  // option 请求
+  optionStore().getPasswordPublicKey();
   app.mount("#app");
 });
