@@ -8,7 +8,7 @@ import { split } from "lodash-es";
 import { i18n } from "/@/plugins/i18n";
 import NProgress from "/@/utils/progress";
 import { openLink } from "/@/utils/link";
-import { storageSession, storageLocal } from "/@/utils/storage";
+import { storageLocal } from "/@/utils/storage";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 // 静态路由
@@ -23,6 +23,7 @@ import flowChartRouter from "./modules/flowchart";
 import componentsRouter from "./modules/components";
 // 动态路由
 import { getAsyncRoutes } from "/@/api/routes";
+import { cookies } from "../utils/storage/cookie";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/*/*/*.vue");
@@ -65,7 +66,7 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
   return arrRoutes;
 };
 
-const router: Router = createRouter({
+export const router: Router = createRouter({
   history: createWebHashHistory(),
   routes: ascending(constantRoutes).concat(...remainingRouter),
   scrollBehavior(to, from, savedPosition) {
@@ -128,7 +129,8 @@ export function resetRouter() {
 const whiteList = ["/login", "/register"];
 
 router.beforeEach((to, _from, next) => {
-  const name = storageSession.getItem("info");
+  // const name = storageSession.getItem("info");
+  const name = cookies.get("uuid");
   NProgress.start();
   const externalLink = to?.redirectedFrom?.fullPath;
   // @ts-ignore
@@ -147,7 +149,7 @@ router.beforeEach((to, _from, next) => {
     } else {
       // 刷新
       if (usePermissionStoreHook().wholeRoutes.length === 0)
-        initRouter(name.username).then((router: Router) => {
+        initRouter(name).then((router: Router) => {
           router.push(to.path);
           // 刷新页面更新标签栏与页面路由匹配
           const localRoutes = storageLocal.getItem(

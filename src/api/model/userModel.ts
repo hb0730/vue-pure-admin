@@ -3,3 +3,10 @@ export interface TokenResultModel {
   token: string;
   expire: string;
 }
+
+export interface UserInfoModel {
+  id: number;
+  username: string;
+  email: string;
+  isAdmin: number;
+}

@@ -2,8 +2,12 @@ import { defineStore } from "pinia";
 import { tokenAPI } from "/@/api/token";
 import { cookies } from "/@/utils/storage/cookie";
 import { warnMessage } from "/@/utils/message";
+import { userAPI } from "/@/api/user";
+import { router } from "/@/router";
+import { db } from "/@/utils/storage/db";
 
 interface TokenState {
+  userId?: number;
   token?: string;
   expire: number;
 }
@@ -11,6 +15,7 @@ interface TokenState {
 export const tokenStore = defineStore({
   id: "pure-token-store",
   state: (): TokenState => ({
+    userId: undefined,
     token: undefined,
     expire: -1
   }),
@@ -23,12 +28,17 @@ export const tokenStore = defineStore({
       this.expire = expire ? Date.parse(expire) : -1;
       cookies.set("token-expire", this.expire);
     },
+    setUserId(userId: number | undefined) {
+      this.userId = userId ? userId : "";
+      cookies.set("uuid", userId.toString());
+    },
     async login({ username = "", password = "" } = {}) {
       try {
         const result = await tokenAPI.login(username, password);
         if (result.code === 0) {
           this.setToken(result.data.token);
           this.setExpire(result.data.expire);
+          return this.afterLoginAction();
         } else {
           warnMessage(result.msg);
         }
@@ -37,7 +47,10 @@ export const tokenStore = defineStore({
       }
     },
     async logout() {
-      return tokenAPI.logout();
+      await tokenAPI.logout();
+      await this.afterLogoutAction();
+      router.push("/login");
+      return;
     },
     async refreshToken() {
       const result = await tokenAPI.refresh();
@@ -46,7 +59,26 @@ export const tokenStore = defineStore({
         this.setExpire(result.data.expire);
       }
     },
-    async afterLoginAction() {}
+    async afterLoginAction() {
+      const userInfo = await userAPI.currentInfo();
+      //注销
+      if (userInfo.code != 0) {
+        return this.logout();
+      }
+      this.setUserId(userInfo.data.id);
+      db.dbSet({
+        dbName: "sys",
+        path: "userInfo",
+        value: JSON.stringify(userInfo.data),
+        user: true
+      });
+
+      router.push("/");
+    },
+    async afterLogoutAction() {
+      this.setToken("");
+      this.setExpire("");
+    }
   }
 });
 
