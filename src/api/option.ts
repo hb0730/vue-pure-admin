@@ -17,4 +17,4 @@ class Option extends BaseRequest {
   }
 }
 
-export const option = new Option();
+export const optionAPI = new Option();

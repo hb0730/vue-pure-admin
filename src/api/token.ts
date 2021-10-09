@@ -41,4 +41,4 @@ class Token extends BaseRequest {
   }
 }
 
-export const token = new Token();
+export const tokenAPI = new Token();

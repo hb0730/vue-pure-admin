@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { token } from "/@/api/token";
+import { tokenAPI } from "/@/api/token";
 import { cookies } from "/@/utils/storage/cookie";
 import { warnMessage } from "/@/utils/message";
 
@@ -25,7 +25,7 @@ export const tokenStore = defineStore({
     },
     async login({ username = "", password = "" } = {}) {
       try {
-        const result = await token.login(username, password);
+        const result = await tokenAPI.login(username, password);
         if (result.code === 0) {
           this.setToken(result.data.token);
           this.setExpire(result.data.expire);
@@ -37,10 +37,10 @@ export const tokenStore = defineStore({
       }
     },
     async logout() {
-      return token.logout();
+      return tokenAPI.logout();
     },
     async refreshToken() {
-      const result = await token.refresh();
+      const result = await tokenAPI.refresh();
       if (result.code === 0) {
         this.setToken(result.data.token);
         this.setExpire(result.data.expire);
