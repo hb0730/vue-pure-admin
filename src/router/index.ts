@@ -26,7 +26,7 @@ import { routerAPI } from "/@/api/routes";
 import { cookies } from "../utils/storage/cookie";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
-const modulesRoutes = import.meta.glob("/src/views/*/*/*.vue");
+const modulesRoutes = import.meta.glob("/src/views/**/*.vue");
 
 const constantRoutes: Array<RouteComponent> = [
   homeRouter,
