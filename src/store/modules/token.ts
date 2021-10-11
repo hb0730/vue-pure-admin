@@ -59,6 +59,11 @@ export const tokenStore = defineStore({
       if (result.code === 0) {
         this.setToken(result.data.token);
         this.setExpire(result.data.expire);
+      } else {
+        warnMessage("登录失效重新登录");
+        setTimeout(() => {
+          this.logout();
+        }, 3000);
       }
     },
     async afterLoginAction() {

@@ -134,8 +134,7 @@ function refreshToken() {
   const expire = cookies.get("token-expire");
   const expireDay = dayjs(Number(expire));
   const nowDay = dayjs();
-  const m = expireDay.subtract(nowDay.valueOf(), "milliseconds").minute();
-  if (m <= 30) {
+  if (expireDay.valueOf() - nowDay.valueOf() <= 180000) {
     tokenStore().refreshToken();
   }
 }
