@@ -79,18 +79,22 @@ export default [
   {
     url: "/getAsyncRoutes",
     method: "get",
-    response: ({ query }) => {
-      if (query.name === "admin") {
-        return {
-          code: 0,
-          info: [systemRouter, setDifAuthority("v-admin", permissionRouter)]
-        };
-      } else {
-        return {
-          code: 0,
-          info: [setDifAuthority("v-test", permissionRouter)]
-        };
-      }
+    response: () => {
+      // if (query.name === "admin") {
+      //   return {
+      //     code: 0,
+      //     info: [systemRouter, setDifAuthority("v-admin", permissionRouter)]
+      //   };
+      // } else {
+      //   return {
+      //     code: 0,
+      //     info: [setDifAuthority("v-test", permissionRouter)]
+      //   };
+      // }
+      return {
+        code: 0,
+        info: [systemRouter, setDifAuthority("v-admin", permissionRouter)]
+      };
     }
   }
 ] as MockMethod[];

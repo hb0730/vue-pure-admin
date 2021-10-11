@@ -28,7 +28,6 @@ type childrenType = {
 };
 
 const onlyOneChild = ref<RouteRecordRaw | childrenType>({} as any);
-
 function hasOneShowingChild(
   children: RouteRecordRaw[] = [],
   parent: RouteRecordRaw

@@ -22,7 +22,7 @@ import remainingRouter from "./modules/remaining";
 import flowChartRouter from "./modules/flowchart";
 import componentsRouter from "./modules/components";
 // 动态路由
-import { getAsyncRoutes } from "/@/api/routes";
+import { routerAPI } from "/@/api/routes";
 import { cookies } from "../utils/storage/cookie";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
@@ -56,6 +56,9 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
   arrRoutes.forEach((v: any) => {
     if (v.redirect) {
       v.component = Layout;
+    } else if (v.component) {
+      // v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
+      v.component = () => import("" + v.component + "");
     } else {
       v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
     }
@@ -84,13 +87,13 @@ export const router: Router = createRouter({
   }
 });
 
-export const initRouter = name => {
+export const initRouter = () => {
   return new Promise(resolve => {
-    getAsyncRoutes({ name }).then(({ info }) => {
-      if (info.length === 0) {
-        usePermissionStoreHook().changeSetting(info);
+    routerAPI.findRouter().then(({ data }) => {
+      if (data.length === 0) {
+        usePermissionStoreHook().changeSetting(data);
       } else {
-        addAsyncRoutes(info).map((v: any) => {
+        addAsyncRoutes(data).map((v: any) => {
           // 防止重复添加路由
           if (
             router.options.routes.findIndex(value => value.path === v.path) !==
@@ -103,7 +106,7 @@ export const initRouter = name => {
             // 最终路由进行升序
             ascending(router.options.routes);
             router.addRoute(v.name, v);
-            usePermissionStoreHook().changeSetting(info);
+            usePermissionStoreHook().changeSetting(data);
           }
           resolve(router);
         });
@@ -126,18 +129,17 @@ export function resetRouter() {
   });
 }
 
-const whiteList = ["/login", "/register"];
+const whiteList = ["/login"];
 
 router.beforeEach((to, _from, next) => {
-  // const name = storageSession.getItem("info");
-  const name = cookies.get("uuid");
+  const id = cookies.get("uuid");
   NProgress.start();
   const externalLink = to?.redirectedFrom?.fullPath;
   // @ts-ignore
   const { t } = i18n.global;
   // @ts-ignore
   if (!externalLink) to.meta.title ? (document.title = t(to.meta.title)) : "";
-  if (name) {
+  if (id) {
     if (_from?.name) {
       // 如果路由包含http 则是超链接 反之是普通路由
       if (externalLink && externalLink.includes("http")) {
@@ -149,7 +151,7 @@ router.beforeEach((to, _from, next) => {
     } else {
       // 刷新
       if (usePermissionStoreHook().wholeRoutes.length === 0)
-        initRouter(name).then((router: Router) => {
+        initRouter().then((router: Router) => {
           router.push(to.path);
           // 刷新页面更新标签栏与页面路由匹配
           const localRoutes = storageLocal.getItem(

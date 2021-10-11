@@ -3,7 +3,7 @@ import { tokenAPI } from "/@/api/token";
 import { cookies } from "/@/utils/storage/cookie";
 import { warnMessage } from "/@/utils/message";
 import { userAPI } from "/@/api/user";
-import { router } from "/@/router";
+import { initRouter, router } from "/@/router";
 import { db } from "/@/utils/storage/db";
 
 interface TokenState {
@@ -50,6 +50,7 @@ export const tokenStore = defineStore({
       await tokenAPI.logout();
       await this.afterLogoutAction();
       router.push("/login");
+      initRouter();
       return;
     },
     async refreshToken() {
@@ -74,6 +75,7 @@ export const tokenStore = defineStore({
       });
 
       router.push("/");
+      initRouter();
     },
     async afterLogoutAction() {
       this.setToken("");
