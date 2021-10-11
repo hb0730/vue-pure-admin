@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, PropType, getCurrentInstance, watch, nextTick, toRef } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { initRouter } from "/@/router";
-import { storageSession } from "/@/utils/storage";
+import { useRoute } from "vue-router";
 
 export interface ContextProps {
   userName: string;
@@ -31,8 +29,6 @@ let tips = ref<string>("注册");
 let tipsFalse = ref<string>("登录");
 
 const route = useRoute();
-const router = useRouter();
-
 watch(
   route,
   async ({ path }): Promise<void> => {
@@ -67,30 +63,10 @@ const onBehavior = (evt: Object): void => {
     }
   });
 };
-
-// // 刷新验证码
-// const refreshVerify = (): void => {
-//   emit("refreshVerify");
-// };
-
 // 表单重置
 const resetForm = (): void => {
   // @ts-expect-error
   instance.refs.ruleForm.resetFields();
-};
-
-// 登录、注册页面切换
-const changPage = (): void => {
-  tips.value === "注册" ? router.push("/register") : router.push("/login");
-};
-
-const noSecret = (): void => {
-  storageSession.setItem("info", {
-    username: "admin",
-    accessToken: "eyJhbGciOiJIUzUxMiJ9.test"
-  });
-  initRouter("admin").then(() => {});
-  router.push("/");
 };
 </script>
 
@@ -115,30 +91,12 @@ const noSecret = (): void => {
           prefix-icon="el-icon-lock"
         ></el-input>
       </el-form-item>
-      <!-- <el-form-item prop="verify">
-        <el-input
-          maxlength="2"
-          onkeyup="this.value=this.value.replace(/[^\d.]/g,'');"
-          v-model.number="model.verify"
-          placeholder="请输入验证码"
-        ></el-input>
-        <span
-          class="verify"
-          title="刷新"
-          v-html="model.svg"
-          @click.prevent="refreshVerify"
-        ></span>
-      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click.prevent="onBehavior">{{
           tipsFalse
         }}</el-button>
         <el-button @click="resetForm">重置</el-button>
-        <span class="tips" @click="changPage">{{ tips }}</span>
       </el-form-item>
-      <span title="测试用户 直接登录" class="secret" @click="noSecret"
-        >免密登录</span
-      >
     </el-form>
   </div>
 </template>

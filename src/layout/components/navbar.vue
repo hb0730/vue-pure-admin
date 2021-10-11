@@ -2,21 +2,26 @@
 import { useI18n } from "vue-i18n";
 import { emitter } from "/@/utils/mitt";
 import Hamburger from "./sidebar/hamBurger.vue";
-import { useRouter, useRoute } from "vue-router";
-import { storageSession } from "/@/utils/storage";
+import { useRoute } from "vue-router";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
 import { useAppStoreHook } from "/@/store/modules/app";
 import { unref, watch, getCurrentInstance } from "vue";
 import { deviceDetection } from "/@/utils/deviceDetection";
 import screenfull from "../components/screenfull/index.vue";
 import globalization from "/@/assets/svg/globalization.svg";
+import { db } from "/@/utils/storage/db";
+import { tokenStore } from "/@/store/modules/token";
 
 const instance =
   getCurrentInstance().appContext.config.globalProperties.$storage;
 const pureApp = useAppStoreHook();
-const router = useRouter();
 const route = useRoute();
-let usename = storageSession.getItem("info")?.username;
+// let usename = storageSession.getItem("info")?.username;
+let usename = "";
+const user = db.dbGet({ dbName: "sys", path: "userInfo", user: true });
+if (user) {
+  usename = JSON.parse(user).nikeName;
+}
 const { locale, t } = useI18n();
 
 watch(
@@ -29,8 +34,7 @@ watch(
 
 // 退出登录
 const logout = (): void => {
-  storageSession.removeItem("info");
-  router.push("/login");
+  tokenStore().logout();
 };
 
 function onPanel() {
