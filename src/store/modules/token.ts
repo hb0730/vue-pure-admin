@@ -5,6 +5,7 @@ import { warnMessage } from "/@/utils/message";
 import { userAPI } from "/@/api/user";
 import { initRouter, router } from "/@/router";
 import { db } from "/@/utils/storage/db";
+import dayjs from "dayjs";
 
 interface TokenState {
   userId?: number;
@@ -22,15 +23,15 @@ export const tokenStore = defineStore({
   actions: {
     setToken(info: string | undefined) {
       this.token = info ? info : "";
-      cookies.set("token", info);
+      cookies.set("token", info, { expires: 30 });
     },
     setExpire(expire: string | undefined) {
-      this.expire = expire ? Date.parse(expire) : -1;
-      cookies.set("token-expire", this.expire);
+      this.expire = expire ? dayjs(expire).valueOf() : -1;
+      cookies.set("token-expire", this.expire + "", { expires: 365 });
     },
     setUserId(userId: number | undefined) {
       this.userId = userId ? userId : "";
-      cookies.set("uuid", userId.toString());
+      cookies.set("uuid", userId.toString(), { expires: 30 });
     },
     async login({ username = "", password = "" } = {}) {
       try {
@@ -80,6 +81,7 @@ export const tokenStore = defineStore({
     async afterLogoutAction() {
       this.setToken("");
       this.setExpire("");
+      this.setUserId("");
     }
   }
 });

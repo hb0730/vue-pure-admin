@@ -24,6 +24,8 @@ import componentsRouter from "./modules/components";
 // 动态路由
 import { routerAPI } from "/@/api/routes";
 import { cookies } from "../utils/storage/cookie";
+import { tokenStore } from "../store/modules/token";
+import dayjs from "dayjs";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.vue");
@@ -128,6 +130,15 @@ export function resetRouter() {
     }
   });
 }
+function refreshToken() {
+  const expire = cookies.get("token-expire");
+  const expireDay = dayjs(Number(expire));
+  const nowDay = dayjs();
+  const m = expireDay.subtract(nowDay.valueOf(), "milliseconds").minute();
+  if (m <= 30) {
+    tokenStore().refreshToken();
+  }
+}
 
 const whiteList = ["/login"];
 
@@ -140,13 +151,18 @@ router.beforeEach((to, _from, next) => {
   // @ts-ignore
   if (!externalLink) to.meta.title ? (document.title = t(to.meta.title)) : "";
   if (id) {
+    refreshToken();
     if (_from?.name) {
       // 如果路由包含http 则是超链接 反之是普通路由
       if (externalLink && externalLink.includes("http")) {
         openLink(`http${split(externalLink, "http")[1]}`);
         NProgress.done();
       } else {
-        next();
+        if (whiteList.indexOf(to.path) !== -1) {
+          next({ path: "/" });
+        } else {
+          next();
+        }
       }
     } else {
       // 刷新
@@ -168,7 +184,11 @@ router.beforeEach((to, _from, next) => {
           });
           storageLocal.setItem("responsive-routesInStorage", newLocalRoutes);
         });
-      next();
+      if (whiteList.indexOf(to.path) !== -1) {
+        next({ path: "/" });
+      } else {
+        next();
+      }
     }
   } else {
     if (to.path !== "/login") {
