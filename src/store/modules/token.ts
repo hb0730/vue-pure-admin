@@ -82,6 +82,7 @@ export const tokenStore = defineStore({
       this.setToken("");
       this.setExpire("");
       this.setUserId("");
+      db.dbSet({ dbName: "sys", path: "userInfo", value: "", user: true });
     }
   }
 });
