@@ -135,6 +135,19 @@ export const buttonConfig = {
   }
 };
 
+export const configSetting = {
+  zh: {
+    message: {
+      setting: "设置"
+    }
+  },
+  en: {
+    message: {
+      setting: "setting"
+    }
+  }
+};
+
 // 配置
 // export const xxxx = {
 //   zh: {
@@ -145,7 +158,7 @@ export const buttonConfig = {
 //   },
 // };
 
-const localesList = [menusConfig, buttonConfig];
+const localesList = [menusConfig, buttonConfig, configSetting];
 
 export const localesConfigs = {
   zh: {

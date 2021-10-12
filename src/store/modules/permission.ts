@@ -13,6 +13,13 @@ export const usePermissionStore = defineStore({
   }),
   actions: {
     asyncActionRoutes(routes) {
+      const filterTree = data => {
+        const newTree = data.filter(v => v.meta.showLink);
+        newTree.forEach(
+          v => v.children && (v.children = filterTree(v.children))
+        );
+        return newTree;
+      };
       if (this.wholeRoutes.length > 0) return;
       //合并
       const total = this.constantRoutes.concat(routes);
@@ -25,7 +32,9 @@ export const usePermissionStore = defineStore({
           temp[item.path] = true;
         }
       });
-      this.wholeRoutes = ascending(result).filter(v => v.meta.showLink);
+      this.wholeRoutes = ascending(filterTree(result)).filter(
+        v => v.meta.showLink
+      );
 
       const getButtonAuth = (arrRoutes: Array<string>) => {
         if (!arrRoutes || !arrRoutes.length) return;

@@ -11,12 +11,11 @@ import screenfull from "../components/screenfull/index.vue";
 import globalization from "/@/assets/svg/globalization.svg";
 import { db } from "/@/utils/storage/db";
 import { tokenStore } from "/@/store/modules/token";
-
+import { open } from "/@/utils/util";
 const instance =
   getCurrentInstance().appContext.config.globalProperties.$storage;
 const pureApp = useAppStoreHook();
 const route = useRoute();
-// let usename = storageSession.getItem("info")?.username;
 let usename = "";
 const user = db.dbGet({ dbName: "sys", path: "userInfo", user: true });
 if (user) {
@@ -55,6 +54,11 @@ function translationCh() {
 function translationEn() {
   instance.locale = { locale: "en" };
   locale.value = "en";
+}
+
+function setting() {
+  console.info("setting");
+  open("/flowChart/index");
 }
 </script>
 
@@ -105,6 +109,9 @@ function translationEn() {
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
+            <el-dropdown-item icon="el-icon-setting" @click="setting">
+              {{ $t("message.setting") }}
+            </el-dropdown-item>
             <el-dropdown-item icon="el-icon-switch-button" @click="logout">{{
               $t("message.hsLoginOut")
             }}</el-dropdown-item>
