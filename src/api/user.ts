@@ -19,7 +19,7 @@ export const getRegist = (data: object) => {
 };
 
 enum API {
-  info = "/info"
+  info = "/user/info"
 }
 
 class User extends BaseRequest {
