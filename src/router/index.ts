@@ -47,6 +47,13 @@ export const ascending = arr => {
   });
 };
 
+// 过滤meta中showLink为false的路由
+export const filterTree = data => {
+  const newTree = data.filter(v => v.meta.showLink);
+  newTree.forEach(v => v.children && (v.children = filterTree(v.children)));
+  return newTree;
+};
+
 // 将所有静态路由导出
 export const constantRoutesArr: Array<RouteComponent> = ascending(
   constantRoutes
@@ -73,7 +80,7 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
 
 export const router: Router = createRouter({
   history: createWebHashHistory(),
-  routes: ascending(constantRoutes).concat(...remainingRouter),
+  routes: filterTree(ascending(constantRoutes)).concat(...remainingRouter),
   scrollBehavior(to, from, savedPosition) {
     return new Promise(resolve => {
       if (savedPosition) {
