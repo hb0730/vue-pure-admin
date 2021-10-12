@@ -60,7 +60,7 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
       v.component = Layout;
     } else if (v.component) {
       // v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
-      v.component = () => import("" + v.component + "");
+      v.component = () => import(`${v.component}`);
     } else {
       v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
     }

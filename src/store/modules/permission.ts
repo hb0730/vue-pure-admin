@@ -14,9 +14,18 @@ export const usePermissionStore = defineStore({
   actions: {
     asyncActionRoutes(routes) {
       if (this.wholeRoutes.length > 0) return;
-      this.wholeRoutes = ascending(this.constantRoutes.concat(routes)).filter(
-        v => v.meta.showLink
-      );
+      //合并
+      const total = this.constantRoutes.concat(routes);
+      const temp = {}; //用于name判断重复
+      const result = []; //最后的新数组
+
+      total.map(function (item, _) {
+        if (!temp[item.path]) {
+          result.push(item);
+          temp[item.path] = true;
+        }
+      });
+      this.wholeRoutes = ascending(result).filter(v => v.meta.showLink);
 
       const getButtonAuth = (arrRoutes: Array<string>) => {
         if (!arrRoutes || !arrRoutes.length) return;
