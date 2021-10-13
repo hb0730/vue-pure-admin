@@ -2,13 +2,15 @@ import {
   Router,
   createRouter,
   RouteComponent,
-  createWebHashHistory
+  createWebHashHistory,
+  RouteRecordNormalized
 } from "vue-router";
 import { split } from "lodash-es";
 import { i18n } from "/@/plugins/i18n";
-import NProgress from "/@/utils/progress";
 import { openLink } from "/@/utils/link";
 import { storageLocal } from "/@/utils/storage";
+import NProgress from "/@/utils/progress";
+import { useTimeoutFn } from "@vueuse/core";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 
 // 静态路由
@@ -45,13 +47,6 @@ export const ascending = arr => {
     return a?.meta?.rank - b?.meta?.rank;
   });
 };
-
-// 过滤meta中showLink为false的路由
-export const filterTree = data => {
-  const newTree = data.filter(v => v.meta.showLink);
-  newTree.forEach(v => v.children && (v.children = filterTree(v.children)));
-  return newTree;
-};
 export const fileImport = file => {
   return () => import(`../views/${file}.vue`);
 };
@@ -59,6 +54,59 @@ export const fileImport = file => {
 export const constantRoutesArr: Array<RouteComponent> = ascending(
   constantRoutes
 ).concat(...remainingRouter);
+
+// 过滤meta中showLink为false的路由
+export const filterTree = data => {
+  const newTree = data.filter(v => v.meta.showLink);
+  newTree.forEach(v => v.children && (v.children = filterTree(v.children)));
+  return newTree;
+};
+
+// 从路由中提取keepAlive为true的name组成数组（此处本项目中并没有用到，只是暴露个方法）
+export const getAliveRoute = () => {
+  const alivePageList = [];
+  const recursiveSearch = treeLists => {
+    if (!treeLists || !treeLists.length) {
+      return;
+    }
+    for (let i = 0; i < treeLists.length; i++) {
+      if (treeLists[i]?.meta?.keepAlive) alivePageList.push(treeLists[i].name);
+      recursiveSearch(treeLists[i].children);
+    }
+  };
+  recursiveSearch(router.options.routes);
+  return alivePageList;
+};
+
+// 处理缓存路由（添加、删除、刷新）
+export const handleAliveRoute = (
+  matched: RouteRecordNormalized[],
+  mode?: string
+) => {
+  switch (mode) {
+    case "add":
+      matched.forEach(v => {
+        usePermissionStoreHook().cacheOperate({ mode: "add", name: v.name });
+      });
+      break;
+    case "delete":
+      usePermissionStoreHook().cacheOperate({
+        mode: "delete",
+        name: matched[matched.length - 1].name
+      });
+      break;
+    default:
+      usePermissionStoreHook().cacheOperate({
+        mode: "delete",
+        name: matched[matched.length - 1].name
+      });
+      useTimeoutFn(() => {
+        matched.forEach(v => {
+          usePermissionStoreHook().cacheOperate({ mode: "add", name: v.name });
+        });
+      }, 100);
+  }
+};
 
 // 过滤后端传来的动态路由 重新生成规范路由
 export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
@@ -78,6 +126,7 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
   return arrRoutes;
 };
 
+// 创建路由实例
 export const router: Router = createRouter({
   history: createWebHashHistory(),
   routes: filterTree(ascending(constantRoutes)).concat(...remainingRouter),
@@ -97,6 +146,7 @@ export const router: Router = createRouter({
 });
 
 export const initRouter = () => {
+  // 初始化路由
   return new Promise(resolve => {
     routerAPI.findRouter().then(({ data }) => {
       if (data.length === 0) {
@@ -128,7 +178,7 @@ export const initRouter = () => {
   });
 };
 
-// reset router
+// 重置路由
 export function resetRouter() {
   router.getRoutes().forEach(route => {
     const { name } = route;
@@ -145,10 +195,16 @@ function refreshToken() {
     tokenStore().refreshToken();
   }
 }
-
 const whiteList = ["/login"];
-
 router.beforeEach((to, _from, next) => {
+  if (to.meta?.keepAlive) {
+    const newMatched = to.matched;
+    handleAliveRoute(newMatched, "add");
+    // 页面整体刷新和点击标签页刷新
+    if (_from.name === undefined || _from.name === "redirect") {
+      handleAliveRoute(newMatched);
+    }
+  }
   const id = cookies.get("uuid");
   NProgress.start();
   const externalLink = to?.redirectedFrom?.fullPath;
