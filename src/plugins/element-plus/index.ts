@@ -33,7 +33,9 @@ import {
   ElRadioButton,
   ElRadioGroup,
   ElDescriptions,
-  ElDescriptionsItem
+  ElDescriptionsItem,
+  ElTabs,
+  ElTabPane
 } from "element-plus";
 
 const components = [
@@ -69,7 +71,9 @@ const components = [
   ElRadioButton,
   ElRadioGroup,
   ElDescriptions,
-  ElDescriptionsItem
+  ElDescriptionsItem,
+  ElTabs,
+  ElTabPane
 ];
 
 const plugins = [ElLoading];

@@ -19,7 +19,7 @@ const route = useRoute();
 let usename = "";
 const user = db.dbGet({ dbName: "sys", path: "userInfo", user: true });
 if (user) {
-  usename = JSON.parse(user).nikeName;
+  usename = JSON.parse(user).nickName;
 }
 const { locale, t } = useI18n();
 
@@ -57,8 +57,7 @@ function translationEn() {
 }
 
 function setting() {
-  console.info("setting");
-  open("/flowChart/index");
+  open("/user/current/index");
 }
 </script>
 
