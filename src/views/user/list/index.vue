@@ -1,3 +1,7 @@
-<script setup lang="ts"></script>
+<template>
+  <div>
+    <p style="text-indent: 2em">test</p>
+  </div>
+</template>
 
-<template>test</template>
+<script lang="ts"></script>
