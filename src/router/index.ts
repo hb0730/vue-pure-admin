@@ -39,7 +39,6 @@ const constantRoutes: Array<RouteComponent> = [
   externalLink,
   errorRouter
 ];
-
 // 按照路由中meta下的rank等级升序来排序路由
 export const ascending = arr => {
   return arr.sort((a: any, b: any) => {
@@ -53,7 +52,9 @@ export const filterTree = data => {
   newTree.forEach(v => v.children && (v.children = filterTree(v.children)));
   return newTree;
 };
-
+export const fileImport = file => {
+  return () => import(`../views/${file}.vue`);
+};
 // 将所有静态路由导出
 export const constantRoutesArr: Array<RouteComponent> = ascending(
   constantRoutes
@@ -66,8 +67,7 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
     if (v.redirect) {
       v.component = Layout;
     } else if (v.component) {
-      // v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
-      v.component = () => import(`${v.component}`);
+      v.component = fileImport(v.component);
     } else {
       v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
     }
