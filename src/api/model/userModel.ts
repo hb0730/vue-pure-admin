@@ -11,3 +11,9 @@ export interface UserInfoModel {
   email: string;
   isAdmin: number;
 }
+
+export interface UpdatePasswordModel {
+  oldPassword: string;
+  newPassword: string;
+  newPassword2: string;
+}

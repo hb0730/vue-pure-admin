@@ -1,7 +1,7 @@
 import { http } from "../utils/http";
 import BaseRequest from "./base";
 import { Result } from "./model/resultModel";
-import { UserInfoModel } from "./model/userModel";
+import { UpdatePasswordModel, UserInfoModel } from "./model/userModel";
 
 // 获取验证码
 export const getVerify = () => {
@@ -20,7 +20,8 @@ export const getRegist = (data: object) => {
 
 enum API {
   info = "/user/info",
-  updateProfile = "/user/update/profile"
+  updateProfile = "/user/update/profile",
+  updatePassword = "/user/update/password"
 }
 
 class User extends BaseRequest {
@@ -50,6 +51,9 @@ class User extends BaseRequest {
    */
   updateProfile(user: UserInfoModel): Promise<Result<any>> {
     return this.post(API.updateProfile, user);
+  }
+  updatePassword(password: UpdatePasswordModel): Promise<Result<any>> {
+    return this.post(API.updatePassword, password);
   }
 }
 
