@@ -1,9 +1,9 @@
 <template>
   <el-row :gutter="20">
     <el-col :span="10" :offset="6">
-      <el-form label-position="top" ref="data" :model="data" center>
+      <el-form label-position="top" ref="formRef" :model="ruleForm" center>
         <el-form-item prop="username" label="账号">
-          <el-input disabled v-model="data.username"></el-input>
+          <el-input disabled v-model="ruleForm.username"></el-input>
         </el-form-item>
         <el-form-item
           prop="nickName"
@@ -12,14 +12,14 @@
         >
           <el-input
             clearable
-            v-model="data.nickName"
+            v-model="ruleForm.nickName"
             placeholder="请输入昵称"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="emial" label="邮箱">
+        <el-form-item prop="email" label="邮箱">
           <el-input
             clearable
-            v-model="data.emial"
+            v-model="ruleForm.email"
             placeholder="请输入邮箱"
           ></el-input>
         </el-form-item>
@@ -34,40 +34,58 @@
   </el-row>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { UserInfoModel } from "/@/api/model/userModel";
+import { getCurrentInstance, onBeforeMount, reactive, toRaw } from "vue";
 import { db } from "/@/utils/storage/db";
+import { errorMessage, successMessage, warnMessage } from "/@/utils/message";
+import { userStore } from "/@/store/modules/user/user";
 
-export default {
-  data() {
-    return {
-      data: {
-        id: "",
-        username: "admin",
-        nickName: "",
-        emial: ""
-      }
-    };
-  },
-  mounted() {
-    this.getCurrentUserInfo();
-  },
-  methods: {
-    /**
-     * 更新用户
-     */
-    updateUser() {},
-    /**
-     * 重置
-     */
-    reset() {
-      this.getCurrentUserInfo();
-    },
-    getCurrentUserInfo() {
-      const result = db.dbGet({ dbName: "sys", path: "userInfo", user: true });
-      if (result) {
-        this.data = JSON.parse(result);
-      }
+const instance = getCurrentInstance();
+const ruleForm: UserInfoModel = reactive<UserInfoModel>({
+  id: 0,
+  username: "",
+  nickName: "",
+  email: "",
+  isAdmin: 0
+});
+
+const updateUser = (): void => {
+  // @ts-expect-error
+  instance.refs.formRef.validate(valid => {
+    if (valid) {
+      const user = toRaw<UserInfoModel>(ruleForm);
+      userStore()
+        .updateProfile(user)
+        .then(result => {
+          if (result.code === 0) {
+            successMessage("更新成功,重新登录后更新");
+          } else {
+            errorMessage("更新失败:" + result.msg);
+          }
+        });
+    } else {
+      warnMessage("更新失败,请检查");
     }
-  }
+  });
 };
+const reset = (): void => {
+  // @ts-expect-error
+  instance.refs.formRef.resetFields();
+  getCurrentUserInfo();
+};
+
+const getCurrentUserInfo = (): void => {
+  const user = JSON.parse(
+    db.dbGet({ dbName: "sys", path: "userInfo", user: true })
+  );
+  ruleForm.id = user.id;
+  ruleForm.username = user.username;
+  ruleForm.nickName = user.nickName;
+  ruleForm.email = user.email;
+  ruleForm.isAdmin = user.isAdmin;
+};
+onBeforeMount(() => {
+  getCurrentUserInfo();
+});
 </script>

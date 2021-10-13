@@ -7,6 +7,7 @@ export interface TokenResultModel {
 export interface UserInfoModel {
   id: number;
   username: string;
+  nickName: string;
   email: string;
   isAdmin: number;
 }

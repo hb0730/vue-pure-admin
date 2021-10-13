@@ -19,7 +19,8 @@ export const getRegist = (data: object) => {
 };
 
 enum API {
-  info = "/user/info"
+  info = "/user/info",
+  updateProfile = "/user/update/profile"
 }
 
 class User extends BaseRequest {
@@ -40,6 +41,15 @@ class User extends BaseRequest {
       API.info + this.info + "/" + id,
       null
     );
+  }
+
+  /**
+   * 更新用户信息
+   * @param user 用户信息
+   * @returns  响应
+   */
+  updateProfile(user: UserInfoModel): Promise<Result<any>> {
+    return this.post(API.updateProfile, user);
   }
 }
 

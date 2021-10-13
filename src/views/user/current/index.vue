@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import Userinfo from "./compent/userinfo.vue";
 import Password from "./compent/password.vue";
+
+const activeName = "userInfo";
 </script>
 <template>
   <div class="app-container">
-    <el-tabs type="card" v-model="activeName" @tab-click="handleClick">
+    <el-tabs type="card" v-model="activeName">
       <el-tab-pane label="用户设置" name="userInfo">
         <Userinfo></Userinfo>
       </el-tab-pane>
@@ -14,18 +16,3 @@ import Password from "./compent/password.vue";
     </el-tabs>
   </div>
 </template>
-
-<script lang="ts">
-export default {
-  data() {
-    return {
-      activeName: "userInfo"
-    };
-  },
-  methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    }
-  }
-};
-</script>
