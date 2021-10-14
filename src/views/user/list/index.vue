@@ -113,7 +113,7 @@
             :show-overflow-tooltip="true"
             align="center"
           >
-            <template>
+            <template v-slot="">
               <el-button
                 title="修改"
                 type="primary"
@@ -131,10 +131,12 @@
         </el-table>
         <el-pagination
           v-model:currentPage="searchModel.pageNum"
-          :page-sizes="[100, 200, 300, 400]"
+          :page-sizes="[10, 20, 50, 100]"
           :page-size="searchModel.pageSize"
           layout="total,sizes, prev, pager, next, jumper"
           :total="searchModel.total"
+          @size-change="sizeChange"
+          @current-change="currentChange"
         ></el-pagination>
       </el-col>
     </el-row>
@@ -181,6 +183,14 @@ const getPage = async () => {
   } else {
     warnMessage("查询失败:" + result.msg);
   }
+};
+const sizeChange = async (pageSize: number) => {
+  searchModel.pageSize = pageSize;
+  getPage();
+};
+const currentChange = async (pageNum: number) => {
+  searchModel.pageNum = pageNum;
+  getPage();
 };
 
 onBeforeMount(() => {
