@@ -48,6 +48,7 @@ class BaseRequest {
     params: any
   ): Promise<T> {
     return http.request<T>(method, url, params, {
+      timeout: 30000,
       beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
         const token = cookies.get("token");
         if (token) {

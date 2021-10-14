@@ -52,6 +52,11 @@ class User extends BaseRequest {
   updateProfile(user: UserInfoModel): Promise<Result<any>> {
     return this.post(API.updateProfile, user);
   }
+  /**
+   * update password
+   * @param password update password model
+   * @returns  响应
+   */
   updatePassword(password: UpdatePasswordModel): Promise<Result<any>> {
     return this.post(API.updatePassword, password);
   }

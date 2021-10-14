@@ -1,8 +1,7 @@
-import { rsa } from "/@/utils/crypto/rsa";
 import BaseRequest from "./base";
 import { Result } from "./model/resultModel";
 import { TokenResultModel } from "./model/userModel";
-import { db } from "../utils/storage/db";
+import { encryptPassword } from "/@/utils/util";
 enum API {
   Login = "/login",
   Logout = "/logout",
@@ -17,9 +16,7 @@ class Token extends BaseRequest {
    * @returns 登录响应信息
    */
   login(username: string, password: string): Promise<Result<TokenResultModel>> {
-    //加密
-    rsa.setPublicKey(db.dbGet({ dbName: "sys", path: "password" }));
-    const newPassword = rsa.encrypt(password);
+    const newPassword = encryptPassword(password);
     return this.post<Result<TokenResultModel>>(API.Login, {
       username: username,
       password: newPassword
