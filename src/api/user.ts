@@ -1,6 +1,6 @@
 import { http } from "../utils/http";
 import BaseRequest from "./base";
-import { Result } from "./model/resultModel";
+import { Result, Page } from "./model/resultModel";
 import { UpdatePasswordModel, UserInfoModel } from "./model/userModel";
 
 // 获取验证码
@@ -19,6 +19,7 @@ export const getRegist = (data: object) => {
 };
 
 enum API {
+  findPage = "/user/page",
   info = "/user/info",
   updateProfile = "/user/update/profile",
   updatePassword = "/user/update/password"
@@ -59,6 +60,14 @@ class User extends BaseRequest {
    */
   updatePassword(password: UpdatePasswordModel): Promise<Result<any>> {
     return this.post(API.updatePassword, password);
+  }
+  /**
+   * 分页查找
+   * @param params 查询条件
+   * @returns 分页结果
+   */
+  pageFind(params: any): Promise<Result<Page<UserInfoModel>>> {
+    return this.post<Result<Page<UserInfoModel>>>(API.findPage, params);
   }
 }
 

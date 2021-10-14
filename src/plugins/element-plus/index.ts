@@ -35,7 +35,9 @@ import {
   ElDescriptions,
   ElDescriptionsItem,
   ElTabs,
-  ElTabPane
+  ElTabPane,
+  ElTable,
+  ElTableColumn
 } from "element-plus";
 
 const components = [
@@ -73,7 +75,9 @@ const components = [
   ElDescriptions,
   ElDescriptionsItem,
   ElTabs,
-  ElTabPane
+  ElTabPane,
+  ElTable,
+  ElTableColumn
 ];
 
 const plugins = [ElLoading];

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Result } from "/@/api/model/resultModel";
+import { Page, Result } from "/@/api/model/resultModel";
 import { UpdatePasswordModel, UserInfoModel } from "/@/api/model/userModel";
 import { userAPI } from "/@/api/user";
 import { encryptPassword } from "/@/utils/util";
@@ -25,6 +25,14 @@ export const userStore = defineStore({
       password.newPassword2 = encryptPassword(password.newPassword2);
       password.oldPassword = encryptPassword(password.oldPassword);
       return userAPI.updatePassword(password);
+    },
+    /**
+     * 分页查询
+     * @param params 查询添加
+     * @returns 分页结果
+     */
+    findPage(params: any): Promise<Result<Page<UserInfoModel>>> {
+      return userAPI.pageFind(params);
     }
   }
 });

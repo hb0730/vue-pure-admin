@@ -3,3 +3,11 @@ export interface Result<T> {
   msg: string;
   data: T;
 }
+
+export interface Page<T> {
+  total: number;
+  records: T[];
+  currentPage: number;
+  pageSize: number;
+  pages: number;
+}
