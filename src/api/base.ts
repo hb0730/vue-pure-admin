@@ -4,6 +4,7 @@ import {
   RequestMethods
 } from "/@/utils/http/types";
 import { cookies } from "/@/utils/storage/cookie";
+import { ElLoading } from "element-plus";
 
 class BaseRequest {
   /**
@@ -47,18 +48,33 @@ class BaseRequest {
     url: string,
     params: any
   ): Promise<T> {
-    return http.request<T>(method, url, params, {
-      timeout: 30000,
-      beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
-        const token = cookies.get("token");
-        if (token) {
-          request.headers = {
-            ...request.headers,
-            Authorization: "Bearer " + token
-          };
-        }
-      }
+    const instance = ElLoading.service({
+      text: "Loading  ",
+      background: "rgba(0, 0, 0, 0.7)",
+      spinner: "el-icon-loading"
     });
+
+    return http
+      .request<T>(method, url, params, {
+        timeout: 30000,
+        beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
+          const token = cookies.get("token");
+          if (token) {
+            request.headers = {
+              ...request.headers,
+              Authorization: "Bearer " + token
+            };
+          }
+        }
+      })
+      .then(value => {
+        instance.close();
+        return value;
+      })
+      .catch(error => {
+        instance.close();
+        return error;
+      });
   }
 }
 export default BaseRequest;
