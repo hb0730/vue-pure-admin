@@ -149,8 +149,8 @@ export const initRouter = () => {
   // 初始化路由
   return new Promise(resolve => {
     routerAPI.findRouter().then(({ data }) => {
-      if (data.length === 0) {
-        usePermissionStoreHook().changeSetting(data);
+      if (!data) {
+        usePermissionStoreHook().changeSetting([]);
       } else {
         addAsyncRoutes(data).map((v: any) => {
           // 防止重复添加路由

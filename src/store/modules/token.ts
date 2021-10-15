@@ -51,7 +51,7 @@ export const tokenStore = defineStore({
       await tokenAPI.logout();
       await this.afterLogoutAction();
       router.push("/login");
-      initRouter();
+      router.go(0);
       return;
     },
     async refreshToken() {
