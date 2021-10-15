@@ -9,7 +9,6 @@ const componentsRouter = {
     icon: "el-icon-menu",
     title: "message.hscomponents",
     showLink: true,
-    savedPosition: true,
     rank: 4
   },
   children: [
@@ -19,9 +18,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/video/index.vue"),
       meta: {
         title: "message.hsvideo",
-        showLink: true,
-        keepAlive: true,
-        savedPosition: true
+        showLink: true
       }
     },
     {
@@ -32,7 +29,9 @@ const componentsRouter = {
         title: "message.hsmap",
         showLink: true,
         keepAlive: true,
-        savedPosition: true
+        transition: {
+          name: "fade"
+        }
       }
     },
     {
@@ -42,7 +41,10 @@ const componentsRouter = {
       meta: {
         title: "message.hsdraggable",
         showLink: true,
-        savedPosition: true
+        transition: {
+          enterTransition: "animate__zoomIn",
+          leaveTransition: "animate__zoomOut"
+        }
       }
     },
 
@@ -53,7 +55,10 @@ const componentsRouter = {
       meta: {
         title: "message.hssplitPane",
         showLink: true,
-        savedPosition: true
+        extraIcon: {
+          svg: true,
+          name: "team-iconxinpinrenqiwang"
+        }
       }
     },
     {
@@ -62,8 +67,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/button/index.vue"),
       meta: {
         title: "message.hsbutton",
-        showLink: true,
-        savedPosition: true
+        showLink: true
       }
     },
     {
@@ -72,8 +76,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/cropping/index.vue"),
       meta: {
         title: "message.hscropping",
-        showLink: true,
-        savedPosition: true
+        showLink: true
       }
     },
     {
@@ -82,8 +85,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/count-to/index.vue"),
       meta: {
         title: "message.hscountTo",
-        showLink: true,
-        savedPosition: true
+        showLink: true
       }
     },
     {
@@ -92,8 +94,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/selector/index.vue"),
       meta: {
         title: "message.hsselector",
-        showLink: true,
-        savedPosition: true
+        showLink: true
       }
     },
     {
@@ -102,8 +103,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/seamless-scroll/index.vue"),
       meta: {
         title: "message.hsseamless",
-        showLink: true,
-        savedPosition: true
+        showLink: true
       }
     },
     {
@@ -112,8 +112,7 @@ const componentsRouter = {
       component: () => import("/@/views/components/contextmenu/index.vue"),
       meta: {
         title: "message.hscontextmenu",
-        showLink: true,
-        savedPosition: true
+        showLink: true
       }
     }
   ]

@@ -9,7 +9,6 @@ const editorRouter = {
     icon: "el-icon-edit-outline",
     title: "message.hseditor",
     showLink: true,
-    savedPosition: true,
     rank: 2
   },
   children: [
@@ -21,7 +20,10 @@ const editorRouter = {
         title: "message.hseditor",
         showLink: true,
         keepAlive: true,
-        savedPosition: true
+        extraIcon: {
+          svg: true,
+          name: "team-iconxinpin"
+        }
       }
     }
   ]

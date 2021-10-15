@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { infoType } from "./type";
 import { reactive, onBeforeMount } from "vue";
 import info, { ContextProps } from "../components/ReInfo/index.vue";
 import { getVerify } from "/@/api/user";
@@ -6,7 +7,7 @@ import { tokenStoreHok } from "../store/modules/token";
 
 // 刷新验证码
 const refreshGetVerify = async () => {
-  let { svg } = await getVerify();
+  let { svg }: infoType = await getVerify();
   contextInfo.svg = svg;
 };
 

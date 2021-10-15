@@ -11,7 +11,7 @@ import {
 import Logo from "../layout/components/sidebar/logo.vue";
 
 let loading = ref<boolean>(true);
-const componentList = shallowRef<ForDataType<undefined>>([]);
+const componentList = shallowRef([]);
 
 setTimeout(() => {
   loading.value = !loading.value;
