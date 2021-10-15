@@ -52,6 +52,8 @@
 <script setup lang="ts">
 import { toRef, PropType, getCurrentInstance, toRaw } from "vue";
 import { userInfoModel } from "../index.vue";
+import { Result } from "/@/api/model/resultModel";
+import { UserInfoModel } from "/@/api/model/userModel";
 import { userStore } from "/@/store/modules/user/user";
 import { errorMessage, warnMessage } from "/@/utils/message";
 const props = defineProps({
@@ -81,21 +83,26 @@ const submitDataScope = (): void => {
   instance.refs.formRef.validate(valid => {
     if (valid) {
       const value = toRaw(modelInfo.value);
-      userStore()
-        .save(value)
-        .then(result => {
-          if (result.code === 0) {
-            cancelDataScope();
-          } else {
-            errorMessage(
-              (isUpdate.value === true ? "修改" : "新增") + "失败:" + result.msg
-            );
-          }
-        });
+      save(value, isUpdate.value).then(result => {
+        if (result.code === 0) {
+          cancelDataScope();
+        } else {
+          errorMessage(
+            (isUpdate.value === true ? "修改" : "新增") + "失败:" + result.msg
+          );
+        }
+      });
     } else {
       warnMessage("表单校验失败，请检查");
     }
   });
+};
+const save = (data: UserInfoModel, isUpdate: boolean): Promise<Result<any>> => {
+  if (isUpdate) {
+    return userStore().updateProfile(data);
+  } else {
+    return userStore().save(data);
+  }
 };
 const cancelDataScope = (): void => {
   // @ts-expect-error

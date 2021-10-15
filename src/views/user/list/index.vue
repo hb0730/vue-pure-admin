@@ -120,12 +120,13 @@
             :show-overflow-tooltip="true"
             align="center"
           >
-            <template v-slot="">
+            <template #default="scope">
               <el-button
                 title="修改"
                 type="primary"
                 icon="fa fa-pencil"
                 size="mini"
+                @click="editHandler(scope.row)"
               ></el-button>
               <el-button
                 title="删除"
@@ -224,20 +225,33 @@ const searchHandler = async () => {
   getPage();
 };
 const closeDialog = value => {
-  initUserInfo();
+  initUserInfo(undefined);
   showDialog.value = value;
   getPage();
 };
-const initUserInfo = async () => {
-  dataInfo.id = 0;
-  dataInfo.username = "";
-  dataInfo.nickName = "";
-  dataInfo.email = "";
-  dataInfo.isAdmin = 0;
+const initUserInfo = async data => {
+  if (data) {
+    dataInfo.id = data.id;
+    dataInfo.username = data.username;
+    dataInfo.nickName = data.nickName;
+    dataInfo.email = data.email;
+    dataInfo.isAdmin = data.isAdmin;
+  } else {
+    dataInfo.id = 0;
+    dataInfo.username = "";
+    dataInfo.nickName = "";
+    dataInfo.email = "";
+    dataInfo.isAdmin = 0;
+  }
 };
 const addNew = () => {
-  initUserInfo();
+  initUserInfo(undefined);
   isUpdate.value = false;
+  showDialog.value = true;
+};
+const editHandler = data => {
+  initUserInfo(data);
+  isUpdate.value = true;
   showDialog.value = true;
 };
 onBeforeMount(() => {
