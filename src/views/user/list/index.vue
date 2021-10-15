@@ -51,6 +51,7 @@
           <button
             type="button"
             class="el-button filter-item el-button--primary el-button--mini"
+            @click="edit"
           >
             <i class="fa fa-edit">
               <span>修改</span>
@@ -75,12 +76,13 @@
       </div>
       <el-col :xs="10">
         <el-table
-          :data="tableData.data"
+          :data="pageData.tableData"
           style="width: 99.9%"
           ref="tableRef"
           border
           :fit="true"
           :header-cell-style="{ 'text-align': 'center' }"
+          @selection-change="handleSelectionChange"
         >
           <el-table-column
             sortable
@@ -104,7 +106,8 @@
             resizable
             :show-overflow-tooltip="true"
             align="center"
-          ></el-table-column>
+          >
+          </el-table-column>
           <el-table-column
             prop="email"
             label="邮箱"
@@ -113,6 +116,7 @@
             :show-overflow-tooltip="true"
             align="center"
           ></el-table-column>
+
           <el-table-column
             label="操作"
             sortable
@@ -133,6 +137,7 @@
                 type="danger"
                 icon="fa fa-trash"
                 size="mini"
+                :disabled="true"
               ></el-button>
             </template>
           </el-table-column>
@@ -149,21 +154,21 @@
       </el-col>
     </el-row>
 
-    <userinfo
-      :showDialog="showDialog"
-      :dataInfo="dataInfo"
-      :isUpdate="isUpdate"
+    <UserInfo
+      :showDialog="pageData.showDialog"
+      :dataInfo="pageData.dataInfo"
+      :isUpdate="pageData.isUpdate"
       @closeDialog="closeDialog"
-    ></userinfo>
+    ></UserInfo>
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, reactive, ref, toRaw } from "vue";
+import { onBeforeMount, reactive, toRaw } from "vue";
 import { Page } from "/@/api/model/resultModel";
 import { UserInfoModel } from "/@/api/model/userModel";
 import { userStore } from "/@/store/modules/user/user";
 import { warnMessage } from "/@/utils/message";
-import userinfo from "./component/userinfo.vue";
+import UserInfo from "./component/userinfo.vue";
 export interface searchInfo {
   nickName: string;
   username: string;
@@ -187,15 +192,18 @@ const searchModel: searchInfo = reactive({
   pageNum: 1,
   pageSize: 10
 });
-const tableData = reactive({ data: [] });
-const showDialog = ref(false);
-const isUpdate = ref(false);
-const dataInfo: userInfoModel = reactive({
-  id: 0,
-  username: "",
-  nickName: "",
-  email: "",
-  isAdmin: 0
+const pageData = reactive({
+  tableData: [],
+  showDialog: false,
+  isUpdate: false,
+  dataInfo: {
+    id: 0,
+    username: "",
+    nickName: "",
+    email: "",
+    isAdmin: 0
+  },
+  selection: []
 });
 
 const getPage = async () => {
@@ -207,7 +215,7 @@ const getPage = async () => {
     if (!resultData.records) {
       resultData.records = [];
     }
-    tableData.data = resultData.records;
+    pageData.tableData = resultData.records;
   } else {
     warnMessage("查询失败:" + result.msg);
   }
@@ -226,33 +234,45 @@ const searchHandler = async () => {
 };
 const closeDialog = value => {
   initUserInfo(undefined);
-  showDialog.value = value;
+  pageData.showDialog = value;
   getPage();
 };
 const initUserInfo = async data => {
   if (data) {
-    dataInfo.id = data.id;
-    dataInfo.username = data.username;
-    dataInfo.nickName = data.nickName;
-    dataInfo.email = data.email;
-    dataInfo.isAdmin = data.isAdmin;
+    pageData.dataInfo = data;
   } else {
-    dataInfo.id = 0;
-    dataInfo.username = "";
-    dataInfo.nickName = "";
-    dataInfo.email = "";
-    dataInfo.isAdmin = 0;
+    pageData.dataInfo = {
+      id: 0,
+      username: "",
+      nickName: "",
+      email: "",
+      isAdmin: 0
+    };
   }
+};
+const handleSelectionChange = val => {
+  pageData.selection = val;
 };
 const addNew = () => {
   initUserInfo(undefined);
-  isUpdate.value = false;
-  showDialog.value = true;
+  pageData.isUpdate = false;
+  pageData.showDialog = true;
+};
+const edit = () => {
+  if (pageData.selection.length < 0) {
+    warnMessage("请选择");
+  } else if (pageData.selection.length > 1) {
+    warnMessage("请选择(有且只有一个)");
+  } else {
+    initUserInfo(pageData.selection[0]);
+    pageData.isUpdate = true;
+    pageData.showDialog = true;
+  }
 };
 const editHandler = data => {
   initUserInfo(data);
-  isUpdate.value = true;
-  showDialog.value = true;
+  pageData.isUpdate = true;
+  pageData.showDialog = true;
 };
 onBeforeMount(() => {
   getPage();
