@@ -33,6 +33,14 @@ export const userStore = defineStore({
      */
     findPage(params: any): Promise<Result<Page<UserInfoModel>>> {
       return userAPI.pageFind(params);
+    },
+    /**
+     * 新增用户
+     * @param user 用户信息
+     * @returns  是否成功
+     */
+    save(user: UserInfoModel): Promise<Result<any>> {
+      return userAPI.save(user);
     }
   }
 });

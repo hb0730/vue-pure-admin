@@ -22,7 +22,8 @@ enum API {
   findPage = "/user/page",
   info = "/user/info",
   updateProfile = "/user/update/profile",
-  updatePassword = "/user/update/password"
+  updatePassword = "/user/update/password",
+  save = "/user/save"
 }
 
 class User extends BaseRequest {
@@ -68,6 +69,14 @@ class User extends BaseRequest {
    */
   pageFind(params: any): Promise<Result<Page<UserInfoModel>>> {
     return this.post<Result<Page<UserInfoModel>>>(API.findPage, params);
+  }
+  /**
+   * 新增用户
+   * @param user 用户信息
+   * @returns  是否成功
+   */
+  save(user: UserInfoModel): Promise<Result<any>> {
+    return this.post<Result<any>>(API.save, user);
   }
 }
 

@@ -14,8 +14,8 @@
 .el-upload__input {
   display: none;
 }
-
-.el-dialog {
+// fix .el-dialog
+.dialog {
   transform: none;
   left: 0;
   position: relative;

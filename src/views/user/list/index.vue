@@ -29,7 +29,13 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button plain size="medium" icon="fa fa-search">查询</el-button>
+        <el-button
+          plain
+          size="medium"
+          icon="fa fa-search"
+          @click="searchHandler"
+          >查询</el-button
+        >
       </el-form-item>
     </el-form>
     <el-row :gutter="2">
@@ -38,6 +44,7 @@
           <button
             type="button"
             class="el-button filter-item el-button--success el-button--mini"
+            @click="addNew"
           >
             <i class="fa fa-plus"></i> <span>新增</span>
           </button>
@@ -68,7 +75,7 @@
       </div>
       <el-col :xs="10">
         <el-table
-          :data="tableData"
+          :data="tableData.data"
           style="width: 99.9%"
           ref="tableRef"
           border
@@ -140,14 +147,22 @@
         ></el-pagination>
       </el-col>
     </el-row>
+
+    <userinfo
+      :showDialog="showDialog"
+      :dataInfo="dataInfo"
+      :isUpdate="isUpdate"
+      @closeDialog="closeDialog"
+    ></userinfo>
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, reactive, toRaw } from "vue";
+import { onBeforeMount, reactive, ref, toRaw } from "vue";
 import { Page } from "/@/api/model/resultModel";
 import { UserInfoModel } from "/@/api/model/userModel";
 import { userStore } from "/@/store/modules/user/user";
 import { warnMessage } from "/@/utils/message";
+import userinfo from "./component/userinfo.vue";
 export interface searchInfo {
   nickName: string;
   username: string;
@@ -171,7 +186,16 @@ const searchModel: searchInfo = reactive({
   pageNum: 1,
   pageSize: 10
 });
-const tableData: userInfoModel[] = reactive([]);
+const tableData = reactive({ data: [] });
+const showDialog = ref(false);
+const isUpdate = ref(false);
+const dataInfo: userInfoModel = reactive({
+  id: 0,
+  username: "",
+  nickName: "",
+  email: "",
+  isAdmin: 0
+});
 
 const getPage = async () => {
   const query = toRaw(searchModel);
@@ -179,7 +203,10 @@ const getPage = async () => {
   if (result.code === 0) {
     const resultData: Page<UserInfoModel> = result.data;
     searchModel.total = resultData.total;
-    Object.assign(tableData, resultData.records);
+    if (!resultData.records) {
+      resultData.records = [];
+    }
+    tableData.data = resultData.records;
   } else {
     warnMessage("查询失败:" + result.msg);
   }
@@ -193,6 +220,26 @@ const currentChange = async (pageNum: number) => {
   getPage();
 };
 
+const searchHandler = async () => {
+  getPage();
+};
+const closeDialog = value => {
+  initUserInfo();
+  showDialog.value = value;
+  getPage();
+};
+const initUserInfo = async () => {
+  dataInfo.id = 0;
+  dataInfo.username = "";
+  dataInfo.nickName = "";
+  dataInfo.email = "";
+  dataInfo.isAdmin = 0;
+};
+const addNew = () => {
+  initUserInfo();
+  isUpdate.value = false;
+  showDialog.value = true;
+};
 onBeforeMount(() => {
   getPage();
 });
