@@ -119,6 +119,20 @@
         background-color: $subMenuHover !important;
       }
     }
+
+    .el-menu-item,
+    .el-sub-menu {
+      i {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      i.fa {
+        font-size: 16px;
+        margin-right: 5px;
+      }
+    }
   }
 
   .horizontal-header {
