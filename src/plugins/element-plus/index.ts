@@ -37,7 +37,8 @@ import {
   ElTabs,
   ElTabPane,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElInfiniteScroll
 } from "element-plus";
 
 const components = [
@@ -80,7 +81,7 @@ const components = [
   ElTableColumn
 ];
 
-const plugins = [ElLoading];
+const plugins = [ElLoading, ElInfiniteScroll];
 
 export function useElementPlus(app: App) {
   components.forEach((component: Component) => {
