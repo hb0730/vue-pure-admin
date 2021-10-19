@@ -1,36 +1,175 @@
 <template>
   <div class="app-container">
-    <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-      <li v-for="i in count" :key="i" class="infinite-list-item">{{ i }}</li>
-    </ul>
+    <el-form
+      ref="searchForm"
+      :model="searchModel"
+      :inline="true"
+      label-position="left"
+    >
+      <el-form-item>
+        <el-input
+          v-model="searchModel.name"
+          placeholder="名称"
+          clearable
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="searchModel.addr" placeholder="ip地址" clearable>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button plain size="medium" icon="fa fa-search">查询</el-button>
+      </el-form-item>
+    </el-form>
+    <el-row :gutter="2">
+      <div class="avue-crud__menu">
+        <div class="avue-crud__left">
+          <AddNewButton @addNewHandler="addNewHandler"></AddNewButton>
+          <EditButton @edit-handler="editHandler"></EditButton>
+          <RemoveButton @remove-handler="removeHandler"></RemoveButton>
+        </div>
+        <div class="avue-crud__right">
+          <RefreshButton @refreshHandler="refreshHandler"></RefreshButton>
+        </div>
+      </div>
+      <el-col :xs="10">
+        <el-table
+          :data="pageData.tableData"
+          style="width: 99.9%"
+          ref="tableRef"
+          border
+          :fit="true"
+          :header-cell-style="{ 'text-align': 'center' }"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+            type="selection"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="服务器名称"
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="服务器地址"
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="服务器端口"
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="服务器账号"
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            label="操作"
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+          >
+          </el-table-column>
+        </el-table>
+      </el-col>
+      <el-pagination
+        v-model:currentPage="searchModel.pageNum"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="searchModel.pageSize"
+        layout="total,sizes, prev, pager, next, jumper"
+        :total="searchModel.total"
+        @size-change="sizeChange"
+        @current-change="currentChange"
+      ></el-pagination>
+    </el-row>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-const count = ref(0);
-const load = () => {
-  count.value += 2;
-};
-</script>
-<style lang="scss" scoped>
-.infinite-list {
-  height: 300px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  .infinite-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50px;
-    background: var(--el-color-primary-light-9);
-    margin: 10px;
-    color: var(--el-color-primary);
-
-    & + .list-item {
-      margin-top: 10px;
+import { onBeforeMount, reactive, toRaw } from "vue";
+//@ts-ignore
+import RefreshButton from "/@/views/components/table/refreshButton.vue";
+//@ts-ignore
+import AddNewButton from "/@/views/components/table/addNewButton.vue";
+//@ts-ignore
+import EditButton from "/@/views/components/table/editButton.vue";
+//@ts-ignore
+import RemoveButton from "/@/views/components/table/removeButton.vue";
+import { hostStore } from "/@/store/modules/host/host";
+import { HostModel, HostQuery } from "/@/api/model/hostModel";
+import { warnMessage } from "/@/utils/message";
+import { Page } from "/@/api/model/resultModel";
+const searchModel: HostQuery = reactive({
+  total: 0,
+  pageNum: 1,
+  pageSize: 10
+});
+const pageData = reactive({
+  tableData: [],
+  selection: []
+});
+/**
+ * 分页查询
+ */
+const getPage = async () => {
+  const query = toRaw(searchModel);
+  const result = await hostStore().findPage(query);
+  if (result.code === 0) {
+    const resultData: Page<HostModel> = result.data;
+    searchModel.total = resultData.total;
+    if (!resultData.records) {
+      resultData.records = [];
     }
+    pageData.tableData = resultData.records;
+  } else {
+    warnMessage("查询失败:" + result.msg);
   }
-}
-</style>
+};
+const handleSelectionChange = val => {
+  pageData.selection = val;
+};
+const sizeChange = async (pageSize: number) => {
+  searchModel.pageSize = pageSize;
+  getPage();
+};
+const currentChange = async (pageNum: number) => {
+  searchModel.pageNum = pageNum;
+  getPage();
+};
+
+const refreshHandler = () => {
+  console.log("refresh");
+};
+const addNewHandler = () => {
+  console.log("add new");
+};
+const editHandler = () => {
+  console.log("edit");
+};
+const removeHandler = () => {
+  console.log("remove");
+};
+onBeforeMount(() => {
+  getPage();
+});
+</script>
+<style lang="scss" scoped></style>
