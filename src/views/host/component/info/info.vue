@@ -84,6 +84,7 @@
 <script setup lang="ts">
 import { toRef, PropType, getCurrentInstance, ref } from "vue";
 import { HostModel, HostTestModel } from "/@/api/model/hostModel";
+import { Result } from "/@/api/model/resultModel";
 import { hostStore } from "/@/store/modules/host/host";
 import { successMessage, warnMessage } from "/@/utils/message";
 const instance = getCurrentInstance();
@@ -106,7 +107,7 @@ const props = defineProps({
   }
 });
 const showDialog = toRef(props, "showDialog");
-// const isUpdate = toRef(props, "isUpdate");
+const isUpdate = toRef(props, "isUpdate");
 const modelInfo = toRef(props, "formData");
 const cancelDataScope = () => {
   // @ts-expect-error
@@ -150,15 +151,27 @@ const submitDataScope = () => {
         userId: 0
       };
       Object.assign(model, modelInfo.value);
-      const result = await hostStore().save(model);
+      let result: Result<any>;
+      if (isUpdate.value) {
+        result = await update(model);
+      } else {
+        result = await addNew(model);
+      }
       if (result.code === 0) {
         cancelDataScope();
       } else {
-        warnMessage("新增失败:" + result.msg);
+        warnMessage((isUpdate.value ? "修改" : "新增") + "失败:" + result.msg);
       }
     } else {
       warnMessage("表单校验失败，请检查");
     }
   });
+};
+
+const addNew = (data: HostModel) => {
+  return hostStore().save(data);
+};
+const update = (data: HostModel) => {
+  return hostStore().update(data);
 };
 </script>

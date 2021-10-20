@@ -2,10 +2,13 @@ import { encode } from "../utils/crypto/base64";
 import BaseRequest from "./base";
 import { HostModel, HostQuery, HostTestModel } from "./model/hostModel";
 import { Page, Result } from "./model/resultModel";
+import qs from "qs";
 enum API {
   findPage = "/host/get",
   testConnection = "/host/test",
-  save = "/host/save"
+  save = "/host/save",
+  update = "/host/update",
+  delete = "/host/delete"
 }
 class Host extends BaseRequest {
   /**
@@ -33,6 +36,30 @@ class Host extends BaseRequest {
   save(model: HostModel): Promise<Result<any>> {
     model.password = encode(model.password);
     return this.post<Result<any>>(API.save, model);
+  }
+  /**
+   * 修改
+   * @param model 修改参数
+   * @returns  是否成功
+   */
+  update(model: HostModel): Promise<Result<any>> {
+    model.password = encode(model.password);
+    return this.put<Result<any>>(API.update + "/" + model.id, model);
+  }
+  /**
+   * 删除
+   * @param id id集合
+   * @returns 是否成功
+   */
+  deleteHost(id: number[]): Promise<Result<any>> {
+    const params = qs.stringify(
+      { id: id },
+      {
+        encode: false,
+        arrayFormat: "comma"
+      }
+    );
+    return this.delete<Result<any>>(API.delete, { id: params.split("=")[1] });
   }
 }
 

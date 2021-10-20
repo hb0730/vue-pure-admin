@@ -89,6 +89,28 @@
             :show-overflow-tooltip="true"
             align="center"
           >
+            <template #default="scope">
+              <el-button
+                title="修改"
+                type="primary"
+                icon="fa fa-pencil"
+                @click="handlerEdit(scope.row)"
+                size="mini"
+              ></el-button>
+              <el-button
+                title="删除"
+                type="danger"
+                icon="fa fa-trash"
+                size="mini"
+                @click="handlerDelete(scope.row)"
+              ></el-button>
+              <el-button
+                title="连接"
+                type="info"
+                icon="fa fa-terminal"
+                size="mini"
+              ></el-button>
+            </template>
           </el-table-column>
         </el-table>
       </el-col>
@@ -126,6 +148,8 @@ import { hostStore } from "/@/store/modules/host/host";
 import { HostModel, HostQuery } from "/@/api/model/hostModel";
 import { warnMessage } from "/@/utils/message";
 import { Page } from "/@/api/model/resultModel";
+import { decode } from "/@/utils/crypto/base64";
+import { warnConfirm } from "/@/utils/message/box";
 const searchModel: HostQuery = reactive({
   total: 0,
   pageNum: 1,
@@ -181,7 +205,7 @@ const initModel = (data?: HostModel) => {
       name: data.name,
       addr: data.addr,
       username: data.username,
-      password: data.password,
+      password: decode(data.password),
       port: data.port,
       userId: data.userId
     };
@@ -198,7 +222,7 @@ const initModel = (data?: HostModel) => {
   }
 };
 const refreshHandler = () => {
-  console.log("refresh");
+  getPage();
 };
 const addNewHandler = () => {
   initModel(undefined);
@@ -206,15 +230,59 @@ const addNewHandler = () => {
   pageData.showDialog = true;
 };
 const editHandler = () => {
-  console.log("edit");
+  if (pageData.selection.length <= 0) {
+    warnMessage("请选择");
+  } else if (pageData.selection.length > 1) {
+    warnMessage("请选择(有且只有一个)");
+  } else {
+    initModel(pageData.selection[0]);
+    pageData.isUpdate = true;
+    pageData.showDialog = true;
+  }
 };
 const removeHandler = () => {
-  console.log("remove");
+  if (pageData.selection.length <= 0) {
+    warnMessage("请选择");
+  } else {
+    warnConfirm("是否删除当前选中的数据")
+      .then(async () => {
+        let id = [];
+        pageData.selection.forEach(value => {
+          id.push(value.id);
+        });
+        const result = await hostStore().deleteHost(id);
+        if (result.code === 0) {
+          getPage();
+        } else {
+          warnMessage("删除失败:" + result.msg);
+        }
+      })
+      .catch(() => {});
+  }
 };
 const cancelDataScope = (data: boolean) => {
+  initModel(undefined);
+  getPage();
   pageData.showDialog = data;
   pageData.isUpdate = false;
-  initModel(undefined);
+};
+const handlerEdit = data => {
+  initModel(data);
+  pageData.isUpdate = true;
+  pageData.showDialog = true;
+};
+const handlerDelete = (data: HostModel) => {
+  warnConfirm("是否删除当前数据")
+    .then(async () => {
+      let id = [data.id];
+      const result = await hostStore().deleteHost(id);
+      if (result.code === 0) {
+        getPage();
+      } else {
+        warnMessage("删除失败:" + result.msg);
+      }
+    })
+    .catch(() => {});
 };
 onBeforeMount(() => {
   getPage();

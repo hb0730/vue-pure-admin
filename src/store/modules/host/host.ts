@@ -29,6 +29,22 @@ export const hostStore = defineStore({
      */
     save(model: HostModel): Promise<Result<any>> {
       return HostAPI.save(model);
+    },
+    /**
+     * 修改
+     * @param model 修改参数
+     * @returns  是否成功
+     */
+    update(model: HostModel): Promise<Result<any>> {
+      return HostAPI.update(model);
+    },
+    /**
+     * 删除
+     * @param id id集合
+     * @returns 是否成功
+     */
+    deleteHost(id: number[]): Promise<Result<any>> {
+      return HostAPI.deleteHost(id);
     }
   }
 });
