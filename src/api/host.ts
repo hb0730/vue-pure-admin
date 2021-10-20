@@ -2,7 +2,7 @@ import { encode } from "../utils/crypto/base64";
 import BaseRequest from "./base";
 import { HostModel, HostQuery, HostTestModel } from "./model/hostModel";
 import { Page, Result } from "./model/resultModel";
-import qs from "qs";
+import { stringify } from "qs";
 enum API {
   findPage = "/host/get",
   testConnection = "/host/test",
@@ -52,7 +52,7 @@ class Host extends BaseRequest {
    * @returns 是否成功
    */
   deleteHost(id: number[]): Promise<Result<any>> {
-    const params = qs.stringify(
+    const params = stringify(
       { id: id },
       {
         encode: false,
