@@ -59,7 +59,7 @@
             align="center"
           ></el-table-column>
           <el-table-column
-            prop="name"
+            prop="addr"
             label="服务器地址"
             sortable
             resizable
@@ -67,7 +67,7 @@
             align="center"
           ></el-table-column>
           <el-table-column
-            prop="name"
+            prop="port"
             label="服务器端口"
             sortable
             resizable
@@ -75,7 +75,7 @@
             align="center"
           ></el-table-column>
           <el-table-column
-            prop="name"
+            prop="username"
             label="服务器账号"
             sortable
             resizable
@@ -103,6 +103,12 @@
       ></el-pagination>
     </el-row>
   </div>
+  <HostInfo
+    :is-update="pageData.isUpdate"
+    :form-data="pageData.formData"
+    :show-dialog="pageData.showDialog"
+    @cancel-data-scope="cancelDataScope"
+  ></HostInfo>
 </template>
 <script setup lang="ts">
 import { onBeforeMount, reactive, toRaw } from "vue";
@@ -114,6 +120,8 @@ import AddNewButton from "/@/views/components/table/addNewButton.vue";
 import EditButton from "/@/views/components/table/editButton.vue";
 //@ts-ignore
 import RemoveButton from "/@/views/components/table/removeButton.vue";
+//@ts-ignore
+import HostInfo from "../component/info/info.vue";
 import { hostStore } from "/@/store/modules/host/host";
 import { HostModel, HostQuery } from "/@/api/model/hostModel";
 import { warnMessage } from "/@/utils/message";
@@ -125,7 +133,18 @@ const searchModel: HostQuery = reactive({
 });
 const pageData = reactive({
   tableData: [],
-  selection: []
+  selection: [],
+  showDialog: false,
+  formData: {
+    id: 0,
+    name: "",
+    addr: "",
+    username: "",
+    port: 22,
+    password: "",
+    userId: 0
+  },
+  isUpdate: false
 });
 /**
  * 分页查询
@@ -155,18 +174,47 @@ const currentChange = async (pageNum: number) => {
   searchModel.pageNum = pageNum;
   getPage();
 };
-
+const initModel = (data?: HostModel) => {
+  if (data) {
+    pageData.formData = {
+      id: data.id,
+      name: data.name,
+      addr: data.addr,
+      username: data.username,
+      password: data.password,
+      port: data.port,
+      userId: data.userId
+    };
+  } else {
+    pageData.formData = {
+      id: 0,
+      name: "",
+      addr: "",
+      username: "",
+      port: 22,
+      password: "",
+      userId: 0
+    };
+  }
+};
 const refreshHandler = () => {
   console.log("refresh");
 };
 const addNewHandler = () => {
-  console.log("add new");
+  initModel(undefined);
+  pageData.isUpdate = false;
+  pageData.showDialog = true;
 };
 const editHandler = () => {
   console.log("edit");
 };
 const removeHandler = () => {
   console.log("remove");
+};
+const cancelDataScope = (data: boolean) => {
+  pageData.showDialog = data;
+  pageData.isUpdate = false;
+  initModel(undefined);
 };
 onBeforeMount(() => {
   getPage();
