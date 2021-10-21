@@ -8,6 +8,10 @@
 
 vue-pure-admin is a free and open source middle and back-end template. Using the latest `vue3`, `vite2`, `TypeScript`, `Element-Plus` and other mainstream technology development, the out-of-the-box middle and back-end front-end solutions can also be used for learning reference.
 
+## Supporting video tutorial
+
+bilibili：https://www.bilibili.com/video/BV1534y1S7HV/
+
 ## Preview
 
 - [vue-pure-admin](http://yiming_chang.gitee.io/manages)
@@ -127,9 +131,9 @@ If you think this project is helpful to you, you can help the author buy a cup o
 
 ## Exchange Group
 
-Please scan the code to join the WeChat exchange group, if you have any questions, you can communicate in the group!
+[WeChat exchange group, click to scan the code to enter the group](https://juejin.cn/post/6948419379566477342/)
 
-![group](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0c5f882422bd47b5af691906ea994ccf~tplv-k3u1fbpfcp-watermark.awebp?)
+My WeChat: 18237613535, pull you into the group
 
 ## License
 

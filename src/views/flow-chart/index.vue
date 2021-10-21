@@ -72,7 +72,7 @@ onMounted(() => {
     <div id="LF-Turbo"></div>
     <!-- 数据查看面板 -->
     <el-dialog
-      custom-class="dialog"
+      customClass="flow-dialog"
       title="数据"
       v-model="dataVisible"
       width="50%"
@@ -85,7 +85,7 @@ onMounted(() => {
 <style scoped>
 #LF-Turbo {
   width: 100vw;
-  height: 85vh;
+  height: 88.5vh;
   outline: none;
 }
 
@@ -122,5 +122,12 @@ onMounted(() => {
   overflow: auto;
   margin-top: -30px;
   z-index: 3;
+}
+
+:deep(.flow-dialog) {
+  transform: none;
+  left: 0;
+  position: relative;
+  margin: 0 auto;
 }
 </style>

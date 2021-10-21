@@ -14,13 +14,6 @@
 .el-upload__input {
   display: none;
 }
-// fix .el-dialog
-.dialog {
-  transform: none;
-  left: 0;
-  position: relative;
-  margin: 0 auto;
-}
 
 // refine element ui upload
 .upload-container {

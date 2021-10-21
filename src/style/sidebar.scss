@@ -23,6 +23,27 @@
     position: relative;
   }
 
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    width: calc(100% - 210px);
+    transition: width 0.28s;
+  }
+
+  .main-hidden {
+    margin-left: 0 !important;
+
+    .fixed-header {
+      width: 100% !important;
+
+      + .app-main {
+        padding-top: 37px;
+      }
+    }
+  }
+
   .el-popper.is-light {
     border: none !important;
   }
@@ -339,6 +360,20 @@
         background-color: $menuHover !important;
       }
     }
+
+    .el-menu-item,
+    .el-sub-menu {
+      i {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      i.fa {
+        margin-right: 5px;
+        font-size: 16px;
+      }
+    }
   }
 
   // horizontal菜单折叠
@@ -416,6 +451,11 @@
 
   // 手机端
   .mobile {
+    .fixed-header {
+      width: 100% !important;
+      transition: width 0.28s;
+    }
+
     .main-container {
       margin-left: 0 !important;
     }
@@ -443,9 +483,14 @@
 }
 
 body[data-layout="vertical"] {
+  .fixed-header + .app-main {
+    padding-top: 85px;
+  }
+
   .hideSidebar {
     .fixed-header {
-      width: calc(100% - 54px);
+      width: calc(100% - 54px) !important;
+      transition: width 0.28s;
     }
 
     .sidebar-container {
@@ -489,6 +534,17 @@ body[data-layout="vertical"] {
         }
       }
     }
+  }
+}
+
+body[data-layout="horizontal"] {
+  .fixed-header {
+    width: 100% !important;
+    transition: none !important;
+  }
+
+  .fixed-header + .app-main {
+    padding-top: 98px;
   }
 }
 

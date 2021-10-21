@@ -33,15 +33,12 @@ import {
   computed,
   onMounted,
   watchEffect,
-  useCssModule,
   onBeforeMount,
   getCurrentInstance
 } from "vue";
 import { setType } from "./types";
-import options from "/@/settings";
 import { useI18n } from "vue-i18n";
 import { emitter } from "/@/utils/mitt";
-import { toggleClass } from "/@/utils/operate";
 import { useEventListener } from "@vueuse/core";
 import { storageLocal } from "/@/utils/storage";
 import { useAppStoreHook } from "/@/store/modules/app";
@@ -57,12 +54,13 @@ import Vertical from "./components/sidebar/vertical.vue";
 import Horizontal from "./components/sidebar/horizontal.vue";
 
 const pureSetting = useSettingStoreHook();
-const { hiddenMainContainer } = useCssModule();
 
 const instance =
   getCurrentInstance().appContext.app.config.globalProperties.$storage;
 
-let containerHiddenSideBar = ref(options.hiddenSideBar);
+const hiddenSideBar = ref(
+  getCurrentInstance().appContext.config.globalProperties.$config?.HiddenSideBar
+);
 
 const set: setType = reactive({
   sidebar: computed(() => {
@@ -127,21 +125,9 @@ const $_resizeHandler = () => {
 };
 
 function onFullScreen() {
-  if (unref(containerHiddenSideBar)) {
-    containerHiddenSideBar.value = false;
-    toggleClass(
-      false,
-      hiddenMainContainer,
-      document.querySelector(".main-container")
-    );
-  } else {
-    containerHiddenSideBar.value = true;
-    toggleClass(
-      true,
-      hiddenMainContainer,
-      document.querySelector(".main-container")
-    );
-  }
+  unref(hiddenSideBar)
+    ? (hiddenSideBar.value = false)
+    : (hiddenSideBar.value = true);
 }
 
 onMounted(() => {
@@ -150,11 +136,6 @@ onMounted(() => {
     useAppStoreHook().toggleDevice("mobile");
     handleClickOutside(true);
   }
-  toggleClass(
-    unref(containerHiddenSideBar),
-    hiddenMainContainer,
-    document.querySelector(".main-container")
-  );
 });
 
 onBeforeMount(() => {
@@ -173,20 +154,16 @@ onBeforeMount(() => {
       class="drawer-bg"
       @click="handleClickOutside(false)"
     />
-    <Vertical v-show="!containerHiddenSideBar && layout.includes('vertical')" />
-    <div class="main-container">
+    <Vertical v-show="!hiddenSideBar && layout.includes('vertical')" />
+    <div :class="['main-container', hiddenSideBar ? 'main-hidden' : '']">
       <div :class="{ 'fixed-header': set.fixedHeader }">
         <!-- 顶部导航栏 -->
-        <navbar
-          v-show="!containerHiddenSideBar && layout.includes('vertical')"
-        />
+        <navbar v-show="!hiddenSideBar && layout.includes('vertical')" />
         <!-- tabs标签页 -->
-        <Horizontal
-          v-show="!containerHiddenSideBar && layout.includes('horizontal')"
-        />
+        <Horizontal v-show="!hiddenSideBar && layout.includes('horizontal')" />
         <tag>
           <span @click="onFullScreen">
-            <fullScreen v-if="!containerHiddenSideBar" />
+            <fullScreen v-if="!hiddenSideBar" />
             <exitScreen v-else />
           </span>
         </tag>
@@ -198,12 +175,6 @@ onBeforeMount(() => {
     <setting />
   </div>
 </template>
-
-<style scoped module>
-.hiddenMainContainer {
-  margin-left: 0 !important;
-}
-</style>
 
 <style lang="scss" scoped>
 @mixin clearfix {
@@ -227,6 +198,10 @@ onBeforeMount(() => {
   }
 }
 
+.main-hidden {
+  margin-left: 0 !important;
+}
+
 .drawer-bg {
   background: #000;
   opacity: 0.3;
@@ -235,19 +210,6 @@ onBeforeMount(() => {
   height: 100%;
   position: absolute;
   z-index: 999;
-}
-
-.fixed-header {
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 9;
-  width: calc(100% - 210px);
-  transition: width 0.28s;
-}
-
-.mobile .fixed-header {
-  width: 100%;
 }
 
 .re-screen {

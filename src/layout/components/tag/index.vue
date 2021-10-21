@@ -1,3 +1,17 @@
+<script lang="ts">
+let routerArrays: Array<RouteConfigs> = [
+  {
+    path: "/welcome",
+    parentPath: "/",
+    meta: {
+      title: "message.hshome",
+      icon: "el-icon-s-home",
+      showLink: true
+    }
+  }
+];
+</script>
+
 <script setup lang="ts">
 import {
   ref,
@@ -12,7 +26,7 @@ import {
 import { RouteConfigs, relativeStorageType, tagsViewsType } from "../../types";
 import { emitter } from "/@/utils/mitt";
 import { templateRef } from "@vueuse/core";
-import { handleAliveRoute } from "/@/router";
+import { handleAliveRoute, delAliveRoutes } from "/@/router";
 import { storageLocal } from "/@/utils/storage";
 import { useRoute, useRouter } from "vue-router";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
@@ -35,17 +49,7 @@ const router = useRouter();
 const showTags = ref(storageLocal.getItem("tagsVal") || false);
 const containerDom = templateRef<HTMLElement | null>("containerDom", null);
 const activeIndex = ref(-1);
-let routerArrays: Array<RouteConfigs> = [
-  {
-    path: "/welcome",
-    parentPath: "/",
-    meta: {
-      title: "message.hshome",
-      icon: "el-icon-s-home",
-      showLink: true
-    }
-  }
-];
+
 const tagsViews = ref<Array<tagsViewsType>>([
   {
     icon: refresh,
@@ -120,7 +124,8 @@ function dynamicRouteTag(value: string, parentPath: string): void {
           routerArrays.push({
             path: value,
             parentPath: `/${parentPath.split("/")[1]}`,
-            meta: arrItem.meta
+            meta: arrItem.meta,
+            name: arrItem.name
           });
           relativeStorage.routesInStorage = routerArrays;
         } else {
@@ -147,6 +152,8 @@ function onFresh() {
 }
 
 function deleteDynamicTag(obj: any, current: any, tag?: string) {
+  // 存放被删除的缓存路由
+  let delAliveRouteList = [];
   let valueIndex: number = routerArrays.findIndex((item: any) => {
     return item.path === obj.path;
   });
@@ -167,12 +174,9 @@ function deleteDynamicTag(obj: any, current: any, tag?: string) {
       ];
       routerArrays = relativeStorage.routesInStorage;
     } else {
-      routerArrays.splice(start, end);
+      delAliveRouteList = routerArrays.splice(start, end);
       relativeStorage.routesInStorage = routerArrays;
     }
-    router.push(obj.path);
-    // 删除缓存路由
-    handleAliveRoute(route.matched, "delete");
   };
 
   if (tag === "other") {
@@ -185,15 +189,30 @@ function deleteDynamicTag(obj: any, current: any, tag?: string) {
     // 从当前匹配到的路径中删除
     spliceRoute(valueIndex, 1);
   }
-
-  if (current === obj.path) {
+  let newRoute: any = routerArrays.slice(-1);
+  if (current === route.path) {
+    // 删除缓存路由
+    tag
+      ? delAliveRoutes(delAliveRouteList)
+      : handleAliveRoute(route.matched, "delete");
     // 如果删除当前激活tag就自动切换到最后一个tag
-    let newRoute: any = routerArrays.slice(-1);
+    if (tag === "left") return;
     nextTick(() => {
       router.push({
         path: newRoute[0].path
       });
     });
+  } else {
+    // 删除缓存路由
+    tag ? delAliveRoutes(delAliveRouteList) : delAliveRoutes([obj]);
+    if (!routerArrays.length) return;
+    let isHasActiveTag = routerArrays.some(item => {
+      return item.path === route.path;
+    });
+    !isHasActiveTag &&
+      router.push({
+        path: newRoute[0].path
+      });
   }
 }
 
@@ -212,7 +231,11 @@ function onClickDrop(key, item, selectRoute?: RouteConfigs) {
     case 1:
       // 关闭当前标签页
       selectRoute
-        ? deleteMenu({ path: selectRoute.path, meta: selectRoute.meta })
+        ? deleteMenu({
+            path: selectRoute.path,
+            meta: selectRoute.meta,
+            name: selectRoute.name
+          })
         : deleteMenu({ path: route.path, meta: route.meta });
       break;
     case 2:
@@ -274,13 +297,13 @@ function closeMenu() {
   visible.value = false;
 }
 
-function showMenus(value: Boolean) {
+function showMenus(value: boolean) {
   Array.of(1, 2, 3, 4, 5).forEach(v => {
     tagsViews.value[v].show = value;
   });
 }
 
-function disabledMenus(value: Boolean) {
+function disabledMenus(value: boolean) {
   Array.of(1, 2, 3, 4, 5).forEach(v => {
     tagsViews.value[v].disabled = value;
   });
@@ -652,7 +675,6 @@ onBeforeMount(() => {
   .contextmenu {
     margin: 0;
     background: #fff;
-    z-index: 3000;
     position: absolute;
     list-style-type: none;
     padding: 5px 0;
