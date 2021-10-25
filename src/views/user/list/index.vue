@@ -41,37 +41,11 @@
     <el-row :gutter="2">
       <div class="avue-crud__menu">
         <div class="avue-crud__left">
-          <button
-            type="button"
-            class="el-button filter-item el-button--success el-button--mini"
-            @click="addNew"
-          >
-            <i class="fa fa-plus"></i> <span>新增</span>
-          </button>
-          <button
-            type="button"
-            class="el-button filter-item el-button--primary el-button--mini"
-            @click="edit"
-          >
-            <i class="fa fa-edit">
-              <span>修改</span>
-            </i>
-          </button>
+          <AddNewButton @addNewHandler="addNew"></AddNewButton>
+          <EditButton @editHandler="edit"></EditButton>
         </div>
         <div class="avue-crud__right">
-          <button
-            type="button"
-            class="
-              el-button el-tooltip
-              el-button--default el-button--small
-              is-circle
-            "
-            aria-describedby="el-tooltip-2497"
-            tabindex="0"
-            title="刷新"
-          >
-            <i class="el-icon-refresh"></i>
-          </button>
+          <RefreshButton @refreshHandler="getPage"></RefreshButton>
         </div>
       </div>
       <el-col :xs="10">
@@ -168,7 +142,14 @@ import { Page } from "/@/api/model/resultModel";
 import { UserInfoModel } from "/@/api/model/userModel";
 import { userStore } from "/@/store/modules/user/user";
 import { warnMessage } from "/@/utils/message";
+//@ts-ignore
 import UserInfo from "./component/userinfo.vue";
+//@ts-ignore
+import RefreshButton from "/@/views/components/table/refreshButton.vue";
+//@ts-ignore
+import AddNewButton from "/@/views/components/table/addNewButton.vue";
+//@ts-ignore
+import EditButton from "/@/views/components/table/editButton.vue";
 export interface searchInfo {
   nickName: string;
   username: string;
@@ -259,7 +240,7 @@ const addNew = () => {
   pageData.showDialog = true;
 };
 const edit = () => {
-  if (pageData.selection.length < 0) {
+  if (pageData.selection.length <= 0) {
     warnMessage("请选择");
   } else if (pageData.selection.length > 1) {
     warnMessage("请选择(有且只有一个)");

@@ -125,13 +125,13 @@
         @current-change="currentChange"
       ></el-pagination>
     </el-row>
+    <HostInfo
+      :is-update="pageData.isUpdate"
+      :form-data="pageData.formData"
+      :show-dialog="pageData.showDialog"
+      @cancel-data-scope="cancelDataScope"
+    ></HostInfo>
   </div>
-  <HostInfo
-    :is-update="pageData.isUpdate"
-    :form-data="pageData.formData"
-    :show-dialog="pageData.showDialog"
-    @cancel-data-scope="cancelDataScope"
-  ></HostInfo>
 </template>
 <script setup lang="ts">
 import { onBeforeMount, reactive, toRaw } from "vue";
