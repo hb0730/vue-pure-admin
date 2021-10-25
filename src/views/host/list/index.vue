@@ -109,7 +109,7 @@
                 type="info"
                 icon="fa fa-terminal"
                 size="mini"
-                @click="openTerminal()"
+                @click="openTerminal(scope.row)"
               ></el-button>
             </template>
           </el-table-column>
@@ -151,7 +151,7 @@ import { warnMessage } from "/@/utils/message";
 import { Page } from "/@/api/model/resultModel";
 import { decode } from "/@/utils/crypto/base64";
 import { warnConfirm } from "/@/utils/message/box";
-import { open } from "/@/utils/util";
+import router from "/@/router";
 const searchModel: HostQuery = reactive({
   total: 0,
   pageNum: 1,
@@ -286,8 +286,13 @@ const handlerDelete = (data: HostModel) => {
     })
     .catch(() => {});
 };
-const openTerminal = () => {
-  open("/host/terminal");
+const openTerminal = data => {
+  router.push({
+    path: "/host/terminal",
+    query: {
+      id: data.id
+    }
+  });
 };
 onBeforeMount(() => {
   getPage();

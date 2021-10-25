@@ -8,7 +8,7 @@ import { onBeforeUnmount, onMounted, toRef } from "vue";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { client } from "./ws";
-import * as uuid from "uuid";
+import { getUUidV4NoDash } from "/@/utils/uuid";
 const props = defineProps({
   hostId: {
     type: Number,
@@ -46,7 +46,7 @@ const openTerminal = options => {
   onTerminalResize();
   client._;
   //在页面上显示连接中...
-  term.write("Connecting...");
+  term.write("Connecting... \r\n");
   //执行连接操作
   client.connect({
     params:
@@ -75,9 +75,6 @@ const openTerminal = options => {
       term.write(data);
     }
   });
-};
-const getUUidV4NoDash = (): string => {
-  return uuid.v4().replace(/-/g, "");
 };
 
 onMounted(() => {

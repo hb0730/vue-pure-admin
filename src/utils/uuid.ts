@@ -1,3 +1,4 @@
+import * as uuid from "uuid";
 const hexList: string[] = [];
 for (let i = 0; i <= 15; i++) {
   hexList[i] = i.toString(16);
@@ -26,3 +27,10 @@ export function buildShortUUID(prefix = ""): string {
   unique++;
   return prefix + "_" + random + unique + String(time);
 }
+/**
+ * 没有破折号的uuid "xxxxxxx"
+ * @returns uuid
+ */
+export const getUUidV4NoDash = (): string => {
+  return uuid.v4().replace(/-/g, "");
+};

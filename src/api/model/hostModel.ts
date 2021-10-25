@@ -22,3 +22,8 @@ export interface HostQuery {
   pageNum: number;
   pageSize: number;
 }
+
+export interface HostFileModel {
+  path: string;
+  list: any[];
+}

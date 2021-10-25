@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { HostAPI } from "/@/api/host";
-import { HostModel, HostQuery, HostTestModel } from "/@/api/model/hostModel";
+import {
+  HostFileModel,
+  HostModel,
+  HostQuery,
+  HostTestModel
+} from "/@/api/model/hostModel";
 import { Page, Result } from "/@/api/model/resultModel";
 
 export const hostStore = defineStore({
@@ -45,6 +50,27 @@ export const hostStore = defineStore({
      */
     deleteHost(id: number[]): Promise<Result<any>> {
       return HostAPI.deleteHost(id);
+    },
+    /**
+     * server file list
+     * @param id id
+     * @param hostId host id
+     * @returns  文件列表
+     */
+    fileList(
+      id: string,
+      hostId: number,
+      path?: string
+    ): Promise<Result<HostFileModel>> {
+      return HostAPI.listFiles(id, hostId, path);
+    },
+    /**
+     * 关闭
+     * @param id id
+     * @returns  是否成功
+     */
+    fileClose(id: string): Promise<Result<any>> {
+      return HostAPI.fileClose(id);
     }
   }
 });

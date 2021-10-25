@@ -1,6 +1,11 @@
 import { encode } from "../utils/crypto/base64";
 import BaseRequest from "./base";
-import { HostModel, HostQuery, HostTestModel } from "./model/hostModel";
+import {
+  HostFileModel,
+  HostModel,
+  HostQuery,
+  HostTestModel
+} from "./model/hostModel";
 import { Page, Result } from "./model/resultModel";
 import { stringify } from "qs";
 enum API {
@@ -8,7 +13,9 @@ enum API {
   testConnection = "/host/test",
   save = "/host/save",
   update = "/host/update",
-  delete = "/host/delete"
+  delete = "/host/delete",
+
+  fileList = "/host/file"
 }
 class Host extends BaseRequest {
   /**
@@ -60,6 +67,31 @@ class Host extends BaseRequest {
       }
     );
     return this.delete<Result<any>>(API.delete, { id: params.split("=")[1] });
+  }
+  //-------------------files-------------------
+  /**
+   * server file list
+   * @param id id
+   * @param hostId host id
+   * @returns  文件列表
+   */
+  listFiles(
+    id: string,
+    hostId: number,
+    path?: string
+  ): Promise<Result<HostFileModel>> {
+    return this.get<Result<HostFileModel>>(API.fileList + "/" + id, {
+      hostId: hostId,
+      path: path
+    });
+  }
+  /**
+   * 关闭
+   * @param id id
+   * @returns  是否成功
+   */
+  fileClose(id: string): Promise<Result<any>> {
+    return this.delete<Result<any>>(API.fileList + "/" + id, null);
   }
 }
 
