@@ -39,7 +39,8 @@ import {
   ElTabPane,
   ElTable,
   ElTableColumn,
-  ElInfiniteScroll
+  ElInfiniteScroll,
+  ElUpload
 } from "element-plus";
 
 const components = [
@@ -80,7 +81,8 @@ const components = [
   ElTabs,
   ElTabPane,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElUpload
 ];
 
 const plugins = [ElLoading, ElInfiniteScroll];

@@ -8,6 +8,13 @@ import {
 } from "./model/hostModel";
 import { Page, Result } from "./model/resultModel";
 import { stringify } from "qs";
+import { http } from "../utils/http";
+import { cookies } from "../utils/storage/cookie";
+import {
+  EnclosureHttpRequestConfig,
+  EnclosureHttpResoponse
+} from "../utils/http/types";
+import { downloadFileBlob } from "../utils/file";
 enum API {
   findPage = "/host/get",
   testConnection = "/host/test",
@@ -15,7 +22,9 @@ enum API {
   update = "/host/update",
   delete = "/host/delete",
 
-  fileList = "/host/file"
+  fileList = "/host/file/:id",
+  fileDown = "/host/file/:id/down",
+  fileUpload = "/host/file/:id/upload?hostId=:hostId&path=:path"
 }
 class Host extends BaseRequest {
   /**
@@ -80,10 +89,14 @@ class Host extends BaseRequest {
     hostId: number,
     path?: string
   ): Promise<Result<HostFileModel>> {
-    return this.get<Result<HostFileModel>>(API.fileList + "/" + id, {
-      hostId: hostId,
-      path: path
-    });
+    return this.requestNoLoading<Result<HostFileModel>>(
+      "get",
+      API.fileList.replace(":id", id),
+      {
+        hostId: hostId,
+        path: path
+      }
+    );
   }
   /**
    * 关闭
@@ -91,7 +104,88 @@ class Host extends BaseRequest {
    * @returns  是否成功
    */
   fileClose(id: string): Promise<Result<any>> {
-    return this.delete<Result<any>>(API.fileList + "/" + id, null);
+    return this.requestNoLoading<Result<any>>(
+      "delete",
+      API.fileList.replace(":id", id),
+      null
+    );
+  }
+  /**
+   *  download file
+   * @param id id
+   * @param hostId hostId
+   * @param path  path
+   */
+  downloadFile(id: string, hostId: number, path?: string) {
+    let response: EnclosureHttpResoponse = null;
+    return http
+      .request(
+        "get",
+        API.fileDown.replace(":id", id),
+        //@ts-ignore
+        { hostId: hostId, path: path },
+        {
+          timeout: 30000,
+          beforeRequestCallback: function (
+            request: EnclosureHttpRequestConfig
+          ) {
+            const token = cookies.get("token");
+            if (token) {
+              request.headers = {
+                ...request.headers,
+                Authorization: "Bearer " + token
+              };
+            }
+          },
+          beforeResponseCallback: function (res: EnclosureHttpResoponse) {
+            response = res;
+          }
+        }
+      )
+      .then(result => {
+        const headers = <Map<string, string>>response.headers;
+        const contentDisposition = headers["content-disposition"];
+        downloadFileBlob(result, headers["content-type"], contentDisposition);
+      });
+  }
+  /**
+   * 文件路径
+   * @param id id
+   * @param hostId hostId
+   * @param files  文件集
+   * @param path  上传路径
+   */
+  uploadFile(
+    id: string,
+    hostId: number,
+    files: any[],
+    path?: string
+  ): Promise<Result<any>> {
+    const filedata = new FormData();
+    files.forEach(file => filedata.append("file", file));
+    return http.request(
+      "post",
+      API.fileUpload
+        .replace(":id", id)
+        .replace(":hostId", hostId.toString())
+        .replace(":path", path),
+      //@ts-ignore
+      filedata,
+      {
+        timeout: 30000,
+        headers: { "content-type": "multiple/form-data" },
+        data: filedata,
+        beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
+          const token = cookies.get("token");
+          if (token) {
+            request.headers = {
+              ...request.headers,
+              Authorization: "Bearer " + token
+            };
+          }
+        }
+      }
+    );
   }
 }
 

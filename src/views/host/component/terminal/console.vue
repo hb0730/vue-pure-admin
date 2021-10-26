@@ -85,7 +85,9 @@ const onTerminalResize = () => {
   const cols: number = document.querySelector(".console").scrollWidth / 9;
   term.resize(parseInt(cols), parseInt(rows));
 };
-onBeforeUnmount(() => {});
+onBeforeUnmount(() => {
+  client.close();
+});
 </script>
 
 <style scoped></style>

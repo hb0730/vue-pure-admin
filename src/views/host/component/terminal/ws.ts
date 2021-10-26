@@ -48,4 +48,9 @@ WSSHClient.prototype.sendClientData = function (data) {
   this._connection.send(data);
 };
 
+WSSHClient.prototype.close = function () {
+  //手动关闭
+  this._connection.close();
+};
+
 export const client = new WSSHClient();

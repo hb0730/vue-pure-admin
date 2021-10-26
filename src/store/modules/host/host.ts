@@ -71,6 +71,30 @@ export const hostStore = defineStore({
      */
     fileClose(id: string): Promise<Result<any>> {
       return HostAPI.fileClose(id);
+    },
+    /**
+     *  download file
+     * @param id id
+     * @param hostId hostId
+     * @param path  path
+     */
+    downloadFile(id: string, hostId: number, path?: string) {
+      return HostAPI.downloadFile(id, hostId, path);
+    },
+    /**
+     * 文件路径
+     * @param id id
+     * @param hostId hostId
+     * @param files  文件集
+     * @param path  上传路径
+     */
+    uploadFile(
+      id: string,
+      hostId: number,
+      files: any[],
+      path?: string
+    ): Promise<Result<any>> {
+      return HostAPI.uploadFile(id, hostId, files, path);
     }
   }
 });
