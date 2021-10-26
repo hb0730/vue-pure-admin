@@ -126,6 +126,7 @@ class Host extends BaseRequest {
         { hostId: hostId, path: path },
         {
           timeout: 30000,
+          responseType: "blob",
           beforeRequestCallback: function (
             request: EnclosureHttpRequestConfig
           ) {
