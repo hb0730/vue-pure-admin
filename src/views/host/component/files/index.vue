@@ -97,7 +97,7 @@ import {
   toRef
 } from "vue-demi";
 import { hostStore } from "/@/store/modules/host/host";
-import { warnMessage } from "/@/utils/message";
+import { successMessage, warnMessage } from "/@/utils/message";
 import { getUUidV4NoDash } from "/@/utils/uuid";
 
 const props = defineProps({
@@ -171,7 +171,11 @@ const getFileList = async () => {
   }
 };
 const downloadFile = async () => {
-  hostStore().downloadFile(id.value, hostId.value, downPath.value);
+  hostStore()
+    .downloadFile(id.value, hostId.value, downPath.value)
+    .then(_ => {
+      successMessage("下载成功");
+    });
 };
 const openUploadDialog = async () => {
   uploadTip.value = `当前上传目录: ${currentPath.value}`;

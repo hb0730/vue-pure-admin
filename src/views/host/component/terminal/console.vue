@@ -42,9 +42,8 @@ const openTerminal = options => {
   let fit = new FitAddon();
   term.loadAddon(fit);
   term.open(document.getElementById("terminal"));
-  fit.fit();
   onTerminalResize();
-  client._;
+  fit.fit();
   //在页面上显示连接中...
   term.write("Connecting... \r\n");
   //执行连接操作
@@ -81,7 +80,7 @@ onMounted(() => {
   openTerminal({ id: getUUidV4NoDash() });
 });
 const onTerminalResize = () => {
-  const rows: number = document.querySelector(".console").scrollHeight / 16 - 5;
+  const rows: number = document.querySelector(".console").scrollHeight / 16;
   const cols: number = document.querySelector(".console").scrollWidth / 9;
   term.resize(parseInt(cols), parseInt(rows));
 };

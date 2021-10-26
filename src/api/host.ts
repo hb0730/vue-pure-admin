@@ -143,10 +143,11 @@ class Host extends BaseRequest {
           }
         }
       )
-      .then(result => {
+      .then(async result => {
         const headers = <Map<string, string>>response.headers;
         const contentDisposition = headers["content-disposition"];
         downloadFileBlob(result, headers["content-type"], contentDisposition);
+        Promise.resolve(result);
       });
   }
   /**
