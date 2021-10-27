@@ -14,11 +14,12 @@ import SidebarItem from "./sidebarItem.vue";
 import { algorithm } from "/@/utils/algorithm";
 import screenfull from "../screenfull/index.vue";
 import { useRoute, useRouter } from "vue-router";
-import { storageSession } from "/@/utils/storage";
 import { deviceDetection } from "/@/utils/deviceDetection";
 import globalization from "/@/assets/svg/globalization.svg";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-
+import { db } from "/@/utils/storage/db";
+import { tokenStore } from "/@/store/modules/token";
+import { open } from "/@/utils/util";
 const instance =
   getCurrentInstance().appContext.config.globalProperties.$storage;
 
@@ -30,7 +31,11 @@ const routeStore = usePermissionStoreHook();
 const route = useRoute();
 const router = useRouter();
 const routers = useRouter().options.routes;
-let usename = storageSession.getItem("info")?.username;
+let usename = "";
+const user = db.dbGet({ dbName: "sys", path: "userInfo", user: true });
+if (user) {
+  usename = JSON.parse(user).nickName;
+}
 const { locale, t } = useI18n();
 
 watch(
@@ -44,8 +49,7 @@ watch(
 
 // 退出登录
 const logout = (): void => {
-  storageSession.removeItem("info");
-  router.push("/login");
+  tokenStore().logout();
 };
 
 function onPanel() {
@@ -112,6 +116,9 @@ onMounted(() => {
     handleResize();
   });
 });
+function setting() {
+  open("/user/current/index");
+}
 </script>
 
 <template>
@@ -172,6 +179,9 @@ onMounted(() => {
           <p>{{ usename }}</p>
         </span>
         <template #dropdown>
+          <el-dropdown-item icon="el-icon-setting" @click="setting">
+            {{ $t("message.setting") }}
+          </el-dropdown-item>
           <el-dropdown-menu class="logout">
             <el-dropdown-item icon="el-icon-switch-button" @click="logout">{{
               $t("message.hsLoginOut")

@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { split } from "lodash-es";
-import panel from "../panel/index.vue";
-import { useRouter } from "vue-router";
 import { emitter } from "/@/utils/mitt";
 import { templateRef } from "@vueuse/core";
 import { debounce } from "/@/utils/debounce";
 import { useAppStoreHook } from "/@/store/modules/app";
-import { storageLocal, storageSession } from "/@/utils/storage";
+import { storageLocal } from "/@/utils/storage";
 import {
   reactive,
   ref,
@@ -16,7 +14,6 @@ import {
   getCurrentInstance
 } from "vue";
 
-const router = useRouter();
 const { isSelect } = useCssModule();
 
 const instance =
@@ -81,12 +78,6 @@ const tagsChange = () => {
     : storageLocal.setItem("tagsVal", false);
   emitter.emit("tagViewsChange", showVal);
 };
-
-function onReset() {
-  storageLocal.clear();
-  storageSession.clear();
-  router.push("/login");
-}
 
 function onChange({ label }) {
   storageLocal.setItem("showModel", label);
@@ -283,13 +274,6 @@ function setTheme(layout: string, theme: string) {
     </ul>
 
     <el-divider />
-    <vxe-button
-      status="danger"
-      style="width: 90%; margin: 24px 15px"
-      content="清空缓存并返回登录页"
-      icon="fa fa-sign-out"
-      @click="onReset"
-    ></vxe-button>
   </panel>
 </template>
 
