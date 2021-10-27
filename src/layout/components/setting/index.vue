@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { split } from "lodash-es";
+import panel from "../panel/index.vue";
 import { emitter } from "/@/utils/mitt";
 import { templateRef } from "@vueuse/core";
 import { debounce } from "/@/utils/debounce";
