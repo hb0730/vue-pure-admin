@@ -113,6 +113,13 @@
                 size="mini"
                 :disabled="true"
               ></el-button>
+              <el-button
+                title="重置密码"
+                type="primary"
+                icon="fa fa-key"
+                size="mini"
+                @click="rePassword(scope.row)"
+              ></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -141,7 +148,7 @@ import { onBeforeMount, reactive, toRaw } from "vue";
 import { Page } from "/@/api/model/resultModel";
 import { UserInfoModel } from "/@/api/model/userModel";
 import { userStore } from "/@/store/modules/user/user";
-import { warnMessage } from "/@/utils/message";
+import { successMessage, warnMessage } from "/@/utils/message";
 //@ts-ignore
 import UserInfo from "./component/userinfo.vue";
 //@ts-ignore
@@ -150,6 +157,7 @@ import RefreshButton from "/@/views/components/table/refreshButton.vue";
 import AddNewButton from "/@/views/components/table/addNewButton.vue";
 //@ts-ignore
 import EditButton from "/@/views/components/table/editButton.vue";
+import { warnConfirm } from "/@/utils/message/box";
 export interface searchInfo {
   nickName: string;
   username: string;
@@ -254,6 +262,22 @@ const editHandler = data => {
   initUserInfo(data);
   pageData.isUpdate = true;
   pageData.showDialog = true;
+};
+const rePassword = async data => {
+  if (data) {
+    warnConfirm("是否重置")
+      .then(async () => {
+        const result = await userStore().rePassword(data.id);
+        if (result.code === 0) {
+          successMessage("重置成功");
+        } else {
+          warnMessage("重置失败:" + result.msg);
+        }
+      })
+      .catch(() => {});
+  } else {
+    warnMessage("请选择");
+  }
 };
 onBeforeMount(() => {
   getPage();

@@ -23,7 +23,8 @@ enum API {
   info = "/user/info",
   updateProfile = "/user/update/profile",
   updatePassword = "/user/update/password",
-  save = "/user/save"
+  save = "/user/save",
+  rePassword = "/user/reset/:id"
 }
 
 class User extends BaseRequest {
@@ -77,6 +78,17 @@ class User extends BaseRequest {
    */
   save(user: UserInfoModel): Promise<Result<any>> {
     return this.post<Result<any>>(API.save, user);
+  }
+  /**
+   * 重置密码
+   * @param userId user id
+   * @returns  是否成功
+   */
+  rePassword(userId: number): Promise<Result<any>> {
+    return this.get<Result<any>>(
+      API.rePassword.replace(":id", userId.toString()),
+      null
+    );
   }
 }
 

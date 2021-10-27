@@ -41,6 +41,14 @@ export const userStore = defineStore({
      */
     save(user: UserInfoModel): Promise<Result<any>> {
       return userAPI.save(user);
+    },
+    /**
+     * 重置密码
+     * @param userId user id
+     * @returns  是否成功
+     */
+    rePassword(userId: number): Promise<Result<any>> {
+      return userAPI.rePassword(userId);
     }
   }
 });
