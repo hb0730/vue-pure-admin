@@ -9,15 +9,33 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { client } from "./ws";
 import { getUUidV4NoDash } from "/@/utils/uuid";
+import { encode } from "/@/utils/crypto/base64";
 const props = defineProps({
   hostId: {
     type: Number,
     required: true
   }
 });
+enum TypeEnum {
+  CMD = "cmd",
+  RESIZE = "resize"
+}
+class Message {
+  type: string;
+  cmd?: any;
+  cols?: number;
+  rows?: number;
+  constructor(type: string, cmd?: any, cols?: number, rows?: number) {
+    this.type = type;
+    this.cmd = cmd;
+    this.cols = cols;
+    this.rows = rows;
+  }
+}
 
 const hostId = toRef(props, "hostId");
 
+const fit: FitAddon = new FitAddon();
 const term: Terminal = new Terminal({
   rendererType: "canvas", //渲染类型
   convertEol: true, //启用时，光标将设置为下一行的开头
@@ -37,13 +55,12 @@ const term: Terminal = new Terminal({
 
 const openTerminal = options => {
   term.onData(data => {
-    client.sendClientData(data);
+    client.send(new Message(TypeEnum.CMD, encode(data), 0, 0));
   });
-  let fit = new FitAddon();
   term.loadAddon(fit);
   term.open(document.getElementById("terminal"));
-  onTerminalResize();
   fit.fit();
+  // onTerminalResize();
   //在页面上显示连接中...
   term.write("Connecting... \r\n");
   //执行连接操作
@@ -64,6 +81,8 @@ const openTerminal = options => {
     onConnect: function () {
       // //连接成功回调
       // client.sendInitData({ id: options.id, hostId: hostId.value });
+
+      reseizeTerminal();
     },
     onClose: function (_) {
       //连接关闭回调
@@ -75,14 +94,15 @@ const openTerminal = options => {
     }
   });
 };
-
+const reseizeTerminal = () => {
+  fit.fit();
+  client.send(new Message(TypeEnum.RESIZE, null, term.cols, term.rows));
+};
 onMounted(() => {
   openTerminal({ id: getUUidV4NoDash() });
 });
-const onTerminalResize = () => {
-  const rows: number = document.querySelector(".console").scrollHeight / 16;
-  const cols: number = document.querySelector(".console").scrollWidth / 9;
-  term.resize(parseInt(cols), parseInt(rows));
+window.onresize = () => {
+  reseizeTerminal();
 };
 onBeforeUnmount(() => {
   client.close();
