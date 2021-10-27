@@ -12,6 +12,12 @@
           <el-button
             type="primary"
             size="mini"
+            icon="fa fa-repeat"
+            @click="reConnection"
+          ></el-button>
+          <el-button
+            type="primary"
+            size="mini"
             icon="el-icon-arrow-up"
             @click="upDirectory"
           ></el-button>
@@ -99,7 +105,7 @@ import {
 import { hostStore } from "/@/store/modules/host/host";
 import { successMessage, warnMessage } from "/@/utils/message";
 import { getUUidV4NoDash } from "/@/utils/uuid";
-
+import { emitter } from "/@/utils/mitt";
 const props = defineProps({
   hostId: {
     type: Number,
@@ -212,6 +218,10 @@ const cleanUpload = () => {
   instance.refs.upload.clearFiles();
   fileData.value = [];
   getFileList();
+};
+const reConnection = () => {
+  getFileList();
+  emitter.emit("reConnection");
 };
 onMounted(() => {
   id.value = getUUidV4NoDash();

@@ -10,6 +10,7 @@ import { FitAddon } from "xterm-addon-fit";
 import { client } from "./ws";
 import { getUUidV4NoDash } from "/@/utils/uuid";
 import { encode } from "/@/utils/crypto/base64";
+import { emitter } from "/@/utils/mitt";
 const props = defineProps({
   hostId: {
     type: Number,
@@ -53,14 +54,7 @@ const term: Terminal = new Terminal({
   }
 });
 
-const openTerminal = options => {
-  term.onData(data => {
-    client.send(new Message(TypeEnum.CMD, encode(data), 0, 0));
-  });
-  term.loadAddon(fit);
-  term.open(document.getElementById("terminal"));
-  fit.fit();
-  // onTerminalResize();
+const connection = options => {
   //在页面上显示连接中...
   term.write("Connecting... \r\n");
   //执行连接操作
@@ -81,7 +75,6 @@ const openTerminal = options => {
     onConnect: function () {
       // //连接成功回调
       // client.sendInitData({ id: options.id, hostId: hostId.value });
-
       reseizeTerminal();
     },
     onClose: function (_) {
@@ -94,6 +87,15 @@ const openTerminal = options => {
     }
   });
 };
+
+const openTerminal = options => {
+  term.onData(data => {
+    client.send(new Message(TypeEnum.CMD, encode(data), 0, 0));
+  });
+  term.loadAddon(fit);
+  term.open(document.getElementById("terminal"));
+  connection(options);
+};
 const reseizeTerminal = () => {
   fit.fit();
   client.send(new Message(TypeEnum.RESIZE, null, term.cols, term.rows));
@@ -104,6 +106,11 @@ onMounted(() => {
 window.onresize = () => {
   reseizeTerminal();
 };
+emitter.on("reConnection", () => {
+  client.close();
+  connection({ id: getUUidV4NoDash() });
+});
+
 onBeforeUnmount(() => {
   client.close();
 });
