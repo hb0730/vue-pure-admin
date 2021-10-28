@@ -131,6 +131,10 @@ class EnclosureHttp {
           this.beforeRequestCallback = undefined;
           return $config;
         }
+        // if (typeof config.beforeRequestCallback == "function") {
+        //   config.beforeRequestCallback($config);
+        //   return $config;
+        // }
         if (EnclosureHttp.initConfig.beforeRequestCallback) {
           EnclosureHttp.initConfig.beforeRequestCallback($config);
           return $config;
@@ -168,6 +172,9 @@ class EnclosureHttp {
           this.beforeResponseCallback = undefined;
           return response.data;
         }
+        // if (typeof config.beforeResponseCallback === "function") {
+        //   config.beforeResponseCallback(response);
+        // }
         if (EnclosureHttp.initConfig.beforeResponseCallback) {
           EnclosureHttp.initConfig.beforeResponseCallback(response);
           return response.data;

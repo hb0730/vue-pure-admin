@@ -1,10 +1,11 @@
 import BaseRequest from "./base";
-import { DNSModel, DNSProvider } from "./model/dnsModel";
-import { Result } from "./model/resultModel";
+import { DNSModel, DNSProvider, DNSQuery } from "./model/dnsModel";
+import { Page, Result } from "./model/resultModel";
 enum API {
   providers = "/dns/providers",
   save = "/dns/save",
-  update = "/dns/update/:id"
+  update = "/dns/update/:id",
+  findPage = "/dns/find/page"
 }
 class DNS extends BaseRequest {
   /**
@@ -33,6 +34,14 @@ class DNS extends BaseRequest {
       API.update.replace(":id", id.toString()),
       model
     );
+  }
+  /**
+   * 分页查询
+   * @param query 查询参数
+   * @returns  分页列表
+   */
+  findPage(query: DNSQuery): Promise<Result<Page<DNSModel>>> {
+    return this.get<Result<Page<DNSModel>>>(API.findPage, query);
   }
 }
 export const dnsAPI = new DNS();

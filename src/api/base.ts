@@ -62,7 +62,6 @@ class BaseRequest {
       background: "rgba(0, 0, 0, 0.7)",
       spinner: "el-icon-loading"
     });
-
     return http
       .request<T>(method, url, params, {
         timeout: 30000,

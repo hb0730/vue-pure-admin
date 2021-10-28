@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { dnsAPI } from "/@/api/dns";
-import { DNSModel, DNSProvider } from "/@/api/model/dnsModel";
-import { Result } from "/@/api/model/resultModel";
+import { DNSModel, DNSProvider, DNSQuery } from "/@/api/model/dnsModel";
+import { Page, Result } from "/@/api/model/resultModel";
 
 export const dnsStore = defineStore({
   id: "dns-store",
@@ -29,6 +29,14 @@ export const dnsStore = defineStore({
      */
     update(model: DNSModel, id: number): Promise<Result<any>> {
       return dnsAPI.updateById(model, id);
+    },
+    /**
+     * 分页查询
+     * @param query 查询参数
+     * @returns  分页列表
+     */
+    findPage(query: DNSQuery): Promise<Result<Page<DNSModel>>> {
+      return dnsAPI.findPage(query);
     }
   }
 });

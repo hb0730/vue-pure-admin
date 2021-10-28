@@ -11,3 +11,9 @@ export interface Page<T> {
   pageSize: number;
   pages: number;
 }
+
+export interface BaseQuery {
+  pageNum: number;
+  pageSize: number;
+  total: number;
+}

@@ -1,11 +1,24 @@
 <template>
   <div class="app-container">
-    <el-form ref="searchForm" :inline="true" label-position="left">
+    <el-form
+      ref="searchForm"
+      v-model="pageData.searchModel"
+      :inline="true"
+      label-position="left"
+    >
       <el-form-item>
-        <el-input placeholder="提供商/别名" clearable></el-input>
+        <el-input
+          v-model="pageData.searchModel.alisa"
+          placeholder="提供商/别名"
+          clearable
+        ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input placeholder="邮箱" clearable></el-input>
+        <el-input
+          v-model="pageData.searchModel.email"
+          placeholder="邮箱"
+          clearable
+        ></el-input>
       </el-form-item>
       <el-form-item>
         <el-button plain size="medium" icon="fa fa-search">查询</el-button>
@@ -62,11 +75,23 @@ import RemoveButton from "/@/views/components/table/removeButton.vue";
 
 //@ts-ignore
 import Info from "../info/index.vue";
-import { onBeforeMount, reactive } from "vue";
+import { onBeforeMount, reactive, toRaw } from "vue";
+import { dnsStore } from "/@/store/modules/dns/dns";
+import { warnMessage } from "/@/utils/message";
+import { Page } from "/@/api/model/resultModel";
+import { DNSModel } from "/@/api/model/dnsModel";
 const pageData = reactive({
   showDialog: false,
   isUpdate: false,
   providers: [],
+  searchModel: {
+    total: 0,
+    pageNum: 1,
+    pageSize: 10,
+    alisa: "",
+    email: ""
+  },
+  tableData: [],
   modelInfo: {
     id: 0,
     userId: 0,
@@ -96,6 +121,20 @@ const initInfo = data => {
     };
   }
 };
+const getPage = async () => {
+  const query = toRaw(pageData.searchModel);
+  const result = await dnsStore().findPage(query);
+  if (result.code === 0) {
+    const resultData: Page<DNSModel> = result.data;
+    pageData.searchModel.total = resultData.total;
+    if (!resultData.records) {
+      resultData.records = [];
+    }
+    pageData.tableData = resultData.records;
+  } else {
+    warnMessage("查询失败:" + result.msg);
+  }
+};
 const addNewHandler = () => {
   initInfo(null);
   pageData.showDialog = true;
@@ -108,8 +147,11 @@ const handleSelectionChange = _ => {};
 const cancelDataScope = () => {
   pageData.showDialog = false;
   initInfo(null);
+  getPage();
 };
-onBeforeMount(() => {});
+onBeforeMount(() => {
+  getPage();
+});
 </script>
 
 <style scoped></style>

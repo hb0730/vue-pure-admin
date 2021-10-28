@@ -84,9 +84,6 @@ const props = defineProps({
     type: Object as PropType<DNSModel>
   }
 });
-const pageData = reactive({
-  providers: []
-});
 const formRules = reactive({
   alisa: [{ required: true, message: "请选择", trigger: "change" }],
   accountId: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -105,12 +102,7 @@ const cancelDataScope = () => {
   instance.refs.formRef.resetFields();
   emit("cancelDataScope");
 };
-const getProviders = async () => {
-  const result = await dnsStore().getProviders();
-  if (result.code === 0) {
-    pageData.providers = result.data;
-  }
-};
+
 const submitDataScope = () => {
   // @ts-expect-error
   instance.refs.formRef.validate(async valid => {
@@ -136,7 +128,15 @@ const saveOrUpdate = (data: DNSModel): Promise<Result<any>> => {
     return dnsStore().save(data);
   }
 };
-
+const pageData = reactive({
+  providers: []
+});
+const getProviders = async () => {
+  const result = await dnsStore().getProviders();
+  if (result.code === 0) {
+    pageData.providers = result.data;
+  }
+};
 onBeforeMount(() => {
   getProviders();
 });
