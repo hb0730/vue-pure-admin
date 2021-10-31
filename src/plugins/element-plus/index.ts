@@ -21,7 +21,6 @@ import {
   ElDropdownMenu,
   ElIcon,
   ElInput,
-  ElInputNumber,
   ElForm,
   ElFormItem,
   ElLoading,
@@ -35,6 +34,7 @@ import {
   ElRadioGroup,
   ElDescriptions,
   ElDescriptionsItem,
+  ElBacktop,
   ElTabs,
   ElTabPane,
   ElTable,
@@ -43,7 +43,7 @@ import {
   ElUpload,
   ElSelect,
   ElOption,
-  ElBacktop
+  ElInputNumber
 } from "element-plus";
 
 const components = [
@@ -68,9 +68,9 @@ const components = [
   ElDropdownMenu,
   ElIcon,
   ElInput,
-  ElInputNumber,
   ElForm,
   ElFormItem,
+  ElLoading,
   ElPopover,
   ElPopper,
   ElTooltip,
@@ -81,6 +81,7 @@ const components = [
   ElRadioGroup,
   ElDescriptions,
   ElDescriptionsItem,
+  ElBacktop,
   ElTabs,
   ElTabPane,
   ElTable,
@@ -88,7 +89,7 @@ const components = [
   ElUpload,
   ElSelect,
   ElOption,
-  ElBacktop
+  ElInputNumber
 ];
 
 const plugins = [ElLoading, ElInfiniteScroll];
