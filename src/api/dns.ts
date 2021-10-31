@@ -1,3 +1,4 @@
+import { stringify } from "qs";
 import BaseRequest from "./base";
 import { DNSModel, DNSProvider, DNSQuery } from "./model/dnsModel";
 import { Page, Result } from "./model/resultModel";
@@ -5,7 +6,8 @@ enum API {
   providers = "/dns/providers",
   save = "/dns/save",
   update = "/dns/update/:id",
-  findPage = "/dns/find/page"
+  findPage = "/dns/find/page",
+  delete = "/dns/delete"
 }
 class DNS extends BaseRequest {
   /**
@@ -42,6 +44,16 @@ class DNS extends BaseRequest {
    */
   findPage(query: DNSQuery): Promise<Result<Page<DNSModel>>> {
     return this.get<Result<Page<DNSModel>>>(API.findPage, query);
+  }
+  deleteDNS(ids: number[]): Promise<Result<any>> {
+    const params = stringify(
+      { id: ids },
+      {
+        encode: false,
+        arrayFormat: "comma"
+      }
+    );
+    return this.delete<Result<any>>(API.delete, { id: params.split("=")[1] });
   }
 }
 export const dnsAPI = new DNS();

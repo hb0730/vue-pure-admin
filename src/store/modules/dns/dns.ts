@@ -37,6 +37,14 @@ export const dnsStore = defineStore({
      */
     findPage(query: DNSQuery): Promise<Result<Page<DNSModel>>> {
       return dnsAPI.findPage(query);
+    },
+    /**
+     * 删除
+     * @param ids id array
+     * @returns 是否成功
+     */
+    deleteDNS(ids: number[]): Promise<Result<any>> {
+      return dnsAPI.deleteDNS(ids);
     }
   }
 });

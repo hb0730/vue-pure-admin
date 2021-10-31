@@ -15,10 +15,10 @@
       ref="formRef"
       center
     >
-      <el-form-item prop="alisa" label="供应商">
+      <el-form-item prop="alias" label="供应商">
         <el-select
           style="width: 100%"
-          v-model="modelInfo.alisa"
+          v-model="modelInfo.alias"
           placeholder="Select"
         >
           <el-option
@@ -85,7 +85,7 @@ const props = defineProps({
   }
 });
 const formRules = reactive({
-  alisa: [{ required: true, message: "请选择", trigger: "change" }],
+  alias: [{ required: true, message: "请选择", trigger: "change" }],
   accountId: [{ required: true, message: "请输入账号", trigger: "blur" }],
   secret: [{ required: true, message: "请输入密钥", trigger: "blur" }]
 });

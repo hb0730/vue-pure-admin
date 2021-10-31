@@ -8,7 +8,7 @@ export interface DNSModel {
   id: number;
   userId: number;
   name: string;
-  alisa: string;
+  alias: string;
   accountId: string;
   secret: string;
   endpoint?: string;

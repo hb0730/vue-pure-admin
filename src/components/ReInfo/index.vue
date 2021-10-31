@@ -106,7 +106,6 @@ const resetForm = (): void => {
           }}</el-button>
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
-        >
       </el-form>
     </div>
   </div>
