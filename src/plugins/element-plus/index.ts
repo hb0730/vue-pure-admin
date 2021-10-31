@@ -42,7 +42,8 @@ import {
   ElInfiniteScroll,
   ElUpload,
   ElSelect,
-  ElOption
+  ElOption,
+  ElBacktop
 } from "element-plus";
 
 const components = [
@@ -86,7 +87,8 @@ const components = [
   ElTableColumn,
   ElUpload,
   ElSelect,
-  ElOption
+  ElOption,
+  ElBacktop
 ];
 
 const plugins = [ElLoading, ElInfiniteScroll];

@@ -492,21 +492,20 @@
     "@intlify/core-base" "9.2.0-beta.4"
     "@intlify/shared" "9.2.0-beta.4"
 
-"@logicflow/core@^0.4.15", "@logicflow/core@^0.4.6":
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/@logicflow/core/-/core-0.4.15.tgz#0e13d51b64403416eed6a3229b2d232869ca8dd5"
-  integrity sha512-JtgRL/ZM+FjjibrOkswkuKzeX3XMnozmq/h0YC/HBRpv0ZHynrlCQGqI1SQsD3tDIkaN4wBnHM9DIqIIwf7ZBQ==
+"@logicflow/core@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.npmjs.org/@logicflow/core/-/core-0.7.1.tgz#b2ffe29d7899c2551934f71d2566b33a72686bd7"
+  integrity sha512-fGuBGwLWRzGhurHgZik8ZN6B89fldvoksjPoXr8kyL/WGrLKGpzvMJPbdXFpLN3F9hif307UrSb+S2eD//aMxA==
   dependencies:
     "@types/mousetrap" "^1.6.4"
     mousetrap "^1.6.5"
     preact "^10.4.8"
 
-"@logicflow/extension@^0.4.6":
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/@logicflow/extension/-/extension-0.4.15.tgz#d68e8824aca89b8966d71ec1a68ce95bebe3169a"
-  integrity sha512-J6BRp5ZpOY/kyQmT8eCiLM+y+OWKClNDpWmiVSYdp0Rr8fGH1U4A8ITYvcte45nXorHLcg659PdHZaYqZtzJog==
+"@logicflow/extension@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.npmjs.org/@logicflow/extension/-/extension-0.7.1.tgz#7887a4c0da9529c2f7cd81e9cc7084ddb2162bb6"
+  integrity sha512-bndx4dLuVI7GdDxRVExR9uCHukS3OVQwMHddzShA9bM+onzm3aWvvXu39Cq/ck1brg6s+VBqLOkTLPL50Loecw==
   dependencies:
-    "@logicflow/core" "^0.4.15"
     ids "^1.0.0"
     preact "^10.4.8"
 
@@ -966,12 +965,12 @@
   resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.2.20.tgz#53746961f731a8ea666e3316271e944238dc31db"
   integrity sha512-FbpX+hD5BvXCQerEYO7jtAGHlhAkhTQ4KIV73kmLWNlawWhTiVuQxizgVb0BOkX5oG9cIRZ42EG++d/k/Efp0w==
 
-"@vueuse/core@^6.5.3":
-  version "6.7.3"
-  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-6.7.3.tgz#1a827ee3be55a98c932f716467337a0826d54993"
-  integrity sha512-Cqvk/e4DbdfZlUmVRcxr4rkK5CMn6KqN7TLx2L1++F9HrvlD/FIET3KQ/W7+wHowhdKEjdOUCFJtyU0k65xH2g==
+"@vueuse/core@^6.7.1":
+  version "6.7.4"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-6.7.4.tgz#8e15524454388b11c9eb6ff59a6742602b976e2f"
+  integrity sha512-y39SD+pxDkv7/Fe369c02FQpr/148otQr64ScPDTpw4fGnspc8ONXCNU3gTrvDFRuiylirdPBpXgmt/GDQO7RA==
   dependencies:
-    "@vueuse/shared" "6.7.3"
+    "@vueuse/shared" "6.7.4"
     vue-demi "*"
 
 "@vueuse/core@~6.1.0":
@@ -989,10 +988,10 @@
   dependencies:
     vue-demi "*"
 
-"@vueuse/shared@6.7.3":
-  version "6.7.3"
-  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-6.7.3.tgz#92ed69b3e79e1a30936fc1f1d39a0107e8d522e0"
-  integrity sha512-6syKgXvdikcSEHJzF7iVyXMqe7y7C7pH35EhH70zQLPnLXH6op9OgD2u4Ro1zyxESRkotbFIsuQJghG5IzXbKA==
+"@vueuse/shared@6.7.4":
+  version "6.7.4"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-6.7.4.tgz#9aa2967d20863cf3253afd08a2e6e84a61d2c89b"
+  integrity sha512-Lkm8myEiOj0sIqSXck5EXDbu0W705Q10BxydGLMfiV6wAY4U1zu+YgEgR37Wy2/mT1545pwQqiJ7bd3kQQFCMw==
   dependencies:
     vue-demi "*"
 
