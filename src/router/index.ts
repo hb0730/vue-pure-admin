@@ -13,6 +13,7 @@ import { storageLocal } from "/@/utils/storage";
 import NProgress from "/@/utils/progress";
 import { useTimeoutFn } from "@vueuse/core";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
+import { cloneDeep } from "lodash-es";
 // 静态路由
 import homeRouter from "./modules/home";
 import Layout from "/@/layout/index.vue";
@@ -24,10 +25,11 @@ import remainingRouter from "./modules/remaining";
 import flowChartRouter from "./modules/flowchart";
 import componentsRouter from "./modules/components";
 // 动态路由
-import { routerAPI } from "/@/api/routes";
 import { cookies } from "../utils/storage/cookie";
 import { tokenStore } from "../store/modules/token";
 import dayjs from "dayjs";
+import { routeStoreHok } from "../store/modules/router";
+import { toRaw } from "vue";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.vue");
@@ -158,33 +160,37 @@ export const router: Router = createRouter({
 export const initRouter = () => {
   // 初始化路由
   return new Promise(resolve => {
-    routerAPI.findRouter().then(({ data }) => {
-      if (!data) {
-        usePermissionStoreHook().changeSetting([]);
-      } else {
-        addAsyncRoutes(data).forEach((v: any) => {
-          // 防止重复添加路由
-          if (
-            router.options.routes.findIndex(value => value.path === v.path) !==
-            -1
-          ) {
-            return;
-          } else {
-            // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
-            router.options.routes.push(v);
-            // 最终路由进行升序
-            ascending(router.options.routes);
-            router.addRoute(v.name, v);
-            usePermissionStoreHook().changeSetting(data);
-          }
-          resolve(router);
+    routeStoreHok()
+      .getDynamicRoutes()
+      .then(info => {
+        const data = toRaw(info);
+        if (!data || !data.length) {
+          usePermissionStoreHook().changeSetting([]);
+        } else {
+          addAsyncRoutes(cloneDeep(data)).forEach((v: any) => {
+            // 防止重复添加路由
+            if (
+              router.options.routes.findIndex(
+                value => value.path === v.path
+              ) !== -1
+            ) {
+              return;
+            } else {
+              // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
+              router.options.routes.push(v);
+              // 最终路由进行升序
+              ascending(router.options.routes);
+              router.addRoute(v.name, v);
+              usePermissionStoreHook().changeSetting(data);
+            }
+            resolve(router);
+          });
+        }
+        router.addRoute({
+          path: "/:pathMatch(.*)",
+          redirect: "/error/404"
         });
-      }
-      router.addRoute({
-        path: "/:pathMatch(.*)",
-        redirect: "/error/404"
       });
-    });
   });
 };
 
@@ -197,7 +203,7 @@ export function resetRouter() {
     }
   });
 }
-function refreshToken() {
+async function refreshToken() {
   const expire = cookies.get("token-expire");
   const expireDay = dayjs(Number(expire));
   const nowDay = dayjs();
@@ -206,7 +212,7 @@ function refreshToken() {
   }
 }
 const whiteList = ["/login"];
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   if (to.meta?.keepAlive) {
     const newMatched = to.matched;
     handleAliveRoute(newMatched, "add");
@@ -223,7 +229,7 @@ router.beforeEach((to, _from, next) => {
   // @ts-ignore
   if (!externalLink) to.meta.title ? (document.title = t(to.meta.title)) : "";
   if (id) {
-    refreshToken();
+    await refreshToken();
     if (_from?.name) {
       // 如果路由包含http 则是超链接 反之是普通路由
       if (externalLink && externalLink.includes("http")) {
