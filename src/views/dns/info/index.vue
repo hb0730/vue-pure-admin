@@ -61,8 +61,8 @@ import {
   PropType,
   getCurrentInstance,
   reactive,
-  onBeforeMount,
-  toRaw
+  toRaw,
+  onMounted
 } from "vue";
 import { DNSModel } from "/@/api/model/dnsModel";
 import { Result } from "/@/api/model/resultModel";
@@ -137,7 +137,7 @@ const getProviders = async () => {
     pageData.providers = result.data;
   }
 };
-onBeforeMount(() => {
+onMounted(() => {
   getProviders();
 });
 </script>

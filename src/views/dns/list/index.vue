@@ -142,7 +142,7 @@ import RemoveButton from "/@/views/components/table/removeButton.vue";
 
 //@ts-ignore
 import Info from "../info/index.vue";
-import { onBeforeMount, reactive, toRaw } from "vue";
+import { onMounted, reactive, toRaw } from "vue";
 import { dnsStore } from "/@/store/modules/dns/dns";
 import { warnMessage } from "/@/utils/message";
 import { Page } from "/@/api/model/resultModel";
@@ -278,7 +278,7 @@ const handlerDelete = (data: DNSModel) => {
     })
     .catch(() => {});
 };
-onBeforeMount(() => {
+onMounted(() => {
   getPage();
 });
 </script>

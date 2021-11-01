@@ -24,7 +24,6 @@ onBeforeMount(() => {
   const Route = useRoute();
   pageData.hostId = parseInt(Route.query.id as string);
 });
-onBeforeMount(() => {});
 </script>
 <style lang="scss" scoped>
 .el-row {

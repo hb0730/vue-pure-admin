@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { UserInfoModel } from "/@/api/model/userModel";
-import { getCurrentInstance, onBeforeMount, reactive, toRaw } from "vue";
+import { getCurrentInstance, onMounted, reactive, toRaw } from "vue";
 import { db } from "/@/utils/storage/db";
 import { errorMessage, successMessage, warnMessage } from "/@/utils/message";
 import { userStore } from "/@/store/modules/user/user";
@@ -85,7 +85,7 @@ const getCurrentUserInfo = (): void => {
   ruleForm.email = user.email;
   ruleForm.isAdmin = user.isAdmin;
 };
-onBeforeMount(() => {
+onMounted(() => {
   getCurrentUserInfo();
 });
 </script>

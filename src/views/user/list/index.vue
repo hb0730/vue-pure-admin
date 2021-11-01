@@ -144,7 +144,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, reactive, toRaw } from "vue";
+import { onMounted, reactive, toRaw } from "vue";
 import { Page } from "/@/api/model/resultModel";
 import { UserInfoModel } from "/@/api/model/userModel";
 import { userStore } from "/@/store/modules/user/user";
@@ -279,7 +279,7 @@ const rePassword = async data => {
     warnMessage("请选择");
   }
 };
-onBeforeMount(() => {
+onMounted(() => {
   getPage();
 });
 </script>

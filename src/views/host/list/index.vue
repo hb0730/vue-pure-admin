@@ -134,7 +134,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onBeforeMount, reactive, toRaw } from "vue";
+import { onMounted, reactive, toRaw } from "vue";
 //@ts-ignore
 import RefreshButton from "/@/views/components/table/refreshButton.vue";
 //@ts-ignore
@@ -294,7 +294,7 @@ const openTerminal = data => {
     }
   });
 };
-onBeforeMount(() => {
+onMounted(() => {
   getPage();
 });
 </script>

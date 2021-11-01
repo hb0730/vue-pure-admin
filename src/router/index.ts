@@ -121,8 +121,8 @@ export const handleAliveRoute = (
 
 // 过滤后端传来的动态路由 重新生成规范路由
 export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
-  if (!arrRoutes || !arrRoutes.length) return;
-  arrRoutes.forEach((v: any) => {
+  if (!arrRoutes || !arrRoutes.length) return arrRoutes;
+  return arrRoutes.map((v: any) => {
     if (v.redirect) {
       v.component = Layout;
     } else if (v.component) {
@@ -131,10 +131,10 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
       v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
     }
     if (v.children) {
-      addAsyncRoutes(v.children);
+      v.children.push(...addAsyncRoutes(v.children));
     }
+    return v;
   });
-  return arrRoutes;
 };
 
 // 创建路由实例
@@ -163,7 +163,7 @@ export const initRouter = () => {
       if (!data) {
         usePermissionStoreHook().changeSetting([]);
       } else {
-        addAsyncRoutes(data).map((v: any) => {
+        addAsyncRoutes(JSON.parse(JSON.stringify(data))).map((v: any) => {
           // 防止重复添加路由
           if (
             router.options.routes.findIndex(value => value.path === v.path) !==
