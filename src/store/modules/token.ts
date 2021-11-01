@@ -6,7 +6,8 @@ import { userAPI } from "/@/api/user";
 import { initRouter, router } from "/@/router";
 import { db } from "/@/utils/storage/db";
 import dayjs from "dayjs";
-
+import { store } from "/@/store";
+import { routeStoreHok } from "./router";
 interface TokenState {
   userId?: number;
   token?: string;
@@ -50,7 +51,6 @@ export const tokenStore = defineStore({
     async logout() {
       await tokenAPI.logout();
       await this.afterLogoutAction();
-      router.push("/login");
       router.go(0);
       return;
     },
@@ -84,6 +84,7 @@ export const tokenStore = defineStore({
       initRouter();
     },
     async afterLogoutAction() {
+      routeStoreHok().clean();
       this.setToken("");
       this.setExpire("");
       this.setUserId("");
@@ -93,5 +94,5 @@ export const tokenStore = defineStore({
 });
 
 export function tokenStoreHok() {
-  return tokenStore();
+  return tokenStore(store);
 }
