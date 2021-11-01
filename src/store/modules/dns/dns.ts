@@ -31,6 +31,14 @@ export const dnsStore = defineStore({
       return dnsAPI.updateById(model, id);
     },
     /**
+     * 查询列表
+     * @param query 查询参数
+     * @returns  列表
+     */
+    find(query?: DNSQuery): Promise<Result<Array<DNSModel>>> {
+      return dnsAPI.find(query);
+    },
+    /**
      * 分页查询
      * @param query 查询参数
      * @returns  分页列表

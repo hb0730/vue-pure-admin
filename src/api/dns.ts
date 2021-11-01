@@ -6,6 +6,7 @@ enum API {
   providers = "/dns/providers",
   save = "/dns/save",
   update = "/dns/update/:id",
+  find = "/dns/find",
   findPage = "/dns/find/page",
   delete = "/dns/delete"
 }
@@ -36,6 +37,14 @@ class DNS extends BaseRequest {
       API.update.replace(":id", id.toString()),
       model
     );
+  }
+  /**
+   * 查询列表
+   * @param query 查询参数
+   * @returns  列表
+   */
+  find(query?: DNSQuery): Promise<Result<Array<DNSModel>>> {
+    return this.get<Result<Array<DNSModel>>>(API.find, query);
   }
   /**
    * 分页查询
