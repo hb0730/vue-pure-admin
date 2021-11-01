@@ -13,7 +13,7 @@ import { storageLocal } from "/@/utils/storage";
 import NProgress from "/@/utils/progress";
 import { useTimeoutFn } from "@vueuse/core";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-
+import { cloneDeep } from "lodash-es";
 // 静态路由
 import homeRouter from "./modules/home";
 import Layout from "/@/layout/index.vue";
@@ -163,7 +163,7 @@ export const initRouter = () => {
       if (!data) {
         usePermissionStoreHook().changeSetting([]);
       } else {
-        addAsyncRoutes(JSON.parse(JSON.stringify(data))).map((v: any) => {
+        addAsyncRoutes(cloneDeep(data)).map((v: any) => {
           // 防止重复添加路由
           if (
             router.options.routes.findIndex(value => value.path === v.path) !==
