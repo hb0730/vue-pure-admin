@@ -44,7 +44,8 @@ import {
   ElSelect,
   ElOption,
   ElInputNumber,
-  ElButtonGroup
+  ElButtonGroup,
+  ElCheckbox
 } from "element-plus";
 
 const components = [
@@ -91,7 +92,8 @@ const components = [
   ElSelect,
   ElOption,
   ElInputNumber,
-  ElButtonGroup
+  ElButtonGroup,
+  ElCheckbox
 ];
 
 const plugins = [ElLoading, ElInfiniteScroll];

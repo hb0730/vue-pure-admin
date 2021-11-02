@@ -14,16 +14,18 @@ const refreshGetVerify = async () => {
 const contextInfo: ContextProps = reactive({
   userName: "",
   passWord: "",
+  remember: false,
   verify: null,
   svg: null
 });
 
 // 登录
 const onLogin = async () => {
-  let { userName, passWord } = contextInfo;
+  let { userName, passWord, remember } = contextInfo;
   await tokenStoreHok().login({
     username: userName,
-    password: passWord
+    password: passWord,
+    remember: remember
   });
 };
 
@@ -33,6 +35,10 @@ const refreshVerify = (): void => {
 
 onBeforeMount(() => {
   // refreshGetVerify();
+  const login = tokenStoreHok().getRemember();
+  contextInfo.userName = login.username;
+  contextInfo.passWord = login.password;
+  contextInfo.remember = login.remember;
 });
 </script>
 

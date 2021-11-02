@@ -9,6 +9,7 @@ export interface ContextProps {
   userName: string;
   passWord: string;
   verify: number | null;
+  remember: boolean;
   svg: any;
   telephone?: number;
   dynamicText?: string;
@@ -99,7 +100,9 @@ const resetForm = (): void => {
             prefix-icon="el-icon-lock"
           ></el-input>
         </el-form-item>
-
+        <el-form-item prop="remember">
+          <el-checkbox v-model="model.remember" label="记住我"></el-checkbox>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click.prevent="onBehavior">{{
             tipsFalse

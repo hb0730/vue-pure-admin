@@ -34,7 +34,28 @@ export const tokenStore = defineStore({
       this.userId = userId ? userId : "";
       cookies.set("uuid", userId.toString(), { expires: 30 });
     },
-    async login({ username = "", password = "" } = {}) {
+    setRemember(login: { username; password; remember }, remember: boolean) {
+      if (remember) {
+        db.dbSet({
+          dbName: "sys",
+          path: "remember",
+          value: JSON.stringify(login)
+        });
+      } else {
+        db.dbSet({ dbName: "sys", path: "remember", value: "" });
+      }
+    },
+    getRemember() {
+      const user =
+        db.dbGet({ dbName: "sys", path: "remember" }) ||
+        JSON.stringify({ username: "", password: "", remember: false });
+      return JSON.parse(user);
+    },
+    async login({ username = "", password = "", remember = false } = {}) {
+      this.setRemember(
+        { username: username, password: password, remember: remember },
+        remember
+      );
       try {
         const result = await tokenAPI.login(username, password);
         if (result.code === 0) {
