@@ -219,7 +219,7 @@ class EnclosureHttp {
         })
         .catch((error: any) => {
           // reject(error);
-          if (error.response.data) {
+          if (error.response) {
             resolve(error.response.data);
           } else {
             reject(error);
