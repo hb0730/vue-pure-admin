@@ -13,7 +13,6 @@ import { storageLocal } from "/@/utils/storage";
 import NProgress from "/@/utils/progress";
 import { useTimeoutFn } from "@vueuse/core";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-import { cloneDeep } from "lodash-es";
 // 静态路由
 import homeRouter from "./modules/home";
 import Layout from "/@/layout/index.vue";
@@ -157,40 +156,34 @@ export const router: Router = createRouter({
   }
 });
 
-export const initRouter = () => {
-  // 初始化路由
-  return new Promise(resolve => {
-    routeStoreHok()
-      .getDynamicRoutes()
-      .then(info => {
-        const data = toRaw(info);
-        if (!data || !data.length) {
-          usePermissionStoreHook().changeSetting([]);
-        } else {
-          addAsyncRoutes(cloneDeep(data)).forEach((v: any) => {
-            // 防止重复添加路由
-            if (
-              router.options.routes.findIndex(
-                value => value.path === v.path
-              ) !== -1
-            ) {
-              return;
-            } else {
-              // 切记将路由push到routes后还需要使用addRoute，这样路由才能正常跳转
-              router.options.routes.push(v);
-              // 最终路由进行升序
-              ascending(router.options.routes);
-              router.addRoute(v.name, v);
-              usePermissionStoreHook().changeSetting(data);
-            }
-            resolve(router);
-          });
-        }
-        router.addRoute({
-          path: "/:pathMatch(.*)",
-          redirect: "/error/404"
-        });
-      });
+/**
+ * 将dynamic routes 加入router
+ * @param dynamicsRoutes 动态路由
+ */
+export const resetDynamicsRouter = async (dynamicsRoutes: any) => {
+  const routes = dynamicsRoutes || [];
+  if (!routes) {
+    usePermissionStoreHook().changeSetting([]);
+  }
+  const filterRoutes = addAsyncRoutes(routes).filter(v => {
+    return (
+      router.options.routes.findIndex(value => value.path === v.path) === -1
+    );
+  });
+  router.options.routes.push(...filterRoutes);
+  ascending(router.options.routes);
+  filterRoutes.forEach((v: any) => {
+    router.addRoute(v.name, v);
+  });
+  usePermissionStoreHook().changeSetting(filterRoutes);
+};
+
+export const initRouter = async () => {
+  const routes = await routeStoreHok().getDynamicRoutes();
+  await resetDynamicsRouter(toRaw(routes));
+  router.addRoute({
+    path: "/:pathMatch(.*)",
+    redirect: "/error/404"
   });
 };
 
@@ -236,40 +229,31 @@ router.beforeEach(async (to, _from, next) => {
         openLink(`http${split(externalLink, "http")[1]}`);
         NProgress.done();
       } else {
-        if (whiteList.indexOf(to.path) !== -1) {
-          next({ path: "/" });
-        } else {
-          next();
-        }
+        next();
       }
     } else {
       // 刷新
-      if (usePermissionStoreHook().wholeRoutes.length === 0)
-        initRouter().then((router: Router) => {
-          router.push(to.path);
-          // 刷新页面更新标签栏与页面路由匹配
-          const localRoutes = storageLocal.getItem(
-            "responsive-routesInStorage"
-          );
-          const optionsRoutes = router.options?.routes;
-          const newLocalRoutes = [];
-          optionsRoutes.forEach(ors => {
-            localRoutes.forEach(lrs => {
-              if (ors.path === lrs.parentPath) {
-                newLocalRoutes.push(lrs);
-              }
-            });
+      if (usePermissionStoreHook().wholeRoutes.length === 0) {
+        await initRouter();
+        router.push(to.path);
+        // 刷新页面更新标签栏与页面路由匹配
+        const localRoutes = storageLocal.getItem("responsive-routesInStorage");
+        const optionsRoutes = router.options?.routes;
+        const newLocalRoutes = [];
+        optionsRoutes.forEach(ors => {
+          localRoutes.forEach(lrs => {
+            if (ors.path === lrs.parentPath) {
+              newLocalRoutes.push(lrs);
+            }
           });
-          storageLocal.setItem(
-            "responsive-routesInStorage",
-            uniqBy(newLocalRoutes, "path")
-          );
         });
-      if (whiteList.indexOf(to.path) !== -1) {
-        next({ path: "/" });
-      } else {
-        next();
+        storageLocal.setItem(
+          "responsive-routesInStorage",
+          uniqBy(newLocalRoutes, "path")
+        );
       }
+
+      next();
     }
   } else {
     if (to.path !== "/login") {
