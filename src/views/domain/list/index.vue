@@ -18,10 +18,25 @@
           style="width: 100%"
           v-model="pageData.searchModel.dnsId"
           clearable
-          placeholder="请选择"
+          placeholder="dns供应商"
         >
           <el-option
             v-for="item in pageData.dnsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select
+          style="width: 100%"
+          v-model="pageData.searchModel.certbotId"
+          clearable
+          placeholder="机器人"
+        >
+          <el-option
+            v-for="item in pageData.certbotList"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -82,6 +97,18 @@
             </template>
           </el-table-column>
           <el-table-column
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+            prop="certbotId"
+            label="机器人"
+          >
+            <template #default="scope">
+              {{ showCertbotName(scope.row).name }}
+            </template>
+          </el-table-column>
+          <el-table-column
             label="操作"
             sortable
             resizable
@@ -113,6 +140,7 @@
       :is-update="pageData.isUpdate"
       :show-dialog="pageData.showDialog"
       :dns-select="pageData.dnsList"
+      :certbot-select="pageData.certbotList"
       @cancel-data-scope="cancelDataScope"
     ></Info>
   </div>
@@ -132,6 +160,7 @@ import { warnMessage } from "/@/utils/message";
 import { Page } from "/@/api/model/result";
 import { DNSModel } from "/@/api/model/dns";
 import { warnConfirm } from "/@/utils/message/box";
+import { certbotStore } from "/@/store/modules/certbot/certbot";
 
 const pageData = reactive({
   searchModel: {
@@ -139,17 +168,20 @@ const pageData = reactive({
     pageNum: 1,
     pageSize: 10,
     domain: null,
+    certbotId: null,
     dnsId: null
   },
   domainInfo: {
     id: null,
     dnsId: null,
+    certbotId: null,
     dnsName: null,
     domain: null
   },
   isUpdate: false,
   showDialog: false,
   dnsList: [],
+  certbotList: [],
   tableData: [],
   selection: []
 });
@@ -159,6 +191,12 @@ const dnsList = async () => {
     pageData.dnsList = result.data;
   }
 };
+const certbotList = async () => {
+  const result = await certbotStore().find(null);
+  if (result.code === 0) {
+    pageData.certbotList = result.data;
+  }
+};
 const initDomainInfo = (data: any) => {
   if (data) {
     pageData.domainInfo = data;
@@ -166,6 +204,7 @@ const initDomainInfo = (data: any) => {
     pageData.domainInfo = {
       id: null,
       dnsId: null,
+      certbotId: null,
       dnsName: null,
       domain: null
     };
@@ -256,8 +295,14 @@ const showDnsName = (data: DomainModel) => {
     (value: DNSModel) => value.id === data.dnsId
   )[0];
 };
+const showCertbotName = (data: DomainModel) => {
+  return pageData.certbotList.filter(
+    (value: DNSModel) => value.id === data.certbotId
+  )[0];
+};
 onMounted(() => {
   dnsList();
+  certbotList();
   getPage();
 });
 </script>

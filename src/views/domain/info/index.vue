@@ -29,6 +29,24 @@
         </el-select>
       </el-form-item>
       <el-form-item
+        prop="certbotId"
+        label="机器人"
+        :rules="[{ message: '请选择', required: true, trigger: 'change' }]"
+      >
+        <el-select
+          style="width: 100%"
+          v-model="dataInfo.certbotId"
+          placeholder="Select"
+        >
+          <el-option
+            v-for="item in certbotSelect"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item
         prop="domain"
         label="域名"
         :rules="[{ message: '请输入', required: true, trigger: 'blur' }]"
@@ -68,6 +86,11 @@ const props = defineProps({
     default: [],
     type: []
   },
+  certbotSelect: {
+    require: true,
+    default: [],
+    type: []
+  },
   modelInfo: Object as PropType<DomainModel>
 });
 const emit = defineEmits<{
@@ -77,6 +100,7 @@ const showDialog = toRef(props, "showDialog");
 const dataInfo = toRef(props, "modelInfo");
 const isUpdate = toRef(props, "isUpdate");
 const dnsSelect = toRef(props, "dnsSelect");
+const certbotSelect = toRef(props, "certbotSelect");
 const cancelDataScope = () => {
   // @ts-expect-error
   instance.refs.formRef.resetFields();
