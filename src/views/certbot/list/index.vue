@@ -124,7 +124,7 @@ import RefreshButton from "/@/views/components/table/refreshButton.vue";
 import Info from "../info/index.vue";
 import { certbotStore } from "/@/store/modules/certbot/certbot";
 import { CertbotModel } from "/@/api/model/certbot";
-import { Page } from "/@/api/model/resultModel";
+import { Page } from "/@/api/model/result";
 import { warnMessage } from "/@/utils/message";
 import { warnConfirm } from "/@/utils/message/box";
 const pageData = reactive({

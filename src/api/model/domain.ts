@@ -1,4 +1,4 @@
-import { BaseQuery } from "./resultModel";
+import { BaseQuery } from "./result";
 
 export interface DomainModel {
   id: number;

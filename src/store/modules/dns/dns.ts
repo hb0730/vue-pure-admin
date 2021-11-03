@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { dnsAPI } from "/@/api/dns";
-import { DNSModel, DNSProvider, DNSQuery } from "/@/api/model/dnsModel";
-import { Page, Result } from "/@/api/model/resultModel";
+import { DNSModel, DNSProvider, DNSQuery } from "/@/api/model/dns";
+import { Page, Result } from "/@/api/model/result";
 
 export const dnsStore = defineStore({
   id: "dns-store",

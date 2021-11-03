@@ -145,8 +145,8 @@ import Info from "../info/index.vue";
 import { onMounted, reactive, toRaw } from "vue";
 import { dnsStore } from "/@/store/modules/dns/dns";
 import { warnMessage } from "/@/utils/message";
-import { Page } from "/@/api/model/resultModel";
-import { DNSModel } from "/@/api/model/dnsModel";
+import { Page } from "/@/api/model/result";
+import { DNSModel } from "/@/api/model/dns";
 import { warnConfirm } from "/@/utils/message/box";
 const pageData = reactive({
   showDialog: false,

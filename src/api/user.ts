@@ -1,7 +1,7 @@
 import { http } from "../utils/http";
 import BaseRequest from "./base";
-import { Result, Page } from "./model/resultModel";
-import { UpdatePasswordModel, UserInfoModel } from "./model/userModel";
+import { Result, Page } from "./model/result";
+import { UpdatePasswordModel, UserInfoModel } from "./model/user";
 
 // 获取验证码
 export const getVerify = () => {

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { Page, Result } from "/@/api/model/resultModel";
-import { UpdatePasswordModel, UserInfoModel } from "/@/api/model/userModel";
+import { Page, Result } from "/@/api/model/result";
+import { UpdatePasswordModel, UserInfoModel } from "/@/api/model/user";
 import { userAPI } from "/@/api/user";
 import { encryptPassword } from "/@/utils/util";
 

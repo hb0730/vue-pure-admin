@@ -36,7 +36,7 @@
 </template>
 <script setup lang="ts">
 import { getCurrentInstance, reactive, toRaw } from "vue";
-import { UpdatePasswordModel } from "/@/api/model/userModel";
+import { UpdatePasswordModel } from "/@/api/model/user";
 import { tokenStoreHok } from "/@/store/modules/token";
 import { userStore } from "/@/store/modules/user/user";
 import { errorMessage, successMessage, warnMessage } from "/@/utils/message";

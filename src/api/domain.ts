@@ -1,7 +1,7 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
 import { DomainModel, DomainQuery } from "./model/domain";
-import { Page, Result } from "./model/resultModel";
+import { Page, Result } from "./model/result";
 
 enum API {
   save = "/domain/save",

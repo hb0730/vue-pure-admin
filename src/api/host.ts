@@ -5,8 +5,8 @@ import {
   HostModel,
   HostQuery,
   HostTestModel
-} from "./model/hostModel";
-import { Page, Result } from "./model/resultModel";
+} from "./model/host";
+import { Page, Result } from "./model/result";
 import { stringify } from "qs";
 import { http } from "../utils/http";
 import { cookies } from "../utils/storage/cookie";

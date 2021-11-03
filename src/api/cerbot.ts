@@ -1,7 +1,7 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
 import { CertbotModel, CertbotQuery } from "./model/certbot";
-import { Page, Result } from "./model/resultModel";
+import { Page, Result } from "./model/result";
 
 enum API {
   finPage = "/boot/find/page",

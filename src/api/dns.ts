@@ -1,7 +1,7 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
-import { DNSModel, DNSProvider, DNSQuery } from "./model/dnsModel";
-import { Page, Result } from "./model/resultModel";
+import { DNSModel, DNSProvider, DNSQuery } from "./model/dns";
+import { Page, Result } from "./model/result";
 enum API {
   providers = "/dns/providers",
   save = "/dns/save",

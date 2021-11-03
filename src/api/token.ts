@@ -1,6 +1,6 @@
 import BaseRequest from "./base";
-import { Result } from "./model/resultModel";
-import { TokenResultModel } from "./model/userModel";
+import { Result } from "./model/result";
+import { TokenResultModel } from "./model/user";
 import { encryptPassword } from "/@/utils/util";
 enum API {
   Login = "/login",

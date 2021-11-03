@@ -64,8 +64,8 @@ import {
   toRaw,
   onMounted
 } from "vue";
-import { DNSModel } from "/@/api/model/dnsModel";
-import { Result } from "/@/api/model/resultModel";
+import { DNSModel } from "/@/api/model/dns";
+import { Result } from "/@/api/model/result";
 import { dnsStore } from "/@/store/modules/dns/dns";
 import { errorMessage, warnMessage } from "/@/utils/message";
 

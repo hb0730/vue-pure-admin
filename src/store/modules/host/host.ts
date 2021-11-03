@@ -5,8 +5,8 @@ import {
   HostModel,
   HostQuery,
   HostTestModel
-} from "/@/api/model/hostModel";
-import { Page, Result } from "/@/api/model/resultModel";
+} from "/@/api/model/host";
+import { Page, Result } from "/@/api/model/result";
 
 export const hostStore = defineStore({
   id: "host-store",

@@ -1,5 +1,5 @@
 import BaseRequest from "./base";
-import { Result } from "./model/resultModel";
+import { Result } from "./model/result";
 
 enum API {
   find = "/options"

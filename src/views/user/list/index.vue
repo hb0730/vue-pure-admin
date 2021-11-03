@@ -145,8 +145,8 @@
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, toRaw } from "vue";
-import { Page } from "/@/api/model/resultModel";
-import { UserInfoModel } from "/@/api/model/userModel";
+import { Page } from "/@/api/model/result";
+import { UserInfoModel } from "/@/api/model/user";
 import { userStore } from "/@/store/modules/user/user";
 import { successMessage, warnMessage } from "/@/utils/message";
 //@ts-ignore

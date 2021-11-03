@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserInfoModel } from "/@/api/model/userModel";
+import { UserInfoModel } from "/@/api/model/user";
 import { getCurrentInstance, onMounted, reactive, toRaw } from "vue";
 import { db } from "/@/utils/storage/db";
 import { errorMessage, successMessage, warnMessage } from "/@/utils/message";

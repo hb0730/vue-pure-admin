@@ -52,8 +52,8 @@
 <script setup lang="ts">
 import { toRef, PropType, getCurrentInstance, toRaw } from "vue";
 import { userInfoModel } from "../index.vue";
-import { Result } from "/@/api/model/resultModel";
-import { UserInfoModel } from "/@/api/model/userModel";
+import { Result } from "/@/api/model/result";
+import { UserInfoModel } from "/@/api/model/user";
 import { userStore } from "/@/store/modules/user/user";
 import { errorMessage, warnMessage } from "/@/utils/message";
 const props = defineProps({

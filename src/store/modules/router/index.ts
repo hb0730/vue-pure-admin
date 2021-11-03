@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Result } from "/@/api/model/resultModel";
+import { Result } from "/@/api/model/result";
 import { routerAPI } from "/@/api/routes";
 import { store } from "/@/store";
 import { db } from "/@/utils/storage/db";

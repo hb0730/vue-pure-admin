@@ -83,8 +83,8 @@
 </template>
 <script setup lang="ts">
 import { toRef, PropType, getCurrentInstance, ref } from "vue";
-import { HostModel, HostTestModel } from "/@/api/model/hostModel";
-import { Result } from "/@/api/model/resultModel";
+import { HostModel, HostTestModel } from "/@/api/model/host";
+import { Result } from "/@/api/model/result";
 import { hostStore } from "/@/store/modules/host/host";
 import { successMessage, warnMessage } from "/@/utils/message";
 const instance = getCurrentInstance();

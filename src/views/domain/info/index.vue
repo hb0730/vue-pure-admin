@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, PropType, toRaw, toRef } from "vue";
 import { DomainModel } from "/@/api/model/domain";
-import { Result } from "/@/api/model/resultModel";
+import { Result } from "/@/api/model/result";
 import { domainStore } from "/@/store/modules/domain/domain";
 import { errorMessage, warnMessage } from "/@/utils/message";
 const instance = getCurrentInstance();

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { certBotAPI } from "/@/api/cerbot";
 import { CertbotModel, CertbotQuery } from "/@/api/model/certbot";
-import { Page, Result } from "/@/api/model/resultModel";
+import { Page, Result } from "/@/api/model/result";
 
 export const certbotStore = defineStore({
   id: "certbot-store",

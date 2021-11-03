@@ -129,8 +129,8 @@ import Info from "../info/index.vue";
 import { domainStore } from "/@/store/modules/domain/domain";
 import { DomainModel } from "/@/api/model/domain";
 import { warnMessage } from "/@/utils/message";
-import { Page } from "/@/api/model/resultModel";
-import { DNSModel } from "/@/api/model/dnsModel";
+import { Page } from "/@/api/model/result";
+import { DNSModel } from "/@/api/model/dns";
 import { warnConfirm } from "/@/utils/message/box";
 
 const pageData = reactive({

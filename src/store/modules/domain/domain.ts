@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { domainAPI } from "/@/api/domain";
 import { DomainModel, DomainQuery } from "/@/api/model/domain";
-import { Page, Result } from "/@/api/model/resultModel";
+import { Page, Result } from "/@/api/model/result";
 
 export const domainStore = defineStore({
   id: "domain-store",
