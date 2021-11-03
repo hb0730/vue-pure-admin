@@ -135,6 +135,15 @@
         </el-table>
       </el-col>
     </el-row>
+    <el-pagination
+      v-model:currentPage="pageData.searchModel.pageNum"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="pageData.searchModel.pageSize"
+      layout="total,sizes, prev, pager, next, jumper"
+      :total="pageData.searchModel.total"
+      @size-change="sizeChange"
+      @current-change="currentChange"
+    ></el-pagination>
     <Info
       :model-info="pageData.domainInfo"
       :is-update="pageData.isUpdate"
@@ -269,6 +278,14 @@ const handlerDelete = (data: DomainModel) => {
       }
     })
     .catch(() => {});
+};
+const sizeChange = async (pageSize: number) => {
+  pageData.searchModel.pageSize = pageSize;
+  getPage();
+};
+const currentChange = async (pageNum: number) => {
+  pageData.searchModel.pageNum = pageNum;
+  getPage();
 };
 const cancelDataScope = () => {
   initDomainInfo(null);
