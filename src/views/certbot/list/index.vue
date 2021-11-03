@@ -71,6 +71,15 @@
           >
           </el-table-column>
           <el-table-column
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+            prop="directoryUrl"
+            label="申请地址"
+          >
+          </el-table-column>
+          <el-table-column
             label="操作"
             sortable
             resizable

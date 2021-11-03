@@ -17,11 +17,18 @@
         <el-input v-model="dataInfo.name"></el-input>
       </el-form-item>
       <el-form-item
-        prop="name"
+        prop="email"
         label="机器人邮箱"
         :rules="[{ message: '请输入', required: true, trigger: 'blur' }]"
       >
         <el-input v-model="dataInfo.email"></el-input>
+      </el-form-item>
+      <el-form-item
+        prop="directoryUrl"
+        label="申请地址"
+        :rules="[{ message: '请输入', required: true, trigger: 'blur' }]"
+      >
+        <el-input v-model="dataInfo.directoryUrl"></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
