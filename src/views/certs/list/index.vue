@@ -7,23 +7,16 @@
       label-position="left"
     >
       <el-form-item>
-        <el-input
-          v-model="pageData.searchModel.domain"
-          placeholder="域名"
-          clearable
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
         <el-select
           style="width: 100%"
-          v-model="pageData.searchModel.dnsId"
+          v-model="pageData.searchModel.domainId"
           clearable
-          placeholder="dns供应商"
+          placeholder="域名"
         >
           <el-option
-            v-for="item in pageData.dnsList"
+            v-for="item in pageData.domainSelect"
             :key="item.id"
-            :label="item.name"
+            :label="item.domain"
             :value="item.id"
           ></el-option>
         </el-select>
@@ -36,7 +29,7 @@
           placeholder="机器人"
         >
           <el-option
-            v-for="item in pageData.certbotList"
+            v-for="item in pageData.certbotSelect"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -75,25 +68,17 @@
             align="center"
             type="selection"
           ></el-table-column>
+
           <el-table-column
             sortable
             resizable
             :show-overflow-tooltip="true"
             align="center"
-            prop="domain"
-            label="域名"
-          >
-          </el-table-column>
-          <el-table-column
-            sortable
-            resizable
-            :show-overflow-tooltip="true"
-            align="center"
-            prop="dnsId"
-            label="dns供应商"
+            prop="domainId"
+            label="顶级域名"
           >
             <template #default="scope">
-              {{ showDnsName(scope.row).name }}
+              {{ getDomainInfo(scope.row.domainId).domain }}
             </template>
           </el-table-column>
           <el-table-column
@@ -101,12 +86,21 @@
             resizable
             :show-overflow-tooltip="true"
             align="center"
-            prop="certbotId"
+            prop="domainId"
             label="机器人"
           >
             <template #default="scope">
-              {{ showCertbotName(scope.row).name }}
+              {{ getCertBotInfo(scope.row.domainId).name }}
             </template>
+          </el-table-column>
+          <el-table-column
+            sortable
+            resizable
+            :show-overflow-tooltip="true"
+            align="center"
+            prop="domainList"
+            label="子域"
+          >
           </el-table-column>
           <el-table-column
             label="操作"
@@ -145,19 +139,16 @@
       @current-change="currentChange"
     ></el-pagination>
     <Info
-      :model-info="pageData.domainInfo"
+      :model-info="pageData.modelInfo"
+      :domain-select="pageData.domainSelect"
       :is-update="pageData.isUpdate"
       :show-dialog="pageData.showDialog"
-      :dns-select="pageData.dnsList"
-      :certbot-select="pageData.certbotList"
       @cancel-data-scope="cancelDataScope"
     ></Info>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, toRaw } from "vue";
-import { dnsStore } from "/@/store/modules/dns/dns";
 //@ts-ignore
 import AddNewButton from "/@/views/components/table/addNewButton.vue";
 //@ts-ignore
@@ -168,79 +159,94 @@ import RemoveButton from "/@/views/components/table/removeButton.vue";
 import RefreshButton from "/@/views/components/table/refreshButton.vue";
 //@ts-ignore
 import Info from "../info/index.vue";
-import { domainStore } from "/@/store/modules/domain/domain";
-import { DomainModel } from "/@/api/model/domain";
-import { warnMessage } from "/@/utils/message";
-import { Page } from "/@/api/model/result";
-import { DNSModel } from "/@/api/model/dns";
-import { warnConfirm } from "/@/utils/message/box";
+import { onMounted, reactive } from "vue-demi";
 import { certbotStore } from "/@/store/modules/certbot/certbot";
+import { domainStore } from "/@/store/modules/domain/domain";
+
+import { warnMessage } from "/@/utils/message";
+import { warnConfirm } from "/@/utils/message/box";
+import { certStore } from "/@/store/modules/certs/certs";
+import { Page } from "/@/api/model/result";
+import { CertModel } from "/@/api/model/certs";
+import { DomainModel } from "/@/api/model/domain";
+import { CertbotModel } from "/@/api/model/certbot";
 
 const pageData = reactive({
+  isUpdate: false,
+  showDialog: false,
+  certbotSelect: [],
+  domainSelect: [],
   searchModel: {
     total: 0,
     pageNum: 1,
     pageSize: 10,
-    domain: null,
-    certbotId: null,
-    dnsId: null
+    domainId: null,
+    certbotId: null
   },
-  domainInfo: {
-    id: null,
-    dnsId: null,
-    certbotId: null,
-    dnsName: null,
-    domain: null
-  },
-  isUpdate: false,
-  showDialog: false,
-  dnsList: [],
-  certbotList: [],
+  selection: [],
   tableData: [],
-  selection: []
+  modelInfo: {
+    id: null,
+    domainId: null,
+    domainList: ""
+  }
 });
-const dnsList = async () => {
-  const result = await dnsStore().find(null);
-  if (result.code == 0) {
-    pageData.dnsList = result.data;
+const domainSelect = async () => {
+  const result = await domainStore().find();
+  if (result.code === 0) {
+    pageData.domainSelect = result.data;
   }
 };
-const certbotList = async () => {
+const certbotSelect = async () => {
   const result = await certbotStore().find(null);
   if (result.code === 0) {
-    pageData.certbotList = result.data;
+    pageData.certbotSelect = result.data;
   }
 };
-const initDomainInfo = (data: any) => {
-  if (data) {
-    pageData.domainInfo = data;
+
+const getPage = async () => {
+  const result = await certStore().findPage(pageData.searchModel);
+  if (result.code === 0) {
+    const resultData: Page<CertModel> = result.data;
+    pageData.searchModel.total = resultData.total;
+    if (!resultData.records) {
+      resultData.records = [];
+    }
+    pageData.tableData = resultData.records;
   } else {
-    pageData.domainInfo = {
+    warnMessage("查询失败:" + result.msg);
+  }
+};
+
+const initModel = async (data?: any) => {
+  if (data) {
+    pageData.modelInfo = data;
+  } else {
+    pageData.modelInfo = {
       id: null,
-      dnsId: null,
-      certbotId: null,
-      dnsName: null,
-      domain: null
+      domainId: null,
+      domainList: ""
     };
   }
 };
-const addNewHandler = () => {
-  initDomainInfo(null);
+
+const addNewHandler = async () => {
+  initModel(null);
   pageData.isUpdate = false;
   pageData.showDialog = true;
 };
-const editHandler = () => {
+const editHandler = async () => {
   if (pageData.selection.length <= 0) {
     warnMessage("请选择");
   } else if (pageData.selection.length > 1) {
     warnMessage("请选择(有且只有一个)");
   } else {
-    initDomainInfo(pageData.selection[0]);
+    initModel(pageData.selection[0]);
     pageData.isUpdate = true;
     pageData.showDialog = true;
   }
 };
-const removeHandler = () => {
+const removeHandler = async () => {
   if (pageData.selection.length <= 0) {
     warnMessage("请选择");
   } else {
@@ -250,7 +256,7 @@ const removeHandler = () => {
         pageData.selection.forEach(value => {
           id.push(value.id);
         });
-        const result = await domainStore().deleteDomain(id);
+        const result = await certStore().deleteByIds(id);
         if (result.code === 0) {
           getPage();
         } else {
@@ -260,22 +266,22 @@ const removeHandler = () => {
       .catch(() => {});
   }
 };
-const refreshHandler = () => {
+const refreshHandler = async () => {
   getPage();
 };
-const handleSelectionChange = val => {
+const handleSelectionChange = async val => {
   pageData.selection = val;
 };
-const handlerEdit = data => {
-  initDomainInfo(data);
+const handlerEdit = async data => {
+  initModel(data);
   pageData.isUpdate = true;
   pageData.showDialog = true;
 };
-const handlerDelete = (data: DomainModel) => {
+const handlerDelete = async (data: any) => {
   warnConfirm("是否删除当前数据")
     .then(async () => {
       let id = [data.id];
-      const result = await domainStore().deleteDomain(id);
+      const result = await certStore().deleteByIds(id);
       if (result.code === 0) {
         getPage();
       } else {
@@ -292,39 +298,44 @@ const currentChange = async (pageNum: number) => {
   pageData.searchModel.pageNum = pageNum;
   getPage();
 };
-const cancelDataScope = () => {
-  initDomainInfo(null);
+const cancelDataScope = async () => {
+  initModel(null);
   pageData.isUpdate = false;
   pageData.showDialog = false;
   getPage();
 };
-const getPage = async () => {
-  const query = toRaw(pageData.searchModel);
-  const result = await domainStore().findPage(query);
-  if (result.code === 0) {
-    const resultData: Page<DomainModel> = result.data;
-    pageData.searchModel.total = resultData.total;
-    if (!resultData.records) {
-      resultData.records = [];
-    }
-    pageData.tableData = resultData.records;
+const getDomainInfo = (id: number): any => {
+  if (!id || !pageData.domainSelect || !pageData.domainSelect.length) {
+    return { domain: "" };
+  }
+  const model = pageData.domainSelect.filter((v: DomainModel) => v.id === id);
+  if (model.length > 0) {
+    return model[0];
   } else {
-    warnMessage("查询失败:" + result.msg);
+    return { domain: "" };
   }
 };
-const showDnsName = (data: DomainModel) => {
-  return pageData.dnsList.filter(
-    (value: DNSModel) => value.id === data.dnsId
-  )[0];
-};
-const showCertbotName = (data: DomainModel) => {
-  return pageData.certbotList.filter(
-    (value: DNSModel) => value.id === data.certbotId
-  )[0];
+const getCertBotInfo = (domainId: number): any => {
+  if (!pageData.certbotSelect || !pageData.certbotSelect.length) {
+    return { name: "" };
+  }
+  const result: DomainModel = getDomainInfo(domainId);
+  if (result.certbotId) {
+    const model = pageData.certbotSelect.filter(
+      (v: CertbotModel) => v.id === result.certbotId
+    );
+    if (model.length > 0) {
+      return model[0];
+    } else {
+      return { name: "" };
+    }
+  } else {
+    return { name: "" };
+  }
 };
 onMounted(() => {
-  dnsList();
-  certbotList();
+  domainSelect();
+  certbotSelect();
   getPage();
 });
 </script>

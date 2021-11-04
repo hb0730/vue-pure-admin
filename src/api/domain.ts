@@ -6,6 +6,7 @@ import { Page, Result } from "./model/result";
 enum API {
   save = "/domain/save",
   update = "/domain/update/:id",
+  find = "/domain/find",
   findPage = "/domain/find/page",
   delete = "/domain/delete"
 }
@@ -32,11 +33,19 @@ class Domain extends BaseRequest {
     );
   }
   /**
+   * 查询列表
+   * @param query 查询参数
+   * @returns  列表
+   */
+  find(query?: DomainQuery): Promise<Result<Array<DomainModel>>> {
+    return this.get<Result<Array<DomainModel>>>(API.find, query);
+  }
+  /**
    * 分页查询
    * @param query 查询参数
    * @returns 分页列表
    */
-  findPage(query: DomainQuery): Promise<Result<Page<DomainModel>>> {
+  findPage(query?: DomainQuery): Promise<Result<Page<DomainModel>>> {
     return this.get<Result<Page<DomainModel>>>(API.findPage, query);
   }
   /**

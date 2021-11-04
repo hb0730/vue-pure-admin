@@ -125,11 +125,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, toRaw } from "vue-demi";
+import { onMounted, reactive, toRaw } from "vue";
+//@ts-ignore
 import AddNewButton from "/@/views/components/table/addNewButton.vue";
+//@ts-ignore
 import EditButton from "/@/views/components/table/editButton.vue";
+//@ts-ignore
 import RemoveButton from "/@/views/components/table/removeButton.vue";
+//@ts-ignore
 import RefreshButton from "/@/views/components/table/refreshButton.vue";
+//@ts-ignore
 import Info from "../info/index.vue";
 import { certbotStore } from "/@/store/modules/certbot/certbot";
 import { CertbotModel } from "/@/api/model/certbot";
@@ -151,7 +156,8 @@ const pageData = reactive({
   modelInfo: {
     id: 0,
     name: "",
-    email: ""
+    email: "",
+    directoryUrl: ""
   }
 });
 
@@ -234,7 +240,7 @@ const initModel = async data => {
   if (data) {
     pageData.modelInfo = data;
   } else {
-    pageData.modelInfo = { id: 0, name: "", email: "" };
+    pageData.modelInfo = { id: 0, name: "", email: "", directoryUrl: "" };
   }
 };
 const sizeChange = async (pageSize: number) => {

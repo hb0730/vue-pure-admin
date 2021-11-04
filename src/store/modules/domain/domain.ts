@@ -24,11 +24,19 @@ export const domainStore = defineStore({
       return domainAPI.update(model, id);
     },
     /**
+     * 查询列表
+     * @param query 查询参数
+     * @returns  列表
+     */
+    find(query?: DomainQuery): Promise<Result<Array<DomainModel>>> {
+      return domainAPI.find(query);
+    },
+    /**
      * 分页查询
      * @param query 查询参数
      * @returns 分页列表
      */
-    findPage(query: DomainQuery): Promise<Result<Page<DomainModel>>> {
+    findPage(query?: DomainQuery): Promise<Result<Page<DomainModel>>> {
       return domainAPI.findPage(query);
     },
     /**
