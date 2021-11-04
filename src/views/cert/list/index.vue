@@ -124,6 +124,13 @@
                 size="mini"
                 @click="handlerDelete(scope.row)"
               ></el-button>
+              <el-button
+                title="记录"
+                type="warning"
+                icon="fa fa-list-alt"
+                size="mini"
+                @click="handlerOpenRecord(scope.row)"
+              ></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -170,6 +177,7 @@ import { Page } from "/@/api/model/result";
 import { CertModel } from "/@/api/model/certs";
 import { DomainModel } from "/@/api/model/domain";
 import { CertbotModel } from "/@/api/model/certbot";
+import { certRecordStoreHook } from "/@/store/modules/certs/record";
 
 const pageData = reactive({
   isUpdate: false,
@@ -332,6 +340,19 @@ const getCertBotInfo = (domainId: number): any => {
   } else {
     return { name: "" };
   }
+};
+const handlerOpenRecord = async (data: CertModel) => {
+  const certbotInfo = getCertBotInfo(data.domainId);
+  const domainInfo = getDomainInfo(data.domainId);
+  const certRecordModel = {
+    id: data.id,
+    domainId: data.domainId,
+    domainName: domainInfo.domain,
+    domainList: data.domainList,
+    certbotName: certbotInfo.name,
+    certbotId: certbotInfo.id
+  };
+  certRecordStoreHook().openRecord(certRecordModel);
 };
 onMounted(() => {
   domainSelect();
