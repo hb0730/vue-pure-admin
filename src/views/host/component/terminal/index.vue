@@ -2,9 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="24">
-        <el-affix>
-          <Console :hostId="pageData.hostId"></Console>
-        </el-affix>
+        <Console :hostId="pageData.hostId"></Console>
       </el-col>
     </el-row>
     <el-row>
