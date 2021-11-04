@@ -146,9 +146,9 @@ import RemoveButton from "/@/views/components/table/removeButton.vue";
 //@ts-ignore
 import HostInfo from "../component/info/info.vue";
 import { hostStore } from "/@/store/modules/host/host";
-import { HostModel, HostQuery } from "/@/api/model/hostModel";
+import { HostModel, HostQuery } from "/@/api/model/host";
 import { warnMessage } from "/@/utils/message";
-import { Page } from "/@/api/model/resultModel";
+import { Page } from "/@/api/model/result";
 import { decode } from "/@/utils/crypto/base64";
 import { warnConfirm } from "/@/utils/message/box";
 import router from "/@/router";
