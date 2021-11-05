@@ -1,6 +1,6 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
-import { CertModel, CertQuery } from "./model/certs";
+import { DomainListModel, DomainListQuery } from "./model/domain-list";
 import { Page, Result } from "./model/result";
 enum API {
   findPage = "/cert/find/page",
@@ -8,21 +8,21 @@ enum API {
   update = "/cert/update/:id",
   delete = "/cert/delete"
 }
-class Cert extends BaseRequest {
+class DomainList extends BaseRequest {
   /**
    * 分页查询
    * @param query 查询参数
    * @returns 分页列表
    */
-  findPage(query?: CertQuery): Promise<Result<Page<CertModel>>> {
-    return this.get<Result<Page<CertModel>>>(API.findPage, query);
+  findPage(query?: DomainListQuery): Promise<Result<Page<DomainListModel>>> {
+    return this.get<Result<Page<DomainListModel>>>(API.findPage, query);
   }
   /**
    * 保存
    * @param model 保存参数
    * @returns 是否成功
    */
-  save(model: CertModel): Promise<Result<any>> {
+  save(model: DomainListModel): Promise<Result<any>> {
     return this.post<Result<any>>(API.save, model);
   }
   /**
@@ -31,7 +31,7 @@ class Cert extends BaseRequest {
    * @param id  id
    * @returns  是否成功
    */
-  update(model: CertModel, id: number): Promise<Result<any>> {
+  update(model: DomainListModel, id: number): Promise<Result<any>> {
     return this.put<Result<any>>(
       API.update.replace(":id", id.toString()),
       model
@@ -54,4 +54,4 @@ class Cert extends BaseRequest {
   }
 }
 
-export const certAPI = new Cert();
+export const domainListAPI = new DomainList();

@@ -51,10 +51,10 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, PropType, toRaw, toRef } from "vue";
-import { CertModel } from "/@/api/model/certs";
+import { DomainListModel } from "/@/api/model/domain-list";
 import { DomainModel } from "/@/api/model/domain";
 import { Result } from "/@/api/model/result";
-import { certStore } from "/@/store/modules/certs/certs";
+import { domainListStore } from "/@/store/modules/certs/domain-list";
 import { errorMessage, warnMessage } from "/@/utils/message";
 const instance = getCurrentInstance();
 const props = defineProps({
@@ -68,7 +68,7 @@ const props = defineProps({
     default: false,
     type: Boolean
   },
-  modelInfo: Object as PropType<CertModel>,
+  modelInfo: Object as PropType<DomainListModel>,
   domainSelect: Array as PropType<Array<DomainModel>>
 });
 const emit = defineEmits<{
@@ -101,11 +101,11 @@ const submitDataScope = () => {
     }
   });
 };
-const saveOrUpdate = (data: CertModel): Promise<Result<any>> => {
+const saveOrUpdate = (data: DomainListModel): Promise<Result<any>> => {
   if (isUpdate.value) {
-    return certStore().update(data, data.id);
+    return domainListStore().update(data, data.id);
   } else {
-    return certStore().save(data);
+    return domainListStore().save(data);
   }
 };
 onMounted(() => {});

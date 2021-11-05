@@ -172,9 +172,9 @@ import { domainStore } from "/@/store/modules/domain/domain";
 
 import { warnMessage } from "/@/utils/message";
 import { warnConfirm } from "/@/utils/message/box";
-import { certStore } from "/@/store/modules/certs/certs";
+import { domainListStore } from "/@/store/modules/certs/domain-list";
 import { Page } from "/@/api/model/result";
-import { CertModel } from "/@/api/model/certs";
+import { DomainListModel } from "/@/api/model/domain-list";
 import { DomainModel } from "/@/api/model/domain";
 import { CertbotModel } from "/@/api/model/certbot";
 import { certRecordStoreHook } from "/@/store/modules/certs/record";
@@ -213,9 +213,9 @@ const certbotSelect = async () => {
 };
 
 const getPage = async () => {
-  const result = await certStore().findPage(pageData.searchModel);
+  const result = await domainListStore().findPage(pageData.searchModel);
   if (result.code === 0) {
-    const resultData: Page<CertModel> = result.data;
+    const resultData: Page<DomainListModel> = result.data;
     pageData.searchModel.total = resultData.total;
     if (!resultData.records) {
       resultData.records = [];
@@ -264,7 +264,7 @@ const removeHandler = async () => {
         pageData.selection.forEach(value => {
           id.push(value.id);
         });
-        const result = await certStore().deleteByIds(id);
+        const result = await domainListStore().deleteByIds(id);
         if (result.code === 0) {
           getPage();
         } else {
@@ -289,7 +289,7 @@ const handlerDelete = async (data: any) => {
   warnConfirm("是否删除当前数据")
     .then(async () => {
       let id = [data.id];
-      const result = await certStore().deleteByIds(id);
+      const result = await domainListStore().deleteByIds(id);
       if (result.code === 0) {
         getPage();
       } else {
@@ -341,7 +341,7 @@ const getCertBotInfo = (domainId: number): any => {
     return { name: "" };
   }
 };
-const handlerOpenRecord = async (data: CertModel) => {
+const handlerOpenRecord = async (data: DomainListModel) => {
   const certbotInfo = getCertBotInfo(data.domainId);
   const domainInfo = getDomainInfo(data.domainId);
   const certRecordModel = {

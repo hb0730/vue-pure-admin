@@ -1,11 +1,11 @@
 import { BaseQuery } from "./result";
 
-export interface CertQuery extends BaseQuery {
+export interface DomainListQuery extends BaseQuery {
   domainId?: number;
   certbotId?: number;
 }
 
-export interface CertModel {
+export interface DomainListModel {
   id: number;
   domainId: number;
   domainList: string;

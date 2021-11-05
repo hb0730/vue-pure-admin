@@ -1,26 +1,26 @@
 import { defineStore } from "pinia";
-import { certAPI } from "/@/api/certs";
-import { CertModel, CertQuery } from "/@/api/model/certs";
+import { domainListAPI } from "/@/api/domain-list";
+import { DomainListModel, DomainListQuery } from "/@/api/model/domain-list";
 import { Page, Result } from "/@/api/model/result";
 
-export const certStore = defineStore({
-  id: "cert-store",
+export const domainListStore = defineStore({
+  id: "domainList-store",
   actions: {
     /**
      * 分页查询
      * @param query 查询参数
      * @returns 分页列表
      */
-    findPage(query?: CertQuery): Promise<Result<Page<CertModel>>> {
-      return certAPI.findPage(query);
+    findPage(query?: DomainListQuery): Promise<Result<Page<DomainListModel>>> {
+      return domainListAPI.findPage(query);
     },
     /**
      * 保存
      * @param model 保存参数
      * @returns 是否成功
      */
-    save(model: CertModel): Promise<Result<any>> {
-      return certAPI.save(model);
+    save(model: DomainListModel): Promise<Result<any>> {
+      return domainListAPI.save(model);
     },
     /**
      * 根据id修改
@@ -28,8 +28,8 @@ export const certStore = defineStore({
      * @param id  id
      * @returns  是否成功
      */
-    update(model: CertModel, id: number): Promise<Result<any>> {
-      return certAPI.update(model, id);
+    update(model: DomainListModel, id: number): Promise<Result<any>> {
+      return domainListAPI.update(model, id);
     },
     /**
      * 根据id批量删除
@@ -37,7 +37,7 @@ export const certStore = defineStore({
      * @returns  是否成功
      */
     deleteByIds(ids: number[]): Promise<Result<any>> {
-      return certAPI.deleteByIds(ids);
+      return domainListAPI.deleteByIds(ids);
     }
   }
 });
