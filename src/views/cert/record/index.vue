@@ -4,17 +4,26 @@
       <el-row justify="space-between">
         <el-col :span="6">
           <el-form-item label="域名">
-            <el-input disabled v-model="certModel.domainName"></el-input>
+            <el-input
+              disabled
+              v-model="pageData.domainListModel.domainName"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="子域">
-            <el-input disabled v-model="certModel.domainList"></el-input>
+            <el-input
+              disabled
+              v-model="pageData.domainListModel.domainList"
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="申请地址">
-            <el-input disabled v-model="certModel.certbotName"></el-input>
+            <el-input
+              disabled
+              v-model="pageData.domainListModel.certbotName"
+            ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -22,7 +31,9 @@
     <el-row>
       <div class="avue-crud__menu">
         <div class="avue-crud__left">
-          <el-button type="success" size="mini">申请</el-button>
+          <el-button type="success" @click="applyCert" size="mini"
+            >申请</el-button
+          >
         </div>
         <div class="avue-crud__right"></div>
       </div>
@@ -51,20 +62,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, onMounted, reactive } from "vue-demi";
+import { onBeforeMount, onMounted, reactive } from "vue-demi";
 import router from "/@/router";
 import { certRecordStoreHook } from "/@/store/modules/certs/record";
-import { warnMessage } from "/@/utils/message";
+import { successMessage, warnMessage } from "/@/utils/message";
 const store = certRecordStoreHook();
-const certModel = computed(() => {
-  return store.getCertModel;
-});
 const pageData = reactive({
   tableData: [],
   searchModel: {
     pageNum: 1,
     pageSize: 10,
     total: 0
+  },
+  domainListModel: {
+    id: null,
+    domainId: null,
+    domainName: null,
+    domainList: null,
+    certbotName: null,
+    certbotId: null
   }
 });
 const sizeChange = async (pageSize: number) => {
@@ -75,11 +91,22 @@ const currentChange = async (pageNum: number) => {
   pageData.searchModel.pageNum = pageNum;
   getPage();
 };
-
+const getDomainListModel = (): any => {
+  pageData.domainListModel = store.getDomainListModel;
+  return pageData.domainListModel;
+};
+const applyCert = async () => {
+  const result = await store.applyCert(pageData.domainListModel.id);
+  if (result.code === 0) {
+    successMessage("申请成功:请完成后续步骤");
+  } else {
+    warnMessage("申请失败:" + result.msg);
+  }
+};
 const getPage = async () => {};
 
 onBeforeMount(() => {
-  if (!certModel) {
+  if (!getDomainListModel()) {
     warnMessage("打开失败");
     router.go(-1);
   }

@@ -31,11 +31,11 @@ export const routeStore = defineStore({
           dbName: "sys",
           path: "menu",
           user: true,
-          value: result.data
+          value: JSON.stringify(result.data)
         });
         this.dynamicRoutes = result.data;
       } else {
-        this.dynamicRoutes = menu;
+        this.dynamicRoutes = JSON.parse(menu);
       }
       return this.dynamicRoutes;
     }

@@ -1,7 +1,7 @@
 import BaseRequest from "./base";
 import { Result } from "./model/result";
 enum API {
-  apply = "/cert/record/:domainListId"
+  apply = "/cert/record/apply/:domainListId"
 }
 class CertRecords extends BaseRequest {
   /**
