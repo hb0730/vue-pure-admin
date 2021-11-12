@@ -58,9 +58,9 @@ class BaseRequest {
     params: any
   ): Promise<T> {
     const instance = ElLoading.service({
-      text: "Loading  ",
-      background: "rgba(0, 0, 0, 0.7)",
-      spinner: "el-icon-loading"
+      lock: true,
+      text: "Loading",
+      background: "rgba(0, 0, 0, 0.7)"
     });
     return http
       .request<T>(method, url, params, {

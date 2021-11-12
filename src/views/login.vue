@@ -56,6 +56,11 @@ function onPwdBlur() {
   if (pwd.value.length === 0)
     removeClass(document.querySelector(".pwd"), "focus");
 }
+window.addEventListener("keydown", async function (e: KeyboardEvent) {
+  if (e.key === "Enter") {
+    await onLogin();
+  }
+});
 onBeforeMount(() => {
   // refreshGetVerify();
   const login = tokenStoreHok().getRemember();
