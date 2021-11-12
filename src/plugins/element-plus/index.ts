@@ -36,6 +36,7 @@ import {
   ElDescriptions,
   ElDescriptionsItem,
   ElBacktop,
+  ElSwitch,
   ElTabs,
   ElTabPane,
   ElTable,
@@ -46,8 +47,7 @@ import {
   ElOption,
   ElInputNumber,
   ElButtonGroup,
-  ElCheckbox,
-  ElSwitch
+  ElCheckbox
 } from "element-plus";
 
 // https://element-plus.org/zh-CN/component/icon.html
@@ -105,6 +105,7 @@ const components = [
   ElDescriptions,
   ElDescriptionsItem,
   ElBacktop,
+  ElSwitch,
   ElTabs,
   ElTabPane,
   ElTable,
@@ -115,7 +116,6 @@ const components = [
   ElInputNumber,
   ElButtonGroup,
   ElCheckbox,
-  ElSwitch,
 
   // icon
   Check,

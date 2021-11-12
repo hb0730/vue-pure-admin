@@ -89,20 +89,7 @@ function resolvePath(routePath) {
       :class="{ 'submenu-title-noDropdown': !isNest }"
       style="display: flex; align-items: center"
     >
-      <!-- <el-icon v-show="props.item.meta.icon">
-        <component
-          :is="
-            onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)
-          "
-        ></component>
-      </el-icon> -->
-      <i
-        v-if="/^fa/.test(props.item.meta.icon)"
-        :class="
-          onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)
-        "
-      />
-      <el-icon v-else v-show="props.item.meta.icon">
+      <el-icon v-show="props.item.meta.icon">
         <component
           :is="
             onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)
@@ -159,6 +146,7 @@ function resolvePath(routePath) {
       <el-icon v-show="props.item.meta.icon" :class="props.item.meta.icon">
         <component :is="props.item.meta && props.item.meta.icon"></component>
       </el-icon>
+
       <span v-if="!menuMode">{{ $t(props.item.meta.title) }}</span>
       <el-tooltip
         v-else
