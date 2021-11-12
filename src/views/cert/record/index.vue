@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onMounted, reactive } from "vue-demi";
+import { onBeforeMount, onMounted, reactive } from "vue";
 import router from "/@/router";
 import { certRecordStoreHook } from "/@/store/modules/certs/record";
 import { successMessage, warnMessage } from "/@/utils/message";

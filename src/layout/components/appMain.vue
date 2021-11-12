@@ -17,11 +17,20 @@ const props = defineProps({
 const keepAlive: Boolean = ref(
   getCurrentInstance().appContext.config.globalProperties.$config?.KeepAlive
 );
+const instance =
+  getCurrentInstance().appContext.app.config.globalProperties.$storage;
 
 const transitions = computed(() => {
   return route => {
     return route.meta.transition;
   };
+});
+
+const hideTabs = computed(() => {
+  return instance?.sets.hideTabs;
+});
+const layout = computed(() => {
+  return instance?.layout.layout === "vertical";
 });
 
 const transitionMain = defineComponent({
@@ -62,6 +71,12 @@ const transitionMain = defineComponent({
 <template>
   <section
     :class="[props.fixedHeader ? 'app-main' : 'app-main-nofixed-header']"
+    :style="[
+      hideTabs && layout ? 'padding-top: 48px;' : '',
+      !hideTabs && layout ? 'padding-top: 85px;' : '',
+      hideTabs && !layout ? 'padding-top: 62px' : '',
+      !hideTabs && !layout ? 'padding-top: 98px;' : ''
+    ]"
   >
     <router-view>
       <template #default="{ Component, route }">
@@ -74,9 +89,18 @@ const transitionMain = defineComponent({
               v-if="keepAlive"
               :include="usePermissionStoreHook().cachePageList"
             >
-              <component :is="Component" :key="route.fullPath" />
+              <component
+                :is="Component"
+                :key="route.fullPath"
+                class="main-content"
+              />
             </keep-alive>
-            <component v-else :is="Component" :key="route.fullPath" />
+            <component
+              v-else
+              :is="Component"
+              :key="route.fullPath"
+              class="main-content"
+            />
           </transitionMain>
         </el-scrollbar>
         <div v-else>
@@ -85,9 +109,18 @@ const transitionMain = defineComponent({
               v-if="keepAlive"
               :include="usePermissionStoreHook().cachePageList"
             >
-              <component :is="Component" :key="route.fullPath" />
+              <component
+                :is="Component"
+                :key="route.fullPath"
+                class="main-content"
+              />
             </keep-alive>
-            <component v-else :is="Component" :key="route.fullPath" />
+            <component
+              v-else
+              :is="Component"
+              :key="route.fullPath"
+              class="main-content"
+            />
           </transitionMain>
         </div>
       </template>
@@ -107,5 +140,9 @@ const transitionMain = defineComponent({
   width: 100%;
   min-height: 100vh;
   position: relative;
+}
+
+.main-content {
+  margin: 24px;
 }
 </style>

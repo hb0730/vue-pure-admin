@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import path from "path";
-import { storageLocal } from "/@/utils/storage";
-import { PropType, ref, nextTick } from "vue";
+import { PropType, ref, nextTick, getCurrentInstance } from "vue";
 import { childrenType } from "../../types";
+import { useAppStoreHook } from "/@/store/modules/app";
 import Icon from "/@/components/ReIcon/src/Icon.vue";
-const layout = ref(
-  storageLocal.getItem("responsive-layout") || "vertical-dark"
-);
-const menuMode = layout.value.layout.split("-")[0] === "vertical";
+
+const instance = getCurrentInstance().appContext.app.config.globalProperties;
+const menuMode = instance.$storage.layout?.layout === "vertical";
+const pureApp = useAppStoreHook();
 
 const props = defineProps({
   item: {
@@ -68,7 +68,12 @@ function hasOneShowingChild(
 }
 
 function resolvePath(routePath) {
-  return path.resolve(props.basePath, routePath);
+  const httpReg = /^http(s?):\/\//;
+  if (httpReg.test(routePath)) {
+    return props.basePath + "/" + routePath;
+  } else {
+    return path.resolve(props.basePath, routePath);
+  }
 }
 </script>
 
@@ -84,14 +89,36 @@ function resolvePath(routePath) {
       :class="{ 'submenu-title-noDropdown': !isNest }"
       style="display: flex; align-items: center"
     >
+      <!-- <el-icon v-show="props.item.meta.icon">
+        <component
+          :is="
+            onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)
+          "
+        ></component>
+      </el-icon> -->
       <i
-        v-show="props.item.meta.icon"
+        v-if="/^fa/.test(props.item.meta.icon)"
         :class="
           onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)
         "
       />
+      <el-icon v-else v-show="props.item.meta.icon">
+        <component
+          :is="
+            onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)
+          "
+        ></component>
+      </el-icon>
       <template #title>
-        <div style="display: flex; align-items: center; overflow: hidden">
+        <div
+          :style="{
+            width: pureApp.sidebar.opened ? '' : '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            overflow: 'hidden'
+          }"
+        >
           <span v-if="!menuMode">{{ $t(onlyOneChild.meta.title) }}</span>
           <el-tooltip
             v-else
@@ -102,7 +129,11 @@ function resolvePath(routePath) {
             <template #content> {{ $t(onlyOneChild.meta.title) }} </template>
             <span
               ref="menuTextRef"
-              style="overflow: hidden; text-overflow: ellipsis"
+              :style="{
+                width: pureApp.sidebar.opened ? '125px' : '',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }"
               @mouseover="hoverMenu(onlyOneChild)"
             >
               {{ $t(onlyOneChild.meta.title) }}
@@ -125,24 +156,25 @@ function resolvePath(routePath) {
     popper-append-to-body
   >
     <template #title>
-      <i v-show="props.item.meta.icon" :class="props.item.meta.icon"></i>
+      <el-icon v-show="props.item.meta.icon" :class="props.item.meta.icon">
+        <component :is="props.item.meta && props.item.meta.icon"></component>
+      </el-icon>
       <span v-if="!menuMode">{{ $t(props.item.meta.title) }}</span>
-
       <el-tooltip
         v-else
         placement="top"
         :offset="-10"
-        :disabled="!props.item.showTooltip"
+        :disabled="!pureApp.sidebar.opened || !props.item.showTooltip"
       >
         <template #content> {{ $t(props.item.meta.title) }} </template>
         <div
           ref="menuTextRef"
-          style="
-            display: inline-block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 125px;
-          "
+          :style="{
+            width: pureApp.sidebar.opened ? '125px' : '',
+            display: 'inline-block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }"
           @mouseover="hoverMenu(props.item)"
         >
           <span style="overflow: hidden; text-overflow: ellipsis">

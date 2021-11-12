@@ -28,7 +28,7 @@ let map: MapConfigureInter;
 
 const instance = getCurrentInstance();
 
-const mapSet: mapInter = reactive({
+const mapSet = reactive({
   loading: deviceDetection() ? false : true
 });
 
@@ -126,19 +126,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    id="mapview"
-    ref="mapview"
-    v-loading="mapSet.loading"
-    element-loading-text="地图加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-  ></div>
+  <div id="mapview" ref="mapview" v-loading="mapSet.loading"></div>
 </template>
 
 <style lang="scss" scoped>
 #mapview {
-  height: 100vh;
+  height: calc(100vh - 86px);
 }
 
 :deep(.amap-marker-label) {

@@ -85,6 +85,8 @@ function setting() {
                 color: locale === 'zh' ? '#f4f4f5' : '#000'
               }"
               @click="translationCh"
+              ><el-icon class="check-zh" v-show="locale === 'zh'"
+                ><check /></el-icon
               >简体中文</el-dropdown-item
             >
             <el-dropdown-item
@@ -93,6 +95,8 @@ function setting() {
                 color: locale === 'en' ? '#f4f4f5' : '#000'
               }"
               @click="translationEn"
+              ><el-icon class="check-en" v-show="locale === 'en'"
+                ><check /></el-icon
               >English</el-dropdown-item
             >
           </el-dropdown-menu>
@@ -117,11 +121,13 @@ function setting() {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <i
+      <el-icon
         class="el-icon-setting"
         :title="$t('message.hssystemSet')"
         @click="onPanel"
-      ></i>
+      >
+        <Setting />
+      </el-icon>
     </div>
   </div>
 </template>
@@ -201,8 +207,8 @@ function setting() {
 
     .el-icon-setting {
       height: 48px;
-      width: 40px;
-      padding: 11px;
+      width: 38px;
+      padding: 12px;
       display: flex;
       cursor: pointer;
       align-items: center;
@@ -227,6 +233,18 @@ function setting() {
   .el-dropdown-menu__item:not(.is-disabled):hover {
     color: #606266;
     background: #f0f0f0;
+  }
+
+  .check-zh {
+    position: absolute;
+    left: 20px;
+    top: 13px;
+  }
+
+  .check-en {
+    position: absolute;
+    bottom: 13px;
+    left: 20px;
   }
 }
 

@@ -3,8 +3,14 @@ import BaseRequest from "./base";
 import { Result, Page } from "./model/result";
 import { UpdatePasswordModel, UserInfoModel } from "./model/user";
 
+interface userType extends Promise<any> {
+  svg?: string;
+  code?: number;
+  info?: object;
+}
+
 // 获取验证码
-export const getVerify = () => {
+export const getVerify = (): userType => {
   return http.request("get", "/captcha");
 };
 
@@ -12,7 +18,6 @@ export const getVerify = () => {
 export const getLogin = (data: object) => {
   return http.request("post", "/login", data);
 };
-
 // 注册
 export const getRegist = (data: object) => {
   return http.request("post", "/register", data);

@@ -166,7 +166,7 @@ import RemoveButton from "/@/views/components/table/removeButton.vue";
 import RefreshButton from "/@/views/components/table/refreshButton.vue";
 //@ts-ignore
 import Info from "../info/index.vue";
-import { onMounted, reactive } from "vue-demi";
+import { onMounted, reactive } from "vue";
 import { certbotStore } from "/@/store/modules/certbot/certbot";
 import { domainStore } from "/@/store/modules/domain/domain";
 
