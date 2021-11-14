@@ -6,6 +6,7 @@ import { createApp, Directive } from "vue";
 import { usI18n } from "../src/plugins/i18n";
 import { MotionPlugin } from "@vueuse/motion";
 import { useTable } from "../src/plugins/vxe-table";
+import { useFontawesome } from "../src/plugins/fontawesome";
 import { useElementPlus } from "../src/plugins/element-plus";
 import { injectResponsiveStorage } from "/@/utils/storage/responsive";
 
@@ -34,7 +35,8 @@ getServerConfig(app).then(async config => {
     .use(MotionPlugin)
     .use(useElementPlus)
     .use(useTable)
-    .use(usI18n);
+    .use(usI18n)
+    .use(useFontawesome);
   await router.isReady();
 
   // option 请求
