@@ -65,9 +65,27 @@ import {
   RefreshRight,
   ArrowDown,
   Close,
-  CloseBold
+  CloseBold,
+  Refresh
 } from "@element-plus/icons";
-
+// icon
+export const iconComponents = [
+  Check,
+  Menu,
+  HomeFilled,
+  SetUp,
+  Edit,
+  Setting,
+  Lollipop,
+  Link,
+  Position,
+  Histogram,
+  RefreshRight,
+  ArrowDown,
+  Close,
+  CloseBold,
+  Refresh
+];
 const components = [
   ElTag,
   ElAffix,
@@ -115,28 +133,13 @@ const components = [
   ElOption,
   ElInputNumber,
   ElButtonGroup,
-  ElCheckbox,
-
-  // icon
-  Check,
-  Menu,
-  HomeFilled,
-  SetUp,
-  Edit,
-  Setting,
-  Lollipop,
-  Link,
-  Position,
-  Histogram,
-  RefreshRight,
-  ArrowDown,
-  Close,
-  CloseBold
+  ElCheckbox
 ];
 
 const plugins = [ElLoading, ElInfiniteScroll];
 
 export function useElementPlus(app: App) {
+  components.push(...iconComponents);
   components.forEach((component: Component) => {
     app.component(component.name, component);
   });

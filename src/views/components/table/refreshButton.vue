@@ -7,7 +7,7 @@
     title="刷新"
     @click="refreshHandler"
   >
-    <i class="el-icon-refresh"></i>
+    <i class="fa fa-refresh"></i>
   </button>
 </template>
 <script setup lang="ts">

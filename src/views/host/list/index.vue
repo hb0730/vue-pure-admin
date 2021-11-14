@@ -19,7 +19,9 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button plain size="medium" icon="fa fa-search">查询</el-button>
+        <el-button plain size="medium" :icon="findIcon('search')">
+          查询</el-button
+        >
       </el-form-item>
     </el-form>
     <el-row :gutter="2">
@@ -93,21 +95,21 @@
               <el-button
                 title="修改"
                 type="primary"
-                icon="fa fa-pencil"
+                :icon="findIcon('edit')"
                 @click="handlerEdit(scope.row)"
                 size="mini"
               ></el-button>
               <el-button
                 title="删除"
                 type="danger"
-                icon="fa fa-trash"
+                :icon="findIcon('trash')"
                 size="mini"
                 @click="handlerDelete(scope.row)"
               ></el-button>
               <el-button
                 title="连接"
                 type="info"
-                icon="fa fa-terminal"
+                :icon="findIcon('terminal')"
                 size="mini"
                 @click="openTerminal(scope.row)"
               ></el-button>
@@ -145,6 +147,7 @@ import EditButton from "/@/views/components/table/editButton.vue";
 import RemoveButton from "/@/views/components/table/removeButton.vue";
 //@ts-ignore
 import HostInfo from "../component/info/info.vue";
+import { findIcon } from "/@/components/fontawesome";
 import { hostStore } from "/@/store/modules/host/host";
 import { HostModel, HostQuery } from "/@/api/model/host";
 import { warnMessage } from "/@/utils/message";

@@ -6,10 +6,27 @@
 import { App } from "vue";
 import "font-awesome/css/font-awesome.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserSecret,
+  faSearch,
+  faSync,
+  faEdit,
+  faTrash,
+  faTerminal,
+  faServer
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export function useFontawesome(app: App) {
-  library.add(faUserSecret);
+  library.add(
+    faUserSecret,
+    faSearch,
+    faSync,
+    faEdit,
+    faTrash,
+    faTerminal,
+    faServer
+  );
   app.component("font-awesome-icon", FontAwesomeIcon);
+  app.component("faSearch", faSearch);
 }
