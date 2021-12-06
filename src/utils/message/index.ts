@@ -3,7 +3,7 @@ import { ElMessage } from "element-plus";
 // 消息
 const Message = (message: string): any => {
   return ElMessage({
-    showClose: true,
+    showClose: false,
     message
   });
 };
@@ -11,7 +11,7 @@ const Message = (message: string): any => {
 // 成功
 const successMessage = (message: string): any => {
   return ElMessage({
-    showClose: true,
+    showClose: false,
     message,
     type: "success"
   });
@@ -20,7 +20,7 @@ const successMessage = (message: string): any => {
 // 警告
 const warnMessage = (message: string): any => {
   return ElMessage({
-    showClose: true,
+    showClose: false,
     message,
     type: "warning"
   });
@@ -29,7 +29,7 @@ const warnMessage = (message: string): any => {
 // 失败
 const errorMessage = (message: string): any => {
   return ElMessage({
-    showClose: true,
+    showClose: false,
     message,
     type: "error"
   });

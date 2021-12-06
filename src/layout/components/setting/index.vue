@@ -5,25 +5,26 @@ import {
   unref,
   watch,
   computed,
+  nextTick,
   useCssModule,
   getCurrentInstance
 } from "vue";
 import panel from "../panel/index.vue";
+import { useRouter } from "vue-router";
 import { emitter } from "/@/utils/mitt";
 import { templateRef } from "@vueuse/core";
 import { debounce } from "/@/utils/debounce";
 import { themeColorsType } from "../../types";
 import { useAppStoreHook } from "/@/store/modules/app";
-import { storageLocal } from "/@/utils/storage";
+import { storageLocal, storageSession } from "/@/utils/storage";
+import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
 import { toggleTheme } from "@zougt/vite-plugin-theme-preprocessor/dist/browser-utils";
-
+const router = useRouter();
 const { isSelect } = useCssModule();
 const instance =
   getCurrentInstance().appContext.app.config.globalProperties.$storage;
-
 const instanceConfig =
   getCurrentInstance().appContext.app.config.globalProperties.$config;
-
 let themeColors = ref<Array<themeColorsType>>([
   // 暗雅（默认）
   { rgb: "27, 42, 71", themeColor: "default" },
@@ -44,17 +45,14 @@ let themeColors = ref<Array<themeColorsType>>([
   // 酱紫
   { rgb: "114, 46, 209", themeColor: "saucePurple" }
 ]);
-
 const verticalRef = templateRef<HTMLElement | null>("verticalRef", null);
 const horizontalRef = templateRef<HTMLElement | null>("horizontalRef", null);
-
 let layoutTheme =
   ref(storageLocal.getItem("responsive-layout")) ||
   ref({
     layout: instanceConfig?.Layout ?? "vertical",
     theme: instanceConfig?.Theme ?? "default"
   });
-
 // body添加layout属性，作用于src/style/sidebar.scss
 if (unref(layoutTheme)) {
   let layout = unref(layoutTheme).layout;
@@ -64,25 +62,20 @@ if (unref(layoutTheme)) {
   });
   setLayoutModel(layout);
 }
-
 // 默认灵动模式
 const markValue = ref(storageLocal.getItem("showModel") || "smart");
-
 const logoVal = ref(storageLocal.getItem("logoVal") || "1");
-
 const settings = reactive({
   greyVal: instance.sets.grey,
   weakVal: instance.sets.weak,
   tabsVal: instance.sets.hideTabs
 });
-
 function toggleClass(flag: boolean, clsName: string, target?: HTMLElement) {
   const targetEl = target || document.body;
   let { className } = targetEl;
   className = className.replace(clsName, "");
   targetEl.className = flag ? `${className} ${clsName} ` : className;
 }
-
 // 灰色模式设置
 const greyChange = (value): void => {
   toggleClass(settings.greyVal, "html-grey", document.querySelector("html"));
@@ -92,7 +85,6 @@ const greyChange = (value): void => {
     hideTabs: instance.sets.hideTabs
   };
 };
-
 // 色弱模式设置
 const weekChange = (value): void => {
   toggleClass(
@@ -106,7 +98,6 @@ const weekChange = (value): void => {
     hideTabs: instance.sets.hideTabs
   };
 };
-
 const tagsChange = () => {
   let showVal = settings.tabsVal;
   instance.sets = {
@@ -116,12 +107,38 @@ const tagsChange = () => {
   };
   emitter.emit("tagViewsChange", showVal);
 };
-
-function onChange({ label }) {
+//初始化项目配置
+nextTick(() => {
+  settings.greyVal &&
+    document.querySelector("html")?.setAttribute("class", "html-grey");
+  settings.weakVal &&
+    document.querySelector("html")?.setAttribute("class", "html-weakness");
+  settings.tabsVal && tagsChange();
+});
+// 清空缓存并返回登录页
+function onReset() {
+  storageLocal.clear();
+  storageSession.clear();
+  toggleClass(false, "html-grey", document.querySelector("html"));
+  toggleClass(false, "html-weakness", document.querySelector("html"));
+  useMultiTagsStoreHook().handleTags("equal", [
+    {
+      path: "/welcome",
+      parentPath: "/",
+      meta: {
+        title: "message.hshome",
+        icon: "el-icon-s-home",
+        i18n: true,
+        showLink: true
+      }
+    }
+  ]);
+  router.push("/login");
+}
+function onChange(label) {
   storageLocal.setItem("showModel", label);
   emitter.emit("tagViewsShowModel", label);
 }
-
 // 侧边栏Logo
 function logoChange() {
   unref(logoVal) === "1"
@@ -129,13 +146,11 @@ function logoChange() {
     : storageLocal.setItem("logoVal", "-1");
   emitter.emit("logoChange", unref(logoVal));
 }
-
 function setFalse(Doms): any {
   Doms.forEach(v => {
     toggleClass(false, isSelect, unref(v));
   });
 }
-
 watch(instance, ({ layout }) => {
   switch (layout["layout"]) {
     case "vertical":
@@ -148,7 +163,6 @@ watch(instance, ({ layout }) => {
       break;
   }
 });
-
 // 主题色 激活选择项
 const getThemeColor = computed(() => {
   return current => {
@@ -167,7 +181,6 @@ const getThemeColor = computed(() => {
     }
   };
 });
-
 // 设置导航模式
 function setLayoutModel(layout: string) {
   layoutTheme.value.layout = layout;
@@ -175,7 +188,6 @@ function setLayoutModel(layout: string) {
   instance.layout = { layout, theme: layoutTheme.value.theme };
   useAppStoreHook().setLayout(layout);
 }
-
 // 设置导航主题色
 function setLayoutThemeColor(theme: string) {
   layoutTheme.value.theme = theme;
@@ -294,6 +306,14 @@ function setLayoutThemeColor(theme: string) {
     </ul>
 
     <el-divider />
+    <el-button
+      type="danger"
+      style="width: 90%; margin: 24px 15px"
+      @click="onReset"
+    >
+      <i class="fa fa-sign-out"></i>
+      清空缓存并返回登录页</el-button
+    >
   </panel>
 </template>
 

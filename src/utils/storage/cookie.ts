@@ -1,9 +1,9 @@
-import { loadEnv } from "@build/utils";
+import { loadEnvToMap } from "@build/";
 import { merge } from "lodash-es";
 import tsCookies from "typescript-cookie/dist/src/compat";
 
 class Cookies {
-  private static env = loadEnv();
+  private static env = loadEnvToMap();
   constructor() {}
   /**
    *  存储 cookie 值

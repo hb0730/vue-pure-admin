@@ -11,6 +11,7 @@ import illustration4 from "/@/assets/login/illustration4.svg";
 import illustration5 from "/@/assets/login/illustration5.svg";
 import illustration6 from "/@/assets/login/illustration6.svg";
 import { tokenStoreHok } from "../store/modules/token";
+import { warnMessage } from "../utils/message";
 // eslint-disable-next-line vue/return-in-computed-property
 const currentWeek = computed(() => {
   switch (String(new Date().getDay())) {
@@ -36,6 +37,10 @@ let user = ref("");
 let pwd = ref("");
 let remember = ref(false);
 const onLogin = async () => {
+  if (user.value == "" || pwd.value == "") {
+    warnMessage("请输入用户名/密码");
+    return;
+  }
   await tokenStoreHok().login({
     username: user.value,
     password: pwd.value,

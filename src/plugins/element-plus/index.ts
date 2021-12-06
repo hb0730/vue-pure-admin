@@ -23,7 +23,6 @@ import {
   ElInput,
   ElForm,
   ElFormItem,
-  ElLoading,
   ElPopover,
   ElPopper,
   ElTooltip,
@@ -41,13 +40,20 @@ import {
   ElTabPane,
   ElTable,
   ElTableColumn,
-  ElInfiniteScroll,
   ElUpload,
   ElSelect,
   ElOption,
   ElInputNumber,
   ElButtonGroup,
-  ElCheckbox
+  ElCheckbox,
+  ElBadge,
+  ElAvatar,
+  ElEmpty,
+  ElCollapse,
+  ElCollapseItem,
+  // 指令
+  ElLoading,
+  ElInfiniteScroll
 } from "element-plus";
 
 // https://element-plus.org/zh-CN/component/icon.html
@@ -66,26 +72,9 @@ import {
   ArrowDown,
   Close,
   CloseBold,
-  Refresh
+  Refresh,
+  Bell
 } from "@element-plus/icons";
-// icon
-export const iconComponents = [
-  Check,
-  Menu,
-  HomeFilled,
-  SetUp,
-  Edit,
-  Setting,
-  Lollipop,
-  Link,
-  Position,
-  Histogram,
-  RefreshRight,
-  ArrowDown,
-  Close,
-  CloseBold,
-  Refresh
-];
 const components = [
   ElTag,
   ElAffix,
@@ -133,7 +122,31 @@ const components = [
   ElOption,
   ElInputNumber,
   ElButtonGroup,
-  ElCheckbox
+  ElCheckbox,
+  ElBadge,
+  ElAvatar,
+  ElEmpty,
+  ElCollapse,
+  ElCollapseItem
+];
+// icon
+export const iconComponents = [
+  Refresh,
+  Check,
+  Menu,
+  HomeFilled,
+  SetUp,
+  Edit,
+  Setting,
+  Lollipop,
+  Link,
+  Position,
+  Histogram,
+  RefreshRight,
+  ArrowDown,
+  Close,
+  CloseBold,
+  Bell
 ];
 
 const plugins = [ElLoading, ElInfiniteScroll];

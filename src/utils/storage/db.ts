@@ -1,4 +1,4 @@
-import { loadEnv } from "@build/utils";
+import { loadEnvToMap } from "@build/";
 import { LocalStorage, LowSync } from "lowdb";
 import { chain, cloneDeep } from "lodash-es";
 import { storageLocal } from ".";
@@ -12,7 +12,7 @@ type Data = {
  */
 class DB {
   private db: LowSync<Data>;
-  private static env = loadEnv();
+  private static env = loadEnvToMap();
   constructor() {
     this.db = new LowSync<Data>(
       new LocalStorage<Data>(`${DB.env.VITE_TITLE}-${DB.env.VITE_VERSION}`)

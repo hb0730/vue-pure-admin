@@ -1,17 +1,3 @@
-<script lang="ts">
-let routerArrays: Array<RouteConfigs> = [
-  {
-    path: "/welcome",
-    parentPath: "/",
-    meta: {
-      title: "message.hshome",
-      icon: "el-icon-s-home",
-      showLink: true
-    }
-  }
-];
-</script>
-
 <script setup lang="ts">
 import {
   ref,
@@ -23,14 +9,6 @@ import {
   getCurrentInstance,
   ComputedRef
 } from "vue";
-import { RouteConfigs, relativeStorageType, tagsViewsType } from "../../types";
-import { emitter } from "/@/utils/mitt";
-import { templateRef } from "@vueuse/core";
-import { handleAliveRoute, delAliveRoutes } from "/@/router";
-import { storageLocal } from "/@/utils/storage";
-import { useRoute, useRouter } from "vue-router";
-import { usePermissionStoreHook } from "/@/store/modules/permission";
-import { toggleClass, removeClass, hasClass } from "/@/utils/operate";
 
 import close from "/@/assets/svg/close.svg";
 import refresh from "/@/assets/svg/refresh.svg";
@@ -39,16 +17,115 @@ import closeLeft from "/@/assets/svg/close_left.svg";
 import closeOther from "/@/assets/svg/close_other.svg";
 import closeRight from "/@/assets/svg/close_right.svg";
 
-let refreshButton = "refresh-button";
-const instance = getCurrentInstance();
+import { emitter } from "/@/utils/mitt";
+import { transformI18n } from "/@/plugins/i18n";
+import { storageLocal } from "/@/utils/storage";
+import { useRoute, useRouter } from "vue-router";
+import { RouteConfigs, tagsViewsType } from "../../types";
+import { handleAliveRoute, delAliveRoutes } from "/@/router";
+import { useSettingStoreHook } from "/@/store/modules/settings";
+import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
+import { usePermissionStoreHook } from "/@/store/modules/permission";
+import { toggleClass, removeClass, hasClass } from "/@/utils/operate";
+import { templateRef, useResizeObserver, useDebounceFn } from "@vueuse/core";
 
-// 响应式storage
-let relativeStorage: relativeStorageType;
 const route = useRoute();
 const router = useRouter();
+const translateX = ref<number>(0);
+const activeIndex = ref<number>(-1);
+let refreshButton = "refresh-button";
+const instance = getCurrentInstance();
+const pureSetting = useSettingStoreHook();
 const showTags = ref(storageLocal.getItem("tagsVal") || false);
+const tabDom = templateRef<HTMLElement | null>("tabDom", null);
 const containerDom = templateRef<HTMLElement | null>("containerDom", null);
-const activeIndex = ref(-1);
+const scrollbarDom = templateRef<HTMLElement | null>("scrollbarDom", null);
+
+let multiTags: ComputedRef<Array<RouteConfigs>> = computed(() => {
+  return useMultiTagsStoreHook()?.multiTags;
+});
+
+const dynamicTagView = () => {
+  const index = multiTags.value.findIndex(item => {
+    return item.path === route.path;
+  });
+  moveToView(index);
+};
+
+watch([route], () => {
+  activeIndex.value = -1;
+  dynamicTagView();
+});
+
+useResizeObserver(
+  scrollbarDom,
+  useDebounceFn(() => {
+    dynamicTagView();
+  }, 200)
+);
+
+const tabNavPadding = 10;
+const moveToView = (index: number): void => {
+  if (!instance.refs["dynamic" + index]) {
+    return;
+  }
+  const tabItemEl = instance.refs["dynamic" + index];
+  const tabItemElOffsetLeft = (tabItemEl as HTMLElement).offsetLeft;
+  const tabItemOffsetWidth = (tabItemEl as HTMLElement).offsetWidth;
+  // 标签页导航栏可视长度（不包含溢出部分）
+  const scrollbarDomWidth = scrollbarDom.value
+    ? scrollbarDom.value.offsetWidth
+    : 0;
+  // 已有标签页总长度（包含溢出部分）
+  const tabDomWidth = tabDom.value ? tabDom.value.offsetWidth : 0;
+
+  if (tabDomWidth < scrollbarDomWidth || tabItemElOffsetLeft === 0) {
+    translateX.value = 0;
+  } else if (tabItemElOffsetLeft < -translateX.value) {
+    // 标签在可视区域左侧
+    translateX.value = -tabItemElOffsetLeft + tabNavPadding;
+  } else if (
+    tabItemElOffsetLeft > -translateX.value &&
+    tabItemElOffsetLeft + tabItemOffsetWidth <
+      -translateX.value + scrollbarDomWidth
+  ) {
+    // 标签在可视区域
+    translateX.value = Math.min(
+      0,
+      scrollbarDomWidth -
+        tabItemOffsetWidth -
+        tabItemElOffsetLeft -
+        tabNavPadding
+    );
+  } else {
+    // 标签在可视区域右侧
+    translateX.value = -(
+      tabItemElOffsetLeft -
+      (scrollbarDomWidth - tabNavPadding - tabItemOffsetWidth)
+    );
+  }
+};
+
+const handleScroll = (offset: number): void => {
+  const scrollbarDomWidth = scrollbarDom.value
+    ? scrollbarDom.value?.offsetWidth
+    : 0;
+  const tabDomWidth = tabDom.value ? tabDom.value.offsetWidth : 0;
+  if (offset > 0) {
+    translateX.value = Math.min(0, translateX.value + offset);
+  } else {
+    if (scrollbarDomWidth < tabDomWidth) {
+      if (translateX.value >= -(tabDomWidth - scrollbarDomWidth)) {
+        translateX.value = Math.max(
+          translateX.value + offset,
+          scrollbarDomWidth - tabDomWidth
+        );
+      }
+    } else {
+      translateX.value = 0;
+    }
+  }
+};
 
 const tagsViews = ref<Array<tagsViewsType>>([
   {
@@ -62,41 +139,38 @@ const tagsViews = ref<Array<tagsViewsType>>([
     icon: close,
     text: "message.hscloseCurrentTab",
     divided: false,
-    disabled: routerArrays.length > 1 ? false : true,
+    disabled: multiTags.value.length > 1 ? false : true,
     show: true
   },
   {
     icon: closeLeft,
     text: "message.hscloseLeftTabs",
     divided: true,
-    disabled: routerArrays.length > 1 ? false : true,
+    disabled: multiTags.value.length > 1 ? false : true,
     show: true
   },
   {
     icon: closeRight,
     text: "message.hscloseRightTabs",
     divided: false,
-    disabled: routerArrays.length > 1 ? false : true,
+    disabled: multiTags.value.length > 1 ? false : true,
     show: true
   },
   {
     icon: closeOther,
     text: "message.hscloseOtherTabs",
     divided: true,
-    disabled: routerArrays.length > 2 ? false : true,
+    disabled: multiTags.value.length > 2 ? false : true,
     show: true
   },
   {
     icon: closeAll,
     text: "message.hscloseAllTabs",
     divided: false,
-    disabled: routerArrays.length > 1 ? false : true,
+    disabled: multiTags.value.length > 1 ? false : true,
     show: true
   }
 ]);
-const dynamicTagList: ComputedRef<Array<RouteConfigs>> = computed(() => {
-  return relativeStorage.routesInStorage;
-});
 
 // 显示模式，默认灵动模式显示
 const showModel = ref(storageLocal.getItem("showModel") || "smart");
@@ -112,7 +186,7 @@ let buttonTop = ref(0);
 let currentSelect = ref({});
 
 function dynamicRouteTag(value: string, parentPath: string): void {
-  const hasValue = relativeStorage.routesInStorage.some((item: any) => {
+  const hasValue = multiTags.value.some(item => {
     return item.path === value;
   });
 
@@ -121,13 +195,12 @@ function dynamicRouteTag(value: string, parentPath: string): void {
       arr.forEach((arrItem: any) => {
         let pathConcat = parentPath + arrItem.path;
         if (arrItem.path === value || pathConcat === value) {
-          routerArrays.push({
+          useMultiTagsStoreHook().handleTags("push", {
             path: value,
             parentPath: `/${parentPath.split("/")[1]}`,
             meta: arrItem.meta,
             name: arrItem.name
           });
-          relativeStorage.routesInStorage = routerArrays;
         } else {
           if (arrItem.children && arrItem.children.length > 0) {
             concatPath(arrItem.children, value, parentPath);
@@ -154,28 +227,35 @@ function onFresh() {
 function deleteDynamicTag(obj: any, current: any, tag?: string) {
   // 存放被删除的缓存路由
   let delAliveRouteList = [];
-  let valueIndex: number = routerArrays.findIndex((item: any) => {
+  let valueIndex: number = multiTags.value.findIndex((item: any) => {
     return item.path === obj.path;
   });
 
-  const spliceRoute = (start?: number, end?: number, other?: boolean): void => {
+  const spliceRoute = (
+    startIndex?: number,
+    length?: number,
+    other?: boolean
+  ): void => {
     if (other) {
-      relativeStorage.routesInStorage = [
+      useMultiTagsStoreHook().handleTags("equal", [
         {
           path: "/welcome",
           parentPath: "/",
           meta: {
             title: "message.hshome",
+            i18n: true,
             icon: "el-icon-s-home",
             showLink: true
           }
         },
         obj
-      ];
-      routerArrays = relativeStorage.routesInStorage;
+      ]);
     } else {
-      delAliveRouteList = routerArrays.splice(start, end);
-      relativeStorage.routesInStorage = routerArrays;
+      // @ts-ignore
+      delAliveRouteList = useMultiTagsStoreHook().handleTags("splice", "", {
+        startIndex,
+        length
+      });
     }
   };
 
@@ -184,12 +264,12 @@ function deleteDynamicTag(obj: any, current: any, tag?: string) {
   } else if (tag === "left") {
     spliceRoute(1, valueIndex - 1);
   } else if (tag === "right") {
-    spliceRoute(valueIndex + 1, routerArrays.length);
+    spliceRoute(valueIndex + 1, multiTags.value.length);
   } else {
     // 从当前匹配到的路径中删除
     spliceRoute(valueIndex, 1);
   }
-  let newRoute: any = routerArrays.slice(-1);
+  let newRoute = useMultiTagsStoreHook().handleTags("slice");
   if (current === route.path) {
     // 删除缓存路由
     tag
@@ -205,8 +285,8 @@ function deleteDynamicTag(obj: any, current: any, tag?: string) {
   } else {
     // 删除缓存路由
     tag ? delAliveRoutes(delAliveRouteList) : delAliveRoutes([obj]);
-    if (!routerArrays.length) return;
-    let isHasActiveTag = routerArrays.some(item => {
+    if (!multiTags.value.length) return;
+    let isHasActiveTag = multiTags.value.some(item => {
       return item.path === route.path;
     });
     !isHasActiveTag &&
@@ -276,11 +356,12 @@ function onClickDrop(key, item, selectRoute?: RouteConfigs) {
       break;
     case 5:
       // 关闭全部标签页
-      routerArrays.splice(1, routerArrays.length);
-      relativeStorage.routesInStorage = routerArrays;
+      useMultiTagsStoreHook().handleTags("splice", "", {
+        startIndex: 1,
+        length: multiTags.value.length
+      });
       usePermissionStoreHook().clearAllCachePage();
       router.push("/welcome");
-
       break;
   }
   setTimeout(() => {
@@ -311,8 +392,8 @@ function disabledMenus(value: boolean) {
 
 // 检查当前右键的菜单两边是否存在别的菜单，如果左侧的菜单是首页，则不显示关闭左侧标签页，如果右侧没有菜单，则不显示关闭右侧标签页
 function showMenuModel(currentPath: string, refresh = false) {
-  let allRoute = unref(relativeStorage.routesInStorage);
-  let routeLength = unref(relativeStorage.routesInStorage).length;
+  let allRoute = multiTags.value;
+  let routeLength = multiTags.value.length;
   // currentIndex为1时，左侧的菜单是首页，则不显示关闭左侧标签页
   let currentIndex = allRoute.findIndex(v => v.path === currentPath);
   // 如果currentIndex等于routeLength-1，右侧没有菜单，则不显示关闭右侧标签页
@@ -363,7 +444,7 @@ function openMenu(tag, e) {
     showMenuModel(tag.path);
   } else if (
     // eslint-disable-next-line no-dupe-else-if
-    relativeStorage.routesInStorage.length === 2 &&
+    multiTags.value.length === 2 &&
     route.path !== tag.path
   ) {
     showMenus(true);
@@ -385,7 +466,9 @@ function openMenu(tag, e) {
   } else {
     buttonLeft.value = left;
   }
-  buttonTop.value = e.clientY + 10;
+  pureSetting.hiddenSideBar
+    ? (buttonTop.value = e.clientY)
+    : (buttonTop.value = e.clientY - 40);
   setTimeout(() => {
     visible.value = true;
   }, 10);
@@ -393,7 +476,10 @@ function openMenu(tag, e) {
 
 // 触发tags标签切换
 function tagOnClick(item) {
-  showMenuModel(item.path);
+  router.push({
+    path: item?.path
+  });
+  showMenuModel(item?.path);
 }
 
 // 鼠标移入
@@ -437,8 +523,6 @@ watch(
 
 onBeforeMount(() => {
   if (!instance) return;
-  relativeStorage = instance.appContext.app.config.globalProperties.$storage;
-  routerArrays = relativeStorage.routesInStorage ?? routerArrays;
 
   // 根据当前路由初始化操作标签页的禁用状态
   showMenuModel(route.fullPath);
@@ -466,40 +550,51 @@ onBeforeMount(() => {
 
 <template>
   <div ref="containerDom" class="tags-view" v-if="!showTags">
-    <el-scrollbar wrap-class="scrollbar-wrapper" class="scroll-container">
+    <i class="ri-arrow-left-s-line" @click="handleScroll(200)"></i>
+    <div ref="scrollbarDom" class="scroll-container">
       <div
-        v-for="(item, index) in dynamicTagList"
-        :key="index"
-        :ref="'dynamic' + index"
-        :class="[
-          'scroll-item is-closable',
-          $route.path === item.path ? 'is-active' : '',
-          $route.path === item.path && showModel === 'card' ? 'card-active' : ''
-        ]"
-        @contextmenu.prevent="openMenu(item, $event)"
-        @mouseenter.prevent="onMouseenter(item, index)"
-        @mouseleave.prevent="onMouseleave(item, index)"
+        class="tab"
+        ref="tabDom"
+        :style="{ transform: `translateX(${translateX}px)` }"
       >
-        <router-link :to="item.path" @click="tagOnClick(item)">{{
-          $t(item.meta.title)
-        }}</router-link>
-        <el-icon
-          v-if="
-            ($route.path === item.path && index !== 0) ||
-            (index === activeIndex && index !== 0)
-          "
-          class="el-icon-close"
-          @click="deleteMenu(item)"
-        >
-          <CloseBold />
-        </el-icon>
         <div
-          :ref="'schedule' + index"
-          v-if="showModel !== 'card'"
-          :class="[$route.path === item.path ? 'schedule-active' : '']"
-        ></div>
+          :ref="'dynamic' + index"
+          v-for="(item, index) in multiTags"
+          :key="index"
+          :class="[
+            'scroll-item is-closable',
+            $route.path === item.path ? 'is-active' : '',
+            $route.path === item.path && showModel === 'card'
+              ? 'card-active'
+              : ''
+          ]"
+          @contextmenu.prevent="openMenu(item, $event)"
+          @mouseenter.prevent="onMouseenter(item, index)"
+          @mouseleave.prevent="onMouseleave(item, index)"
+          @click="tagOnClick(item)"
+        >
+          <router-link :to="item.path">{{
+            transformI18n(item.meta.title, item.meta.i18n)
+          }}</router-link>
+          <el-icon
+            v-if="
+              ($route.path === item.path && index !== 0) ||
+              (index === activeIndex && index !== 0)
+            "
+            class="el-icon-close"
+            @click.stop="deleteMenu(item)"
+          >
+            <CloseBold />
+          </el-icon>
+          <div
+            :ref="'schedule' + index"
+            v-if="showModel !== 'card'"
+            :class="[$route.path === item.path ? 'schedule-active' : '']"
+          ></div>
+        </div>
       </div>
-    </el-scrollbar>
+    </div>
+    <i class="ri-arrow-right-s-line" @click="handleScroll(-200)"></i>
     <!-- 右键菜单按钮 -->
     <transition name="el-zoom-in-top">
       <ul
@@ -560,277 +655,5 @@ onBeforeMount(() => {
 </template>
 
 <style lang="scss" scoped>
-@keyframes scheduleInWidth {
-  from {
-    width: 0;
-  }
-
-  to {
-    width: 100%;
-  }
-}
-@keyframes scheduleOutWidth {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0;
-  }
-}
-@-webkit-keyframes rotate {
-  from {
-    -webkit-transform: rotate(0deg);
-  }
-
-  to {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@-moz-keyframes rotate {
-  from {
-    -moz-transform: rotate(0deg);
-  }
-
-  to {
-    -moz-transform: rotate(360deg);
-  }
-}
-@-o-keyframes rotate {
-  from {
-    -o-transform: rotate(0deg);
-  }
-
-  to {
-    -o-transform: rotate(360deg);
-  }
-}
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.tags-view {
-  width: 100%;
-  font-size: 14px;
-  display: flex;
-  box-shadow: 0 0 1px #888;
-
-  .scroll-item {
-    border-radius: 3px 3px 0 0;
-    padding: 2px 6px;
-    display: inline-block;
-    position: relative;
-    margin-right: 4px;
-    height: 28px;
-    line-height: 25px;
-    transition: all 0.4s;
-
-    .el-icon-close {
-      font-size: 10px;
-      color: #1890ff;
-      cursor: pointer;
-      transform: fontsize3s;
-
-      &:hover {
-        border-radius: 50%;
-        color: #fff;
-        background: #b4bccc;
-        font-size: 14px;
-      }
-    }
-
-    &.is-closable:not(:first-child) {
-      &:hover {
-        padding-right: 8px;
-      }
-    }
-  }
-
-  a {
-    text-decoration: none;
-    color: #666;
-    padding: 0 4px 0 4px;
-  }
-
-  .scroll-container {
-    padding: 5px 0;
-    white-space: nowrap;
-    position: relative;
-    width: 100%;
-    background: #fff;
-
-    .scroll-item {
-      &:nth-child(1) {
-        margin-left: 5px;
-      }
-    }
-
-    .scrollbar-wrapper {
-      position: absolute;
-      height: 40px;
-      overflow-x: hidden !important;
-    }
-  }
-
-  // 右键菜单
-  .contextmenu {
-    margin: 0;
-    background: #fff;
-    position: absolute;
-    list-style-type: none;
-    padding: 5px 0;
-    border-radius: 4px;
-    color: #000000d9;
-    font-weight: normal;
-    font-size: 13px;
-    white-space: nowrap;
-    outline: 0;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
-
-    li {
-      width: 100%;
-      margin: 0;
-      padding: 7px 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-
-      &:hover {
-        background: #eee;
-      }
-
-      svg {
-        display: block;
-        margin-right: 0.5em;
-      }
-    }
-  }
-}
-
-.right-button {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  font-size: 16px;
-
-  li {
-    width: 40px;
-    height: 38px;
-    line-height: 38px;
-    text-align: center;
-    border-right: 1px solid #ccc;
-    cursor: pointer;
-  }
-}
-
-.el-dropdown-menu {
-  padding: 0;
-
-  li {
-    width: 100%;
-    margin: 0;
-    padding: 0 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    svg {
-      display: block;
-      margin-right: 0.5em;
-    }
-  }
-}
-
-.el-dropdown-menu__item:not(.is-disabled):hover {
-  color: #606266;
-  background: #f0f0f0;
-}
-
-:deep(.el-dropdown-menu__item) i {
-  margin-right: 10px;
-}
-
-.el-dropdown-menu__item--divided::before {
-  margin: 0;
-}
-
-.el-dropdown-menu__item.is-disabled {
-  cursor: not-allowed;
-}
-
-.is-active {
-  background-color: #eaf4fe;
-  position: relative;
-  color: #fff;
-
-  a {
-    color: #1890ff;
-  }
-}
-
-// 卡片模式
-.card-active {
-  border: 1px solid #1890ff;
-}
-// 卡片模式下鼠标移入显示蓝色边框
-.card-in {
-  border: 1px solid #1890ff;
-  color: #1890ff;
-
-  a {
-    color: #1890ff;
-  }
-}
-// 卡片模式下鼠标移出隐藏蓝色边框
-.card-out {
-  border: none;
-  color: #666;
-
-  a {
-    color: #666;
-  }
-}
-
-// 灵动模式
-.schedule-active {
-  width: 100%;
-  height: 2px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  background: #1890ff;
-}
-// 灵动模式下鼠标移入显示蓝色进度条
-.schedule-in {
-  width: 100%;
-  height: 2px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  background: #1890ff;
-  animation: scheduleInWidth 400ms ease-in;
-}
-// 灵动模式下鼠标移出隐藏蓝色进度条
-.schedule-out {
-  width: 0;
-  height: 2px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  background: #1890ff;
-  animation: scheduleOutWidth 400ms ease-in;
-}
-// 刷新按钮动画效果
-.refresh-button {
-  -webkit-animation: rotate 600ms linear infinite;
-  -moz-animation: rotate 600ms linear infinite;
-  -o-animation: rotate 600ms linear infinite;
-  animation: rotate 600ms linear infinite;
-}
+@import "./index.scss";
 </style>

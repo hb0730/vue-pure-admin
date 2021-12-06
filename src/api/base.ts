@@ -1,8 +1,5 @@
 import { http } from "/@/utils/http";
-import {
-  EnclosureHttpRequestConfig,
-  RequestMethods
-} from "/@/utils/http/types";
+import { PureHttpRequestConfig, RequestMethods } from "/@/utils/http/types";
 import { cookies } from "/@/utils/storage/cookie";
 import { ElLoading } from "element-plus";
 
@@ -15,7 +12,7 @@ class BaseRequest {
    * @returns Promise
    */
   public post<T>(url: string, params: any): Promise<T> {
-    return this.request<T>("post", url, params);
+    return this.request<T>("post", url, { data: params });
   }
   /**
    * @description  put 请求
@@ -25,7 +22,7 @@ class BaseRequest {
    * @returns Promise
    */
   public put<T>(url: string, params: any): Promise<T> {
-    return this.request<T>("put", url, params);
+    return this.request<T>("put", url, { data: params });
   }
   /**
    *
@@ -34,7 +31,7 @@ class BaseRequest {
    * @returns  响应
    */
   public delete<T>(url: string, params: any): Promise<T> {
-    return this.request<T>("delete", url, params);
+    return this.request<T>("delete", url, { data: params });
   }
   /**
    * get请求
@@ -43,7 +40,7 @@ class BaseRequest {
    * @returns 响应参数
    */
   public get<T>(url: string, params: any): Promise<T> {
-    return this.request<T>("get", url, params);
+    return this.request<T>("get", url, { params: params });
   }
   /**
    * @description 请求
@@ -65,7 +62,7 @@ class BaseRequest {
     return http
       .request<T>(method, url, params, {
         timeout: 30000,
-        beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
+        beforeRequestCallback: function (request: PureHttpRequestConfig) {
           const token = cookies.get("token");
           if (token) {
             request.headers = {
@@ -98,7 +95,7 @@ class BaseRequest {
   ): Promise<T> {
     return http.request<T>(method, url, params, {
       timeout: 30000,
-      beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
+      beforeRequestCallback: function (request: PureHttpRequestConfig) {
         const token = cookies.get("token");
         if (token) {
           request.headers = {

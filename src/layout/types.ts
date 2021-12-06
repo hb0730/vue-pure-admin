@@ -4,6 +4,7 @@ export const routerArrays: Array<RouteConfigs> = [
     parentPath: "/",
     meta: {
       title: "message.hshome",
+      i18n: true,
       icon: "el-icon-s-home",
       showLink: true
     }
@@ -15,6 +16,7 @@ export type RouteConfigs = {
   parentPath?: string;
   meta?: {
     title?: string;
+    i18n?: boolean;
     icon?: string;
     showLink?: boolean;
     savedPosition?: boolean;
@@ -22,8 +24,8 @@ export type RouteConfigs = {
   name?: string;
 };
 
-export type relativeStorageType = {
-  routesInStorage: Array<RouteConfigs>;
+export type multiTagsType = {
+  tags: Array<RouteConfigs>;
 };
 
 export type tagsViewsType = {
@@ -38,6 +40,7 @@ export interface setType {
   sidebar: {
     opened: boolean;
     withoutAnimation: boolean;
+    isClickHamburger: boolean;
   };
   device: string;
   fixedHeader: boolean;
@@ -58,6 +61,7 @@ export type childrenType = {
   meta?: {
     icon?: string;
     title?: string;
+    i18n?: boolean;
     extraIcon?: {
       svg?: boolean;
       name?: string;
@@ -70,3 +74,9 @@ export type themeColorsType = {
   rgb: string;
   themeColor: string;
 };
+
+export interface scrollbarDomType extends HTMLElement {
+  wrap?: {
+    offsetWidth: number;
+  };
+}

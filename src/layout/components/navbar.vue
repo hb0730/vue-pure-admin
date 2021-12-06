@@ -4,6 +4,7 @@ import { emitter } from "/@/utils/mitt";
 import Hamburger from "./sidebar/hamBurger.vue";
 import { useRoute } from "vue-router";
 import Breadcrumb from "./sidebar/breadCrumb.vue";
+import Notice from "./notice/index.vue";
 import { useAppStoreHook } from "/@/store/modules/app";
 import { unref, watch, getCurrentInstance } from "vue";
 import { deviceDetection } from "/@/utils/deviceDetection";
@@ -12,6 +13,7 @@ import globalization from "/@/assets/svg/globalization.svg";
 import { db } from "/@/utils/storage/db";
 import { tokenStore } from "/@/store/modules/token";
 import { open } from "/@/utils/util";
+import { transformI18n } from "/@/plugins/i18n";
 const instance =
   getCurrentInstance().appContext.config.globalProperties.$storage;
 const pureApp = useAppStoreHook();
@@ -21,13 +23,17 @@ const user = db.dbGet({ dbName: "sys", path: "userInfo", user: true });
 if (user) {
   usename = JSON.parse(user).nickName;
 }
-const { locale, t } = useI18n();
+const { locale } = useI18n();
 
 watch(
   () => locale.value,
   () => {
     //@ts-ignore
-    document.title = t(unref(route.meta.title)); // 动态title
+    document.title = transformI18n(
+      //@ts-ignore
+      unref(route.meta.title),
+      unref(route.meta.i18n)
+    ); // 动态title
   }
 );
 
@@ -72,6 +78,8 @@ function setting() {
     <Breadcrumb class="breadcrumb-container" />
 
     <div class="vertical-header-right">
+      <!-- 通知 -->
+      <Notice />
       <!-- 全屏 -->
       <screenfull v-show="!deviceDetection()" />
       <!-- 国际化 -->
@@ -160,6 +168,12 @@ function setting() {
     align-items: center;
     color: #000000d9;
     justify-content: flex-end;
+
+    :deep(.dropdown-badge) {
+      &:hover {
+        background: #f6f6f6;
+      }
+    }
 
     .screen-full {
       cursor: pointer;

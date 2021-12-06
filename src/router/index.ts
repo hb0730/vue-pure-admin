@@ -3,17 +3,20 @@ import {
   createRouter,
   RouteComponent,
   createWebHashHistory,
-  RouteRecordNormalized
+  RouteRecordNormalized,
+  RouteRecordName,
+  RouteMeta
 } from "vue-router";
-import { RouteConfigs } from "/@/layout/types";
-import { split, uniqBy } from "lodash-es";
-import { i18n } from "/@/plugins/i18n";
 import { openLink } from "/@/utils/link";
-import { storageLocal } from "/@/utils/storage";
 import NProgress from "/@/utils/progress";
+import { split, uniqBy } from "lodash-es";
 import { useTimeoutFn } from "@vueuse/core";
+import { RouteConfigs } from "/@/layout/types";
+import { storageLocal } from "/@/utils/storage";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
+import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
 // 静态路由
+import tabsRouter from "./modules/tabs";
 import homeRouter from "./modules/home";
 import Layout from "/@/layout/index.vue";
 import errorRouter from "./modules/error";
@@ -23,17 +26,20 @@ import externalLink from "./modules/externalLink";
 import remainingRouter from "./modules/remaining";
 import flowChartRouter from "./modules/flowchart";
 import componentsRouter from "./modules/components";
+
 // 动态路由
 import { cookies } from "../utils/storage/cookie";
 import { tokenStore } from "../store/modules/token";
 import dayjs from "dayjs";
 import { routeStoreHok } from "../store/modules/router";
 import { toRaw } from "vue";
+import { transformI18n } from "/@/plugins/i18n";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.vue");
 
 const constantRoutes: Array<RouteComponent> = [
+  tabsRouter,
   homeRouter,
   flowChartRouter,
   editorRouter,
@@ -140,7 +146,7 @@ export const addAsyncRoutes = (arrRoutes: Array<RouteComponent>) => {
 // 创建路由实例
 export const router: Router = createRouter({
   history: createWebHashHistory(),
-  routes: filterTree(ascending(constantRoutes)).concat(...remainingRouter),
+  routes: ascending(constantRoutes).concat(...remainingRouter),
   scrollBehavior(to, from, savedPosition) {
     return new Promise(resolve => {
       if (savedPosition) {
@@ -217,10 +223,15 @@ router.beforeEach(async (to, _from, next) => {
   const id = cookies.get("uuid");
   NProgress.start();
   const externalLink = to?.redirectedFrom?.fullPath;
-  // @ts-ignore
-  const { t } = i18n.global;
-  // @ts-ignore
-  if (!externalLink) to.meta.title ? (document.title = t(to.meta.title)) : "";
+  if (!externalLink)
+    to.matched.some(item => {
+      item.meta.title
+        ? (document.title = transformI18n(
+            item.meta.title as string,
+            item.meta?.i18n as boolean
+          ))
+        : "";
+    });
   if (id) {
     await refreshToken();
     if (_from?.name) {
@@ -235,9 +246,37 @@ router.beforeEach(async (to, _from, next) => {
       // 刷新
       if (usePermissionStoreHook().wholeRoutes.length === 0) {
         await initRouter();
+        if (!useMultiTagsStoreHook().getMultiTagsCache) {
+          const handTag = (
+            path: string,
+            parentPath: string,
+            name: RouteRecordName,
+            meta: RouteMeta
+          ): void => {
+            useMultiTagsStoreHook().handleTags("push", {
+              path,
+              parentPath,
+              name,
+              meta
+            });
+          };
+          const to1 = router
+            .getRoutes()
+            .filter(route => route.path == to.path)[0];
+          const parentPath = to1?.path;
+          if (to1.meta?.realPath) {
+            const { path, name, meta } = to1?.children[0];
+            handTag(path, parentPath, name, meta);
+            router.push(path);
+          } else {
+            const { path, name, meta } = to1;
+            handTag(path, parentPath, name, meta);
+            router.push(to.path);
+          }
+        }
         router.push(to.path);
         // 刷新页面更新标签栏与页面路由匹配
-        const localRoutes = storageLocal.getItem("responsive-routesInStorage");
+        const localRoutes = storageLocal.getItem("responsive-tags");
         const optionsRoutes = router.options?.routes;
         const newLocalRoutes = [];
         optionsRoutes.forEach(ors => {
@@ -247,12 +286,8 @@ router.beforeEach(async (to, _from, next) => {
             }
           });
         });
-        storageLocal.setItem(
-          "responsive-routesInStorage",
-          uniqBy(newLocalRoutes, "path")
-        );
+        storageLocal.setItem("responsive-tags", uniqBy(newLocalRoutes, "path"));
       }
-
       next();
     }
   } else {
