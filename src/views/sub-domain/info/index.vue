@@ -8,7 +8,13 @@
     :before-close="cancelDataScope"
     :destroy-on-close="true"
   >
-    <el-form label-position="right" :model="dataInfo" ref="formRef" center>
+    <el-form
+      label-position="right"
+      label-width="auto"
+      :model="dataInfo"
+      ref="formRef"
+      center
+    >
       <el-form-item
         prop="domainId"
         label="顶级域名"
@@ -51,10 +57,10 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, PropType, toRaw, toRef } from "vue";
-import { DomainListModel } from "/@/api/model/domain-list";
+import { SubDomainModel } from "/@/api/model/sub-domain";
 import { DomainModel } from "/@/api/model/domain";
 import { Result } from "/@/api/model/result";
-import { domainListStore } from "/@/store/modules/certs/domain-list";
+import { subDomainStore } from "/@/store/modules/domain/sub-domain";
 import { errorMessage, warnMessage } from "/@/utils/message";
 const instance = getCurrentInstance();
 const props = defineProps({
@@ -68,7 +74,7 @@ const props = defineProps({
     default: false,
     type: Boolean
   },
-  modelInfo: Object as PropType<DomainListModel>,
+  modelInfo: Object as PropType<SubDomainModel>,
   domainSelect: Array as PropType<Array<DomainModel>>
 });
 const emit = defineEmits<{
@@ -101,11 +107,11 @@ const submitDataScope = () => {
     }
   });
 };
-const saveOrUpdate = (data: DomainListModel): Promise<Result<any>> => {
+const saveOrUpdate = (data: SubDomainModel): Promise<Result<any>> => {
   if (isUpdate.value) {
-    return domainListStore().update(data, data.id);
+    return subDomainStore().update(data, data.id);
   } else {
-    return domainListStore().save(data);
+    return subDomainStore().save(data);
   }
 };
 onMounted(() => {});

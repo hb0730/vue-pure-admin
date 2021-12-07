@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import { domainListAPI } from "/@/api/domain-list";
-import { DomainListModel, DomainListQuery } from "/@/api/model/domain-list";
+import { subDomainAPI } from "/@/api/sub-domain";
+import { SubDomainModel, SubDomainQuery } from "/@/api/model/sub-domain";
 import { Page, Result } from "/@/api/model/result";
 
-export const domainListStore = defineStore({
+export const subDomainStore = defineStore({
   id: "domainList-store",
   actions: {
     /**
@@ -11,16 +11,16 @@ export const domainListStore = defineStore({
      * @param query 查询参数
      * @returns 分页列表
      */
-    findPage(query?: DomainListQuery): Promise<Result<Page<DomainListModel>>> {
-      return domainListAPI.findPage(query);
+    findPage(query?: SubDomainQuery): Promise<Result<Page<SubDomainModel>>> {
+      return subDomainAPI.findPage(query);
     },
     /**
      * 保存
      * @param model 保存参数
      * @returns 是否成功
      */
-    save(model: DomainListModel): Promise<Result<any>> {
-      return domainListAPI.save(model);
+    save(model: SubDomainModel): Promise<Result<any>> {
+      return subDomainAPI.save(model);
     },
     /**
      * 根据id修改
@@ -28,8 +28,8 @@ export const domainListStore = defineStore({
      * @param id  id
      * @returns  是否成功
      */
-    update(model: DomainListModel, id: number): Promise<Result<any>> {
-      return domainListAPI.update(model, id);
+    update(model: SubDomainModel, id: number): Promise<Result<any>> {
+      return subDomainAPI.update(model, id);
     },
     /**
      * 根据id批量删除
@@ -37,7 +37,7 @@ export const domainListStore = defineStore({
      * @returns  是否成功
      */
     deleteByIds(ids: number[]): Promise<Result<any>> {
-      return domainListAPI.deleteByIds(ids);
+      return subDomainAPI.deleteByIds(ids);
     }
   }
 });

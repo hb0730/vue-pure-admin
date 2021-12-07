@@ -171,16 +171,16 @@ import Info from "../info/index.vue";
 import { findIconReg } from "/@/components/ReIcon";
 
 import { onMounted, reactive } from "vue";
-import { certbotStore } from "/@/store/modules/certbot/certbot";
+import { caManagerStore } from "/@/store/modules/ca-manager";
 import { domainStore } from "/@/store/modules/domain/domain";
 
 import { warnMessage } from "/@/utils/message";
 import { warnConfirm } from "/@/utils/message/box";
-import { domainListStore } from "/@/store/modules/certs/domain-list";
+import { subDomainStore } from "/@/store/modules/domain/sub-domain";
 import { Page } from "/@/api/model/result";
-import { DomainListModel } from "/@/api/model/domain-list";
+import { SubDomainModel } from "/@/api/model/sub-domain";
 import { DomainModel } from "/@/api/model/domain";
-import { CertbotModel } from "/@/api/model/certbot";
+import { CAManagerModel } from "/@/api/model/ca-manager";
 import { certRecordStoreHook } from "/@/store/modules/certs/record";
 
 const pageData = reactive({
@@ -210,16 +210,16 @@ const domainSelect = async () => {
   }
 };
 const certbotSelect = async () => {
-  const result = await certbotStore().find(null);
+  const result = await caManagerStore().find(null);
   if (result.code === 0) {
     pageData.certbotSelect = result.data;
   }
 };
 
 const getPage = async () => {
-  const result = await domainListStore().findPage(pageData.searchModel);
+  const result = await subDomainStore().findPage(pageData.searchModel);
   if (result.code === 0) {
-    const resultData: Page<DomainListModel> = result.data;
+    const resultData: Page<SubDomainModel> = result.data;
     pageData.searchModel.total = resultData.total;
     if (!resultData.records) {
       resultData.records = [];
@@ -268,7 +268,7 @@ const removeHandler = async () => {
         pageData.selection.forEach(value => {
           id.push(value.id);
         });
-        const result = await domainListStore().deleteByIds(id);
+        const result = await subDomainStore().deleteByIds(id);
         if (result.code === 0) {
           getPage();
         } else {
@@ -293,7 +293,7 @@ const handlerDelete = async (data: any) => {
   warnConfirm("是否删除当前数据")
     .then(async () => {
       let id = [data.id];
-      const result = await domainListStore().deleteByIds(id);
+      const result = await subDomainStore().deleteByIds(id);
       if (result.code === 0) {
         getPage();
       } else {
@@ -334,7 +334,7 @@ const getCertBotInfo = (domainId: number): any => {
   const result: DomainModel = getDomainInfo(domainId);
   if (result.certbotId) {
     const model = pageData.certbotSelect.filter(
-      (v: CertbotModel) => v.id === result.certbotId
+      (v: CAManagerModel) => v.id === result.certbotId
     );
     if (model.length > 0) {
       return model[0];
@@ -345,7 +345,7 @@ const getCertBotInfo = (domainId: number): any => {
     return { name: "" };
   }
 };
-const handlerOpenRecord = async (data: DomainListModel) => {
+const handlerOpenRecord = async (data: SubDomainModel) => {
   const certbotInfo = getCertBotInfo(data.domainId);
   const domainInfo = getDomainInfo(data.domainId);
   const certRecordModel = {

@@ -1,28 +1,28 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
-import { DomainListModel, DomainListQuery } from "./model/domain-list";
+import { SubDomainModel, SubDomainQuery } from "./model/sub-domain";
 import { Page, Result } from "./model/result";
 enum API {
-  findPage = "/cert/find/page",
-  save = "/cert/save",
-  update = "/cert/update/:id",
-  delete = "/cert/delete"
+  findPage = "/sub/domain/find/page",
+  save = "/sub/domain/save",
+  update = "/sub/domain/update/:id",
+  delete = "/sub/domain/delete"
 }
-class DomainList extends BaseRequest {
+class SubDomain extends BaseRequest {
   /**
    * 分页查询
    * @param query 查询参数
    * @returns 分页列表
    */
-  findPage(query?: DomainListQuery): Promise<Result<Page<DomainListModel>>> {
-    return this.get<Result<Page<DomainListModel>>>(API.findPage, query);
+  findPage(query?: SubDomainQuery): Promise<Result<Page<SubDomainModel>>> {
+    return this.get<Result<Page<SubDomainModel>>>(API.findPage, query);
   }
   /**
    * 保存
    * @param model 保存参数
    * @returns 是否成功
    */
-  save(model: DomainListModel): Promise<Result<any>> {
+  save(model: SubDomainModel): Promise<Result<any>> {
     return this.post<Result<any>>(API.save, model);
   }
   /**
@@ -31,7 +31,7 @@ class DomainList extends BaseRequest {
    * @param id  id
    * @returns  是否成功
    */
-  update(model: DomainListModel, id: number): Promise<Result<any>> {
+  update(model: SubDomainModel, id: number): Promise<Result<any>> {
     return this.put<Result<any>>(
       API.update.replace(":id", id.toString()),
       model
@@ -54,4 +54,4 @@ class DomainList extends BaseRequest {
   }
 }
 
-export const domainListAPI = new DomainList();
+export const subDomainAPI = new SubDomain();

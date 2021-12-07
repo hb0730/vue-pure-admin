@@ -1,34 +1,34 @@
 import { defineStore } from "pinia";
-import { certBotAPI } from "/@/api/cerbot";
-import { CertbotModel, CertbotQuery } from "/@/api/model/certbot";
+import { caManagerAPI } from "../../../api/ca-manager";
+import { CAManagerModel, CAManagerQuery } from "../../../api/model/ca-manager";
 import { Page, Result } from "/@/api/model/result";
 
-export const certbotStore = defineStore({
-  id: "certbot-store",
+export const caManagerStore = defineStore({
+  id: "ca-manager-store",
   actions: {
     /**
      * 分页查询
      * @param query 查询参数
      * @returns 分页列表
      */
-    findPage(query: CertbotQuery): Promise<Result<Page<CertbotModel>>> {
-      return certBotAPI.findPage(query);
+    findPage(query: CAManagerQuery): Promise<Result<Page<CAManagerModel>>> {
+      return caManagerAPI.findPage(query);
     },
     /**
      * 列表查询
      * @param query 查询参数
      * @returns 列表
      */
-    find(query: CertbotQuery): Promise<Result<Array<CertbotModel>>> {
-      return certBotAPI.find(query);
+    find(query: CAManagerQuery): Promise<Result<Array<CAManagerModel>>> {
+      return caManagerAPI.find(query);
     },
     /**
      * 保存
      * @param model 保存信息
      * @returns  是否成功
      */
-    save(model: CertbotModel): Promise<Result<any>> {
-      return certBotAPI.save(model);
+    save(model: CAManagerModel): Promise<Result<any>> {
+      return caManagerAPI.save(model);
     },
     /**
      * 根据id更新
@@ -36,8 +36,8 @@ export const certbotStore = defineStore({
      * @param id id
      * @returns 是否成功
      */
-    update(model: CertbotModel, id: number): Promise<Result<any>> {
-      return certBotAPI.update(model, id);
+    update(model: CAManagerModel, id: number): Promise<Result<any>> {
+      return caManagerAPI.update(model, id);
     },
     /**
      * 根据id批量删除
@@ -45,7 +45,7 @@ export const certbotStore = defineStore({
      * @returns  是否成功
      */
     deleteByIds(ids: number[]): Promise<Result<any>> {
-      return certBotAPI.deleteByIds(ids);
+      return caManagerAPI.deleteByIds(ids);
     }
   }
 });

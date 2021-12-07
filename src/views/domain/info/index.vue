@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, PropType, toRaw, toRef } from "vue";
-import { CertbotModel } from "/@/api/model/certbot";
+import { CAManagerModel } from "/@/api/model/ca-manager";
 import { DNSModel } from "/@/api/model/dns";
 import { DomainModel } from "/@/api/model/domain";
 import { Result } from "/@/api/model/result";
@@ -91,7 +91,7 @@ const props = defineProps({
   certbotSelect: {
     require: true,
     default: () => [],
-    type: Array as PropType<CertbotModel[]>
+    type: Array as PropType<CAManagerModel[]>
   },
   modelInfo: Object as PropType<DomainModel>
 });

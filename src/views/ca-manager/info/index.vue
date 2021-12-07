@@ -42,9 +42,9 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, PropType, toRaw, toRef } from "vue";
-import { CertbotModel } from "/@/api/model/certbot";
+import { CAManagerModel } from "/@/api/model/ca-manager";
 import { Result } from "/@/api/model/result";
-import { certbotStore } from "/@/store/modules/certbot/certbot";
+import { caManagerStore } from "/@/store/modules/ca-manager";
 import { errorMessage, warnMessage } from "/@/utils/message";
 const instance = getCurrentInstance();
 const props = defineProps({
@@ -58,7 +58,7 @@ const props = defineProps({
     default: false,
     type: Boolean
   },
-  modelInfo: Object as PropType<CertbotModel>
+  modelInfo: Object as PropType<CAManagerModel>
 });
 const emit = defineEmits<{
   (e: "cancelDataScope"): void;
@@ -89,11 +89,11 @@ const submitDataScope = () => {
     }
   });
 };
-const saveOrUpdate = (data: CertbotModel): Promise<Result<any>> => {
+const saveOrUpdate = (data: CAManagerModel): Promise<Result<any>> => {
   if (isUpdate.value) {
-    return certbotStore().update(data, data.id);
+    return caManagerStore().update(data, data.id);
   } else {
-    return certbotStore().save(data);
+    return caManagerStore().save(data);
   }
 };
 onMounted(() => {});

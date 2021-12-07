@@ -1,38 +1,38 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
-import { CertbotModel, CertbotQuery } from "./model/certbot";
+import { CAManagerModel, CAManagerQuery } from "./model/ca-manager";
 import { Page, Result } from "./model/result";
 
 enum API {
-  finPage = "/boot/find/page",
-  find = "/boot/find",
-  save = "/boot/save",
-  update = "/boot/update/:id",
-  delete = "/boot/delete"
+  finPage = "/ca/manager/find/page",
+  find = "/ca/manager/find",
+  save = "/ca/manager/save",
+  update = "/ca/manager/update/:id",
+  delete = "/ca/manager/delete"
 }
-class CertBot extends BaseRequest {
+class CAManager extends BaseRequest {
   /**
    * 分页查询
    * @param query 查询参数
    * @returns 分页列表
    */
-  findPage(query: CertbotQuery): Promise<Result<Page<CertbotModel>>> {
-    return this.get<Result<Page<CertbotModel>>>(API.finPage, query);
+  findPage(query: CAManagerQuery): Promise<Result<Page<CAManagerModel>>> {
+    return this.get<Result<Page<CAManagerModel>>>(API.finPage, query);
   }
   /**
    * 列表查询
    * @param query 查询参数
    * @returns 列表
    */
-  find(query: CertbotQuery): Promise<Result<Array<CertbotModel>>> {
-    return this.get<Result<Array<CertbotModel>>>(API.find, query);
+  find(query: CAManagerQuery): Promise<Result<Array<CAManagerModel>>> {
+    return this.get<Result<Array<CAManagerModel>>>(API.find, query);
   }
   /**
    * 保存
    * @param model 保存信息
    * @returns  是否成功
    */
-  save(model: CertbotModel): Promise<Result<any>> {
+  save(model: CAManagerModel): Promise<Result<any>> {
     return this.post<Result<any>>(API.save, model);
   }
   /**
@@ -41,7 +41,7 @@ class CertBot extends BaseRequest {
    * @param id id
    * @returns 是否成功
    */
-  update(model: CertbotModel, id: number): Promise<Result<any>> {
+  update(model: CAManagerModel, id: number): Promise<Result<any>> {
     return this.put(API.update.replace(":id", id.toString()), model);
   }
   /**
@@ -61,4 +61,4 @@ class CertBot extends BaseRequest {
   }
 }
 
-export const certBotAPI = new CertBot();
+export const caManagerAPI = new CAManager();

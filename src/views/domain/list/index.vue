@@ -177,7 +177,7 @@ import { warnMessage } from "/@/utils/message";
 import { Page } from "/@/api/model/result";
 import { DNSModel } from "/@/api/model/dns";
 import { warnConfirm } from "/@/utils/message/box";
-import { certbotStore } from "/@/store/modules/certbot/certbot";
+import { caManagerStore } from "/@/store/modules/ca-manager";
 
 const pageData = reactive({
   searchModel: {
@@ -209,7 +209,7 @@ const dnsList = async () => {
   }
 };
 const certbotList = async () => {
-  const result = await certbotStore().find(null);
+  const result = await caManagerStore().find(null);
   if (result.code === 0) {
     pageData.certbotList = result.data;
   }

@@ -139,8 +139,8 @@ import RefreshButton from "/@/views/components/table/refreshButton.vue";
 //@ts-ignore
 import Info from "../info/index.vue";
 import { findIconReg } from "/@/components/ReIcon";
-import { certbotStore } from "/@/store/modules/certbot/certbot";
-import { CertbotModel } from "/@/api/model/certbot";
+import { caManagerStore } from "/@/store/modules/ca-manager";
+import { CAManagerModel } from "/@/api/model/ca-manager";
 import { Page } from "/@/api/model/result";
 import { warnMessage } from "/@/utils/message";
 import { warnConfirm } from "/@/utils/message/box";
@@ -190,7 +190,7 @@ const removeHandler = async () => {
         pageData.selection.forEach(value => {
           id.push(value.id);
         });
-        const result = await certbotStore().deleteByIds(id);
+        const result = await caManagerStore().deleteByIds(id);
         if (result.code === 0) {
           getPage();
         } else {
@@ -211,11 +211,11 @@ const handlerEdit = async data => {
   pageData.isUpdate = true;
   pageData.showDialog = true;
 };
-const handlerDelete = async (data: CertbotModel) => {
+const handlerDelete = async (data: CAManagerModel) => {
   warnConfirm("是否删除当前数据")
     .then(async () => {
       let id = [data.id];
-      const result = await certbotStore().deleteByIds(id);
+      const result = await caManagerStore().deleteByIds(id);
       if (result.code === 0) {
         getPage();
       } else {
@@ -227,9 +227,9 @@ const handlerDelete = async (data: CertbotModel) => {
 
 const getPage = async () => {
   const query = toRaw(pageData.searchModel);
-  const result = await certbotStore().findPage(query);
+  const result = await caManagerStore().findPage(query);
   if (result.code === 0) {
-    const resultData: Page<CertbotModel> = result.data;
+    const resultData: Page<CAManagerModel> = result.data;
     pageData.searchModel.total = resultData.total;
     if (!resultData.records) {
       resultData.records = [];
