@@ -19,7 +19,9 @@ export function findIconReg(icon: string) {
     return findIcon(
       text.slice(0, text.indexOf(" ") == -1 ? text.length : text.indexOf(" ")),
       "FA",
-      text.slice(text.indexOf(" ") + 1, text.length)
+      text.indexOf(" ") == -1
+        ? "fas"
+        : text.slice(text.indexOf(" ") + 1, text.length)
     );
   } else if (iFReg.test(icon)) {
     return findIcon(icon.split(iFReg)[1], "IF");
@@ -39,7 +41,7 @@ export function findIcon(icon: String, type = "EL", property?: string) {
         return { icon, property };
       },
       components: { FontAwesomeIcon },
-      template: `<font-awesome-icon :icon="icon" v-bind:[property]="true" />`
+      template: `<font-awesome-icon :icon="[property,icon]" v-bind:[property]="true" />`
     });
   } else if (type === "IF") {
     return defineComponent({

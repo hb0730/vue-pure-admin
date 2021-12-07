@@ -32,7 +32,7 @@
         <el-button
           plain
           size="medium"
-          icon="fa fa-search"
+          :icon="findIconReg('FA-search')"
           @click="searchHandler"
           >查询</el-button
         >
@@ -102,21 +102,21 @@
               <el-button
                 title="修改"
                 type="primary"
-                icon="fa fa-pencil"
+                :icon="findIconReg('FA-edit')"
                 size="mini"
                 @click="editHandler(scope.row)"
               ></el-button>
               <el-button
                 title="删除"
                 type="danger"
-                icon="fa fa-trash"
+                :icon="findIconReg('FA-trash')"
                 size="mini"
                 :disabled="true"
               ></el-button>
               <el-button
                 title="重置密码"
                 type="primary"
-                icon="fa fa-key"
+                :icon="findIconReg('FA-key')"
                 size="mini"
                 @click="rePassword(scope.row)"
               ></el-button>
@@ -158,6 +158,7 @@ import AddNewButton from "/@/views/components/table/addNewButton.vue";
 //@ts-ignore
 import EditButton from "/@/views/components/table/editButton.vue";
 import { warnConfirm } from "/@/utils/message/box";
+import { findIconReg } from "/@/components/ReIcon";
 export interface searchInfo {
   nickName: string;
   username: string;

@@ -15,6 +15,7 @@ import "animate.css";
 import "./style/index.scss";
 // 导入字体图标
 import "./assets/iconfont/iconfont.js";
+import "./assets/iconfont.css";
 import "./assets/iconfont/iconfont.css";
 import "v-contextmenu/dist/themes/default.css";
 

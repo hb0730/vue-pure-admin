@@ -44,7 +44,9 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button plain size="medium" icon="fa fa-search">查询</el-button>
+        <el-button plain size="medium" :icon="findIconReg('FA-search')"
+          >查询</el-button
+        >
       </el-form-item>
     </el-form>
     <el-row :gutter="2">
@@ -119,14 +121,14 @@
               ><el-button
                 title="修改"
                 type="primary"
-                icon="fa fa-pencil"
+                :icon="findIconReg('FA-edit')"
                 @click="handlerEdit(scope.row)"
                 size="mini"
               ></el-button>
               <el-button
                 title="删除"
                 type="danger"
-                icon="fa fa-trash"
+                :icon="findIconReg('FA-trash')"
                 size="mini"
                 @click="handlerDelete(scope.row)"
               ></el-button>
@@ -168,6 +170,7 @@ import RemoveButton from "/@/views/components/table/removeButton.vue";
 import RefreshButton from "/@/views/components/table/refreshButton.vue";
 //@ts-ignore
 import Info from "../info/index.vue";
+import { findIconReg } from "/@/components/ReIcon";
 import { domainStore } from "/@/store/modules/domain/domain";
 import { DomainModel } from "/@/api/model/domain";
 import { warnMessage } from "/@/utils/message";

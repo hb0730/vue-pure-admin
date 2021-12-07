@@ -6,6 +6,7 @@ specifiers:
   "@commitlint/config-conventional": 13.1.0
   "@element-plus/icons": ^0.0.11
   "@fortawesome/fontawesome-svg-core": ^1.2.36
+  "@fortawesome/free-brands-svg-icons": ^5.15.4
   "@fortawesome/free-solid-svg-icons": ^5.15.4
   "@fortawesome/vue-fontawesome": ^3.0.0-5
   "@logicflow/core": 0.7.1
@@ -100,6 +101,7 @@ dependencies:
   "@amap/amap-jsapi-loader": 1.0.1
   "@element-plus/icons": 0.0.11
   "@fortawesome/fontawesome-svg-core": 1.2.36
+  "@fortawesome/free-brands-svg-icons": 5.15.4
   "@fortawesome/free-solid-svg-icons": 5.15.4
   "@fortawesome/vue-fontawesome": 3.0.0-5_a4ef6aa86ab1c63b266771040e7bf2c7
   "@logicflow/core": 0.7.1
@@ -853,6 +855,17 @@ packages:
     resolution:
       {
         integrity: sha512-YUcsLQKYb6DmaJjIHdDWpBIGCcyE/W+p/LMGvjQem55Mm2XWVAP5kWTMKWLv9lwpCVjpLxPyOMOyUocP1GxrtA==
+      }
+    engines: { node: ">=6" }
+    requiresBuild: true
+    dependencies:
+      "@fortawesome/fontawesome-common-types": 0.2.36
+    dev: false
+
+  /@fortawesome/free-brands-svg-icons/5.15.4:
+    resolution:
+      {
+        integrity: sha512-f1witbwycL9cTENJegcmcZRYyawAFbm8+c6IirLmwbbpqz46wyjbQYLuxOc7weXFXfB7QR8/Vd2u5R3q6JYD9g==
       }
     engines: { node: ">=6" }
     requiresBuild: true

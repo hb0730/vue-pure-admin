@@ -65,6 +65,8 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, PropType, toRaw, toRef } from "vue";
+import { CertbotModel } from "/@/api/model/certbot";
+import { DNSModel } from "/@/api/model/dns";
 import { DomainModel } from "/@/api/model/domain";
 import { Result } from "/@/api/model/result";
 import { domainStore } from "/@/store/modules/domain/domain";
@@ -83,13 +85,13 @@ const props = defineProps({
   },
   dnsSelect: {
     require: true,
-    default: [],
-    type: []
+    default: () => [],
+    type: Array as PropType<DNSModel[]>
   },
   certbotSelect: {
     require: true,
-    default: [],
-    type: []
+    default: () => [],
+    type: Array as PropType<CertbotModel[]>
   },
   modelInfo: Object as PropType<DomainModel>
 });
