@@ -1,8 +1,8 @@
 import { http } from "../utils/http";
 import BaseRequest from "./base";
 
-export const getAsyncRoutes = (data?: object) => {
-  return http.request("get", "/getAsyncRoutes", { data });
+export const getAsyncRoutes = (params?: object) => {
+  return http.request("get", "/getAsyncRoutes", { params });
 };
 
 enum API {
