@@ -12,25 +12,26 @@
           <el-button
             type="primary"
             size="mini"
-            icon="fa fa-repeat"
+            :icon="findIconReg('FA-redo')"
             @click="reConnection"
-          ></el-button>
+          >
+          </el-button>
           <el-button
             type="primary"
             size="mini"
-            icon="el-icon-arrow-up"
+            :icon="findIconReg('ArrowUp')"
             @click="upDirectory"
           ></el-button>
           <el-button
             type="primary"
             size="mini"
-            icon="el-icon-refresh"
+            :icon="findIconReg('Refresh')"
             @click="getFileList()"
           ></el-button>
           <el-button
             type="primary"
             size="mini"
-            icon="el-icon-upload"
+            :icon="findIconReg('Upload')"
             @click="openUploadDialog"
           ></el-button>
         </el-button-group>
@@ -106,6 +107,7 @@ import { hostStore } from "/@/store/modules/host/host";
 import { successMessage, warnMessage } from "/@/utils/message";
 import { getUUidV4NoDash } from "/@/utils/uuid";
 import { emitter } from "/@/utils/mitt";
+import { findIconReg } from "/@/components/ReIcon";
 const props = defineProps({
   hostId: {
     type: Number,

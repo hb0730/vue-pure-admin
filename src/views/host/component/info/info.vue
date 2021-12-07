@@ -8,7 +8,7 @@
     :before-close="cancelDataScope"
     :destroy-on-close="true"
   >
-    <el-form :model="modelInfo" ref="formRef" center>
+    <el-form :model="modelInfo" label-width="auto" ref="formRef" center>
       <el-form-item
         :rules="[{ required: true, message: '请输入服务器名称' }]"
         prop="name"

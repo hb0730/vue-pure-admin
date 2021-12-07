@@ -58,6 +58,8 @@ import {
 
 // https://element-plus.org/zh-CN/component/icon.html
 import {
+  Upload,
+  ArrowUp,
   Check,
   Menu,
   HomeFilled,
@@ -131,6 +133,8 @@ const components = [
 ];
 // icon
 export const iconComponents = [
+  Upload,
+  ArrowUp,
   Refresh,
   Check,
   Menu,

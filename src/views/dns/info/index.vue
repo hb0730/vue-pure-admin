@@ -11,6 +11,7 @@
     <el-form
       :rules="formRules"
       label-position="right"
+      label-width="auto"
       :model="modelInfo"
       ref="formRef"
       center

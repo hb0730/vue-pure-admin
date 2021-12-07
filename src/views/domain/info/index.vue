@@ -8,7 +8,13 @@
     :before-close="cancelDataScope"
     :destroy-on-close="true"
   >
-    <el-form label-position="right" :model="dataInfo" ref="formRef" center>
+    <el-form
+      label-position="right"
+      label-width="auto"
+      :model="dataInfo"
+      ref="formRef"
+      center
+    >
       <el-form-item
         prop="dnsId"
         label="提供商"

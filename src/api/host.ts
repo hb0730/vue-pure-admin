@@ -93,8 +93,10 @@ class Host extends BaseRequest {
       "get",
       API.fileList.replace(":id", id),
       {
-        hostId: hostId,
-        path: path
+        params: {
+          hostId: hostId,
+          path: path
+        }
       }
     );
   }

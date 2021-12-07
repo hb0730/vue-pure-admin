@@ -7,6 +7,7 @@ import { App } from "vue";
 import "font-awesome/css/font-awesome.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
+  faRedo,
   faKey,
   faUsers,
   faUser,
@@ -31,6 +32,7 @@ import "remixicon/fonts/remixicon.css";
 
 export function useFontawesome(app: App) {
   library.add(
+    faRedo,
     faKey,
     faUsers,
     faUser,

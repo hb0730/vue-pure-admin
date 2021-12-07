@@ -18,7 +18,7 @@ import { useRoute } from "vue-router";
 import Console from "/@/views/host/component/terminal/console.vue";
 import Files from "/@/views/host/component/files/index.vue";
 const pageData = reactive({
-  hostId: 1
+  hostId: 0
 });
 onBeforeMount(() => {
   const Route = useRoute();
