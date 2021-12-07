@@ -35,13 +35,13 @@
         </el-select>
       </el-form-item>
       <el-form-item
-        prop="certbotId"
+        prop="caManagerId"
         label="机器人"
         :rules="[{ message: '请选择', required: true, trigger: 'change' }]"
       >
         <el-select
           style="width: 100%"
-          v-model="dataInfo.certbotId"
+          v-model="dataInfo.caManagerId"
           placeholder="Select"
         >
           <el-option

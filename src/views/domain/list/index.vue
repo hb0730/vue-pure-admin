@@ -31,7 +31,7 @@
       <el-form-item>
         <el-select
           style="width: 100%"
-          v-model="pageData.searchModel.certbotId"
+          v-model="pageData.searchModel.caManagerId"
           clearable
           placeholder="机器人"
         >
@@ -185,13 +185,13 @@ const pageData = reactive({
     pageNum: 1,
     pageSize: 10,
     domain: null,
-    certbotId: null,
+    caManagerId: null,
     dnsId: null
   },
   domainInfo: {
     id: null,
     dnsId: null,
-    certbotId: null,
+    caManagerId: null,
     dnsName: null,
     domain: null
   },
@@ -221,7 +221,7 @@ const initDomainInfo = (data: any) => {
     pageData.domainInfo = {
       id: null,
       dnsId: null,
-      certbotId: null,
+      caManagerId: null,
       dnsName: null,
       domain: null
     };
@@ -322,7 +322,7 @@ const showDnsName = (data: DomainModel) => {
 };
 const showCertbotName = (data: DomainModel) => {
   return pageData.certbotList.filter(
-    (value: DNSModel) => value.id === data.certbotId
+    (value: DNSModel) => value.id === data.caManagerId
   )[0];
 };
 onMounted(() => {

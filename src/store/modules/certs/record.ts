@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { certRecordAPI } from "/@/api/certRecords";
-import { Result } from "/@/api/model/result";
+import { CertRecordModel, CertRecordsQuery } from "/@/api/model/cert-records";
+import { Page, Result } from "/@/api/model/result";
 import { store } from "/@/store";
 import { warnMessage } from "/@/utils/message";
 import { db } from "/@/utils/storage/db";
@@ -53,6 +54,22 @@ const certRecordStore = defineStore({
      */
     applyCert(domainListId: number): Promise<Result<any>> {
       return certRecordAPI.applyCert(domainListId);
+    },
+    /**
+     * 查询申请证书列表
+     * @param query 查询参数
+     * @returns 分页列表
+     */
+    findPage(query: CertRecordsQuery): Promise<Result<Page<CertRecordModel>>> {
+      return certRecordAPI.findPage(query);
+    },
+    /**
+     *验证记录
+     * @param certRecordId 申请id
+     * @returns 是否成功
+     */
+    challengesDNS(certRecordId: number): Promise<Result<any>> {
+      return certRecordAPI.challengesDNS(certRecordId);
     }
   }
 });

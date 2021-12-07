@@ -332,9 +332,9 @@ const getCertBotInfo = (domainId: number): any => {
     return { name: "" };
   }
   const result: DomainModel = getDomainInfo(domainId);
-  if (result.certbotId) {
+  if (result.caManagerId) {
     const model = pageData.certbotSelect.filter(
-      (v: CAManagerModel) => v.id === result.certbotId
+      (v: CAManagerModel) => v.id === result.caManagerId
     );
     if (model.length > 0) {
       return model[0];
