@@ -12,6 +12,7 @@ import NProgress from "/@/utils/progress";
 import { split, uniqBy } from "lodash-es";
 import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
+import { transformI18n } from "/@/plugins/i18n";
 import { storageLocal } from "/@/utils/storage";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
@@ -33,7 +34,6 @@ import { tokenStore } from "../store/modules/token";
 import dayjs from "dayjs";
 import { routeStoreHok } from "../store/modules/router";
 import { toRaw } from "vue";
-import { transformI18n } from "/@/plugins/i18n";
 
 // https://cn.vitejs.dev/guide/features.html#glob-import
 const modulesRoutes = import.meta.glob("/src/views/**/*.vue");
@@ -210,7 +210,53 @@ async function refreshToken() {
     tokenStore().refreshToken();
   }
 }
+
+function findRouteByPath(path, routes) {
+  let res = routes.find(item => item.path == path);
+  if (res) {
+    return res;
+  } else {
+    for (let i = 0; i < routes.length; i++) {
+      if (
+        routes[i].children instanceof Array &&
+        routes[i].children.length > 0
+      ) {
+        res = findRouteByPath(path, routes[i].children);
+        if (res) {
+          return res;
+        }
+      }
+    }
+    return null;
+  }
+}
+
+function getParentPaths(path, routes) {
+  // 深度遍历查找
+  function dfs(routes, path, parents) {
+    for (let i = 0; i < routes.length; i++) {
+      const item = routes[i];
+      // 找到path则返回父级path
+      if (item.path === path) return parents;
+      // children不存在或为空则不递归
+      if (!item.children || !item.children.length) continue;
+      // 往下查找时将当前path入栈
+      parents.push(item.path);
+
+      if (dfs(item.children, path, parents).length) return parents;
+      // 深度遍历查找未找到时当前path 出栈
+      parents.pop();
+    }
+    // 未找到时返回空数组
+    return [];
+  }
+
+  return dfs(routes, path, []);
+}
+
+// 路由白名单
 const whiteList = ["/login"];
+
 router.beforeEach(async (to, _from, next) => {
   if (to.meta?.keepAlive) {
     const newMatched = to.matched;
@@ -260,18 +306,23 @@ router.beforeEach(async (to, _from, next) => {
               meta
             });
           };
-          const to1 = router
-            .getRoutes()
-            .filter(route => route.path == to.path)[0];
-          const parentPath = to1?.path;
-          if (to1.meta?.realPath) {
-            const { path, name, meta } = to1?.children[0];
+          const parentPath = to.matched[0]?.path;
+          if (to.meta?.realPath) {
+            const { path, name, meta } = to.matched[0]?.children[0];
             handTag(path, parentPath, name, meta);
             router.push(path);
           } else {
-            const { path, name, meta } = to1;
-            handTag(path, parentPath, name, meta);
-            router.push(to.path);
+            const { path } = to;
+            const routes = router.options.routes;
+            const route = findRouteByPath(path, routes);
+            const routePartent = getParentPaths(path, routes);
+            handTag(
+              route.path,
+              routePartent[routePartent.length - 1],
+              route.name,
+              route.meta
+            );
+            router.push(path);
           }
         }
         router.push(to.path);
