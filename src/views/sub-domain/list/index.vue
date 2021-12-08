@@ -18,13 +18,23 @@
             :key="item.id"
             :label="item.domain"
             :value="item.id"
-          ></el-option>
+          >
+            <span style="float: left">{{ item.domain }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ getCAMangerInfo(item.id).name }}</span
+            >
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-select
           style="width: 100%"
-          v-model="pageData.searchModel.certbotId"
+          v-model="pageData.searchModel.caManagerId"
           clearable
           placeholder="机器人"
         >
@@ -37,7 +47,11 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button plain size="medium" :icon="findIconReg('FA-search')"
+        <el-button
+          plain
+          size="medium"
+          @click="searchModel"
+          :icon="findIconReg('FA-search')"
           >查询</el-button
         >
       </el-form-item>
@@ -92,7 +106,7 @@
             label="机器人"
           >
             <template #default="scope">
-              {{ getCertBotInfo(scope.row.domainId).name }}
+              {{ getCAMangerInfo(scope.row.domainId).name }}
             </template>
           </el-table-column>
           <el-table-column
@@ -150,6 +164,7 @@
     <Info
       :model-info="pageData.modelInfo"
       :domain-select="pageData.domainSelect"
+      :ca-manager="pageData.certbotSelect"
       :is-update="pageData.isUpdate"
       :show-dialog="pageData.showDialog"
       @cancel-data-scope="cancelDataScope"
@@ -193,7 +208,7 @@ const pageData = reactive({
     pageNum: 1,
     pageSize: 10,
     domainId: null,
-    certbotId: null
+    caManagerId: null
   },
   selection: [],
   tableData: [],
@@ -327,7 +342,7 @@ const getDomainInfo = (id: number): any => {
     return { domain: "" };
   }
 };
-const getCertBotInfo = (domainId: number): any => {
+const getCAMangerInfo = (domainId: number): any => {
   if (!pageData.certbotSelect || !pageData.certbotSelect.length) {
     return { name: "" };
   }
@@ -346,7 +361,7 @@ const getCertBotInfo = (domainId: number): any => {
   }
 };
 const handlerOpenRecord = async (data: SubDomainModel) => {
-  const certbotInfo = getCertBotInfo(data.domainId);
+  const certbotInfo = getCAMangerInfo(data.domainId);
   const domainInfo = getDomainInfo(data.domainId);
   const certRecordModel = {
     id: data.id,
@@ -357,6 +372,10 @@ const handlerOpenRecord = async (data: SubDomainModel) => {
     certbotId: certbotInfo.id
   };
   certRecordStoreHook().openRecord(certRecordModel);
+};
+const searchModel = async () => {
+  pageData.searchModel.pageNum = 0;
+  getPage();
 };
 onMounted(() => {
   domainSelect();

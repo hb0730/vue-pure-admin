@@ -139,6 +139,7 @@ import { successMessage, warnMessage } from "/@/utils/message";
 import RefreshButton from "/@/views/components/table/refreshButton.vue";
 import { findIconReg } from "/@/components/ReIcon";
 import Info from "./info.vue";
+import { warnConfirm } from "/@/utils/message/box";
 
 const store = certRecordStoreHook();
 const pageData = reactive({
@@ -173,16 +174,21 @@ const currentChange = async (pageNum: number) => {
   getPage();
 };
 const getDomainListModel = (): any => {
-  pageData.domainListModel = store.getDomainListModel;
+  pageData.domainListModel = store.getDomainListModel();
   return pageData.domainListModel;
 };
 const applyCert = async () => {
-  const result = await store.applyCert(pageData.domainListModel.id);
-  if (result.code === 0) {
-    successMessage("申请成功:请完成后续步骤");
-  } else {
-    warnMessage("申请失败:" + result.msg);
-  }
+  warnConfirm("是否申请")
+    .then(async () => {
+      const result = await store.applyCert(pageData.domainListModel.id);
+      if (result.code === 0) {
+        successMessage("申请成功:请完成后续步骤");
+        getPage();
+      } else {
+        warnMessage("申请失败:" + result.msg);
+      }
+    })
+    .catch(() => {});
 };
 const refreshHandler = async () => {
   getPage();

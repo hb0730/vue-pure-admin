@@ -19,7 +19,12 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button plain size="medium" :icon="findIcon('search')">
+        <el-button
+          plain
+          size="medium"
+          @click="searchModelHandler"
+          :icon="findIcon('search')"
+        >
           查询</el-button
         >
       </el-form-item>
@@ -296,6 +301,10 @@ const openTerminal = data => {
       id: data.id
     }
   });
+};
+const searchModelHandler = async () => {
+  searchModel.pageNum = 0;
+  getPage();
 };
 onMounted(() => {
   getPage();

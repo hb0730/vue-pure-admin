@@ -31,7 +31,7 @@ class BaseRequest {
    * @returns  响应
    */
   public delete<T>(url: string, params: any): Promise<T> {
-    return this.request<T>("delete", url, { data: params });
+    return this.request<T>("delete", url, { params: params });
   }
   /**
    * get请求

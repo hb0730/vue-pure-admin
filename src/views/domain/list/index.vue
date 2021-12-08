@@ -44,7 +44,11 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button plain size="medium" :icon="findIconReg('FA-search')"
+        <el-button
+          plain
+          size="medium"
+          @click="searchModel"
+          :icon="findIconReg('FA-search')"
           >查询</el-button
         >
       </el-form-item>
@@ -324,6 +328,10 @@ const showCertbotName = (data: DomainModel) => {
   return pageData.certbotList.filter(
     (value: DNSModel) => value.id === data.caManagerId
   )[0];
+};
+const searchModel = async () => {
+  pageData.searchModel.pageNum = 0;
+  getPage();
 };
 onMounted(() => {
   dnsList();

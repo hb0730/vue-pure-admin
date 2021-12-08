@@ -21,7 +21,11 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button plain size="medium" :icon="findIconReg('FA-search')"
+        <el-button
+          plain
+          size="medium"
+          @click="searchModel"
+          :icon="findIconReg('FA-search')"
           >查询</el-button
         >
       </el-form-item>
@@ -258,6 +262,10 @@ const cancelDataScope = async () => {
   initModel(null);
   pageData.isUpdate = false;
   pageData.showDialog = false;
+  getPage();
+};
+const searchModel = async () => {
+  pageData.searchModel.pageNum = 0;
   getPage();
 };
 onMounted(() => {

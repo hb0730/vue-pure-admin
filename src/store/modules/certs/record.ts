@@ -18,18 +18,6 @@ export interface CertRecordState {
 }
 const certRecordStore = defineStore({
   id: "cert-record-store",
-  state: (): CertRecordState => ({
-    domainListModel: db.dbGet({
-      dbName: "database",
-      path: "certRecord",
-      user: true
-    })
-  }),
-  getters: {
-    getDomainListModel(): any {
-      return this.domainListModel;
-    }
-  },
   actions: {
     async setDomainListModel(model: any) {
       db.dbSet({
@@ -37,6 +25,13 @@ const certRecordStore = defineStore({
         path: "certRecord",
         user: true,
         value: model
+      });
+    },
+    getDomainListModel(): any {
+      return db.dbGet({
+        dbName: "database",
+        path: "certRecord",
+        user: true
       });
     },
     async openRecord(model: any) {

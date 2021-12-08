@@ -21,7 +21,11 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button plain size="medium" :icon="findIconReg('FA-search')"
+        <el-button
+          plain
+          size="medium"
+          @click="searchModel"
+          :icon="findIconReg('FA-search')"
           >查询</el-button
         >
       </el-form-item>
@@ -279,6 +283,10 @@ const handlerDelete = (data: DNSModel) => {
       }
     })
     .catch(() => {});
+};
+const searchModel = async () => {
+  pageData.searchModel.pageNum = 0;
+  getPage();
 };
 onMounted(() => {
   getPage();

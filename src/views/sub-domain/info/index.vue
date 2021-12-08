@@ -30,7 +30,16 @@
             :key="item.id"
             :label="item.domain"
             :value="item.id"
-          ></el-option>
+            ><span style="float: left">{{ item.domain }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ getCAMangerInfo(item.id).name }}</span
+            ></el-option
+          >
         </el-select>
       </el-form-item>
       <el-form-item
@@ -62,6 +71,7 @@ import { DomainModel } from "/@/api/model/domain";
 import { Result } from "/@/api/model/result";
 import { subDomainStore } from "/@/store/modules/domain/sub-domain";
 import { errorMessage, warnMessage } from "/@/utils/message";
+import { CAManagerModel } from "/@/api/model/ca-manager";
 const instance = getCurrentInstance();
 const props = defineProps({
   showDialog: {
@@ -75,7 +85,8 @@ const props = defineProps({
     type: Boolean
   },
   modelInfo: Object as PropType<SubDomainModel>,
-  domainSelect: Array as PropType<Array<DomainModel>>
+  domainSelect: Array as PropType<Array<DomainModel>>,
+  caManager: Array as PropType<CAManagerModel[]>
 });
 const emit = defineEmits<{
   (e: "cancelDataScope"): void;
@@ -83,6 +94,7 @@ const emit = defineEmits<{
 const showDialog = toRef(props, "showDialog");
 const dataInfo = toRef(props, "modelInfo");
 const isUpdate = toRef(props, "isUpdate");
+const camanager = toRef(props, "caManager");
 const domainSelect = toRef(props, "domainSelect");
 const cancelDataScope = () => {
   // @ts-expect-error
@@ -106,6 +118,35 @@ const submitDataScope = () => {
       warnMessage("表单校验失败，请检查");
     }
   });
+};
+const getCAMangerInfo = (domainId: number): any => {
+  if (!camanager.value || !camanager.value.length) {
+    return { name: "" };
+  }
+  const result: DomainModel = getDomainInfo(domainId);
+  if (result.caManagerId) {
+    const model = camanager.value.filter(
+      (v: CAManagerModel) => v.id === result.caManagerId
+    );
+    if (model.length > 0) {
+      return model[0];
+    } else {
+      return { name: "" };
+    }
+  } else {
+    return { name: "" };
+  }
+};
+const getDomainInfo = (id: number): any => {
+  if (!id || !domainSelect.value || !domainSelect.value.length) {
+    return { domain: "" };
+  }
+  const model = domainSelect.value.filter((v: DomainModel) => v.id === id);
+  if (model.length > 0) {
+    return model[0];
+  } else {
+    return { domain: "" };
+  }
 };
 const saveOrUpdate = (data: SubDomainModel): Promise<Result<any>> => {
   if (isUpdate.value) {

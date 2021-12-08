@@ -96,6 +96,7 @@ const queryDnsRecord = async () => {
   const result = await store.challengesDNS(certRecordId.value);
   dataInfo.dnsButtonLoading = false;
   if (result.code === 0) {
+    status.value = 1;
     successMessage("验证成功,可以下载证书");
   } else {
     errorMessage(result.msg);
