@@ -34,7 +34,10 @@
         >
       </el-form-item>
       <el-form-item label="下载">
-        <el-button style="width: 100%" :disabled="status != 1"
+        <el-button
+          style="width: 100%"
+          @click="downloadFile"
+          :disabled="status != 1"
           >下载证书</el-button
         >
       </el-form-item>
@@ -97,6 +100,9 @@ const queryDnsRecord = async () => {
   } else {
     errorMessage(result.msg);
   }
+};
+const downloadFile = async () => {
+  await store.downloadCert(certRecordId.value);
 };
 </script>
 

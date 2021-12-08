@@ -10,10 +10,7 @@ import { Page, Result } from "./model/result";
 import { stringify } from "qs";
 import { http } from "../utils/http";
 import { cookies } from "../utils/storage/cookie";
-import {
-  EnclosureHttpRequestConfig,
-  EnclosureHttpResoponse
-} from "../utils/http/types";
+import { PureHttpRequestConfig, PureHttpResoponse } from "../utils/http/types";
 import { downloadFileBlob } from "../utils/file";
 enum API {
   findPage = "/host/get",
@@ -119,7 +116,7 @@ class Host extends BaseRequest {
    * @param path  path
    */
   downloadFile(id: string, hostId: number, path?: string) {
-    let response: EnclosureHttpResoponse = null;
+    let response: PureHttpResoponse = null;
     return http
       .request(
         "get",
@@ -129,9 +126,7 @@ class Host extends BaseRequest {
         {
           timeout: 30000,
           responseType: "blob",
-          beforeRequestCallback: function (
-            request: EnclosureHttpRequestConfig
-          ) {
+          beforeRequestCallback: function (request: PureHttpRequestConfig) {
             const token = cookies.get("token");
             if (token) {
               request.headers = {
@@ -140,7 +135,7 @@ class Host extends BaseRequest {
               };
             }
           },
-          beforeResponseCallback: function (res: EnclosureHttpResoponse) {
+          beforeResponseCallback: function (res: PureHttpResoponse) {
             response = res;
           }
         }
@@ -179,7 +174,7 @@ class Host extends BaseRequest {
         timeout: 30000,
         headers: { "content-type": "multiple/form-data" },
         data: filedata,
-        beforeRequestCallback: function (request: EnclosureHttpRequestConfig) {
+        beforeRequestCallback: function (request: PureHttpRequestConfig) {
           const token = cookies.get("token");
           if (token) {
             request.headers = {

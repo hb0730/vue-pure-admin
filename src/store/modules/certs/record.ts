@@ -70,6 +70,14 @@ const certRecordStore = defineStore({
      */
     challengesDNS(certRecordId: number): Promise<Result<any>> {
       return certRecordAPI.challengesDNS(certRecordId);
+    },
+    /**
+     *证书下载
+     * @param certRecordId 申请id
+     * @returns 是否成功
+     */
+    downloadCert(certRecordId: number) {
+      return certRecordAPI.downloadCert(certRecordId);
     }
   }
 });
