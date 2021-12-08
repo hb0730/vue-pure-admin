@@ -324,20 +324,24 @@ router.beforeEach(async (to, _from, next) => {
             );
             router.push(path);
           }
-        }
-        router.push(to.path);
-        // 刷新页面更新标签栏与页面路由匹配
-        const localRoutes = storageLocal.getItem("responsive-tags");
-        const optionsRoutes = router.options?.routes;
-        const newLocalRoutes = [];
-        optionsRoutes.forEach(ors => {
-          localRoutes.forEach(lrs => {
-            if (ors.path === lrs.parentPath) {
-              newLocalRoutes.push(lrs);
-            }
+        } else {
+          router.push(to.path);
+          // 刷新页面更新标签栏与页面路由匹配
+          const localRoutes = storageLocal.getItem("responsive-tags");
+          const optionsRoutes = router.options?.routes;
+          const newLocalRoutes = [];
+          optionsRoutes.forEach(ors => {
+            localRoutes.forEach(lrs => {
+              if (ors.path === lrs.parentPath) {
+                newLocalRoutes.push(lrs);
+              }
+            });
           });
-        });
-        storageLocal.setItem("responsive-tags", uniqBy(newLocalRoutes, "path"));
+          storageLocal.setItem(
+            "responsive-tags",
+            uniqBy(newLocalRoutes, "path")
+          );
+        }
       }
       next();
     }
