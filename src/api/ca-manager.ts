@@ -1,9 +1,10 @@
 import { stringify } from "qs";
 import BaseRequest from "./base";
-import { CAManagerModel, CAManagerQuery } from "./model/ca-manager";
+import { CAManagerModel, CAManagerQuery, CAType } from "./model/ca-manager";
 import { Page, Result } from "./model/result";
 
 enum API {
+  findCAType = "/ca/manager/type/:code",
   finPage = "/ca/manager/find/page",
   find = "/ca/manager/find",
   save = "/ca/manager/save",
@@ -11,6 +12,20 @@ enum API {
   delete = "/ca/manager/delete"
 }
 class CAManager extends BaseRequest {
+  /**
+   * find support types
+   * @param code ca code
+   * @returns ca types
+   */
+  findCAType(code?: string): Promise<Result<CAType[]>> {
+    if (!code) {
+      code = "";
+    }
+    return this.get<Result<CAType[]>>(
+      API.findCAType.replace(":code", code),
+      null
+    );
+  }
   /**
    * 分页查询
    * @param query 查询参数

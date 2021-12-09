@@ -84,6 +84,9 @@
             prop="directoryUrl"
             label="申请地址"
           >
+            <template #default="scope"
+              >{{ showCATypeURL(scope.row.caCode) }}
+            </template>
           </el-table-column>
           <el-table-column
             label="操作"
@@ -124,6 +127,7 @@
     <Info
       :model-info="pageData.modelInfo"
       :is-update="pageData.isUpdate"
+      :ca-types="pageData.caTypes"
       :show-dialog="pageData.showDialog"
       @cancel-data-scope="cancelDataScope"
     ></Info>
@@ -160,11 +164,14 @@ const pageData = reactive({
   },
   tableData: [],
   selection: [],
+  caTypes: [],
   modelInfo: {
     id: 0,
     name: "",
     email: "",
-    directoryUrl: ""
+    caCode: "",
+    kid: null,
+    hmacKey: null
   }
 });
 
@@ -182,6 +189,14 @@ const editHandler = async () => {
     initModel(pageData.selection[0]);
     pageData.isUpdate = true;
     pageData.showDialog = true;
+  }
+};
+const showCATypeURL = (caType: string): string => {
+  const result = pageData.caTypes.filter(v => v.code == caType);
+  if (result.length > 0) {
+    return result[0].directoryURL as string;
+  } else {
+    return "";
   }
 };
 const removeHandler = async () => {
@@ -243,11 +258,26 @@ const getPage = async () => {
     warnMessage("查询失败:" + result.msg);
   }
 };
-const initModel = async data => {
+const getCATypes = async () => {
+  const result = await caManagerStore().findCAType("");
+  if (result.code === 0) {
+    pageData.caTypes = result.data;
+  } else {
+    warnMessage("查询失败:" + result.msg);
+  }
+};
+const initModel = async (data: CAManagerModel) => {
   if (data) {
     pageData.modelInfo = data;
   } else {
-    pageData.modelInfo = { id: 0, name: "", email: "", directoryUrl: "" };
+    pageData.modelInfo = {
+      id: 0,
+      name: "",
+      email: "",
+      caCode: "",
+      kid: "",
+      hmacKey: ""
+    };
   }
 };
 const sizeChange = async (pageSize: number) => {
@@ -269,6 +299,7 @@ const searchModel = async () => {
   getPage();
 };
 onMounted(() => {
+  getCATypes();
   getPage();
 });
 </script>

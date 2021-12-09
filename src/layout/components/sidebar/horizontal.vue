@@ -186,14 +186,15 @@ function setting() {
           <p>{{ usename }}</p>
         </span>
         <template #dropdown>
-          <el-dropdown-item icon="el-icon-setting" @click="setting">
-            {{ $t("message.setting") }}
-          </el-dropdown-item>
           <el-dropdown-menu class="logout">
+            <el-dropdown-item @click="setting">
+              <i class="iconfont icon-user-settings-line"></i>
+              {{ $t("message.setting") }}
+            </el-dropdown-item>
             <el-dropdown-item @click="logout">
-              <i class="ri-logout-circle-r-line"></i
-              >{{ $t("message.hsLoginOut") }}</el-dropdown-item
-            >
+              <i class="iconfont icon-logout"></i>
+              {{ $t("message.hsLoginOut") }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>

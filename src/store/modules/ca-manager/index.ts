@@ -1,11 +1,23 @@
 import { defineStore } from "pinia";
-import { caManagerAPI } from "../../../api/ca-manager";
-import { CAManagerModel, CAManagerQuery } from "../../../api/model/ca-manager";
+import { caManagerAPI } from "/@/api/ca-manager";
+import {
+  CAManagerModel,
+  CAManagerQuery,
+  CAType
+} from "/@/api/model/ca-manager";
 import { Page, Result } from "/@/api/model/result";
 
 export const caManagerStore = defineStore({
   id: "ca-manager-store",
   actions: {
+    /**
+     * find support types
+     * @param code ca code
+     * @returns ca types
+     */
+    findCAType(code?: string): Promise<Result<CAType[]>> {
+      return caManagerAPI.findCAType(code);
+    },
     /**
      * 分页查询
      * @param query 查询参数
