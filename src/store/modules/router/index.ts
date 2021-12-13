@@ -3,24 +3,15 @@ import { Result } from "/@/api/model/result";
 import { routerAPI } from "/@/api/routes";
 import { store } from "/@/store";
 import { db } from "/@/utils/storage/db";
-interface RouterState {
-  dynamicRoutes: [];
-}
 export const routeStore = defineStore({
   id: "route-store",
-  state: (): RouterState => ({
-    dynamicRoutes: []
-  }),
   actions: {
     async clean() {
       this.dynamicRoutes = [];
       db.dbSet({ dbName: "sys", path: "menu", user: true, value: "" });
     },
     async getDynamicRoutes(): Promise<Array<any>> {
-      if (!this.dynamicRoutes || !this.dynamicRoutes.length) {
-        await this.loadRoutes();
-      }
-      return this.dynamicRoutes;
+      return this.loadRoutes();
     },
     async loadRoutes() {
       const menu = db.dbGet({ dbName: "sys", path: "menu", user: true });
@@ -33,11 +24,10 @@ export const routeStore = defineStore({
           user: true,
           value: JSON.stringify(result.data)
         });
-        this.dynamicRoutes = result.data;
+        return result.data;
       } else {
-        this.dynamicRoutes = JSON.parse(menu);
+        return JSON.parse(menu);
       }
-      return this.dynamicRoutes;
     }
   }
 });

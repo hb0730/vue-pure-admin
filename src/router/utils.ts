@@ -116,7 +116,7 @@ const initRouter = () => {
   return new Promise(resolve => {
     routeStoreHok()
       .getDynamicRoutes()
-      .then(info => {
+      .then((info: any[]) => {
         if (info.length === 0) {
           usePermissionStoreHook().changeSetting(info);
         } else {
