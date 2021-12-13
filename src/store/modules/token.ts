@@ -3,11 +3,12 @@ import { tokenAPI } from "/@/api/token";
 import { cookies } from "/@/utils/storage/cookie";
 import { warnMessage } from "/@/utils/message";
 import { userAPI } from "/@/api/user";
-import { initRouter, router } from "/@/router";
+import { router } from "/@/router";
 import { db } from "/@/utils/storage/db";
 import dayjs from "dayjs";
 import { store } from "/@/store";
 import { routeStoreHok } from "./router";
+import { initRouter } from "/@/router/utils";
 interface TokenState {
   userId?: number;
   token?: string;
