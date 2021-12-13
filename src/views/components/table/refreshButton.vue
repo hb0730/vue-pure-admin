@@ -1,17 +1,14 @@
 <template>
-  <button
-    type="button"
-    class="el-button el-tooltip el-button--default el-button--small is-circle"
-    aria-describedby="el-tooltip-2497"
-    tabindex="0"
+  <el-button
+    size="small"
     title="刷新"
+    circle
+    :icon="findIconReg('FA-sync')"
     @click="refreshHandler"
-  >
-    <i class="fa fa-refresh"></i>
-  </button>
+  ></el-button>
 </template>
 <script setup lang="ts">
-import _ from "vue";
+import { findIconReg } from "/@/components/ReIcon";
 const emit = defineEmits<{
   (e: "refreshHandler"): void;
 }>();

@@ -1,16 +1,14 @@
 <template>
-  <button
-    type="button"
-    class="el-button filter-item el-button--danger el-button--mini"
+  <el-button
+    type="danger"
+    size="mini"
+    :icon="findIconReg('FA-trash-alt')"
     @click="removeHandler"
+    >修改</el-button
   >
-    <i class="fa fa-remove">
-      <span>删除</span>
-    </i>
-  </button>
 </template>
 <script setup lang="ts">
-import _ from "vue";
+import { findIconReg } from "/@/components/ReIcon";
 const emit = defineEmits<{
   (e: "removeHandler"): void;
 }>();

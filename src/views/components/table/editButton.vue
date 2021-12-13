@@ -1,16 +1,14 @@
 <template>
-  <button
-    type="button"
-    class="el-button filter-item el-button--primary el-button--mini"
+  <el-button
+    type="primary"
+    size="mini"
+    :icon="findIconReg('FA-edit')"
     @click="editHandler"
+    >修改</el-button
   >
-    <i class="fa fa-edit">
-      <span>修改</span>
-    </i>
-  </button>
 </template>
 <script setup lang="ts">
-import _ from "vue";
+import { findIconReg } from "/@/components/ReIcon";
 const emit = defineEmits<{
   (e: "editHandler"): void;
 }>();
