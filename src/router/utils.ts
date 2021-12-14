@@ -245,7 +245,7 @@ const addAsyncRoutes = (arrRoutes: Array<RouteRecordRaw>) => {
   return arrRoutes;
 };
 export const fileImport = file => {
-  return () => import(`/@/views/${file}.vue`);
+  return () => import(`../views/${file}.vue`);
 };
 
 // 获取路由历史模式 https://next.router.vuejs.org/zh/guide/essentials/history-mode.html
