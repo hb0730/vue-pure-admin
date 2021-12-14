@@ -1,22 +1,17 @@
-import {
-  Router,
-  RouteMeta,
-  createRouter,
-  RouteRecordName,
-  createWebHashHistory
-} from "vue-router";
 import { toRouteType } from "./types";
 import { openLink } from "/@/utils/link";
 import NProgress from "/@/utils/progress";
-import { split, uniqBy } from "lodash-es";
 import { constantRoutes } from "./modules";
 import { transformI18n } from "/@/plugins/i18n";
 import remainingRouter from "./modules/remaining";
+import { split, find, findIndex } from "lodash-es";
 import { storageLocal } from "/@/utils/storage";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
+import { Router, RouteMeta, createRouter, RouteRecordName } from "vue-router";
 import {
   initRouter,
+  getHistoryMode,
   getParentPaths,
   findRouteByPath,
   handleAliveRoute,
@@ -26,8 +21,9 @@ import { cookies } from "../utils/storage/cookie";
 
 // 创建路由实例
 export const router: Router = createRouter({
-  history: createWebHashHistory(),
+  history: getHistoryMode(),
   routes: constantRoutes.concat(...remainingRouter),
+  strict: true,
   scrollBehavior(to, from, savedPosition) {
     return new Promise(resolve => {
       if (savedPosition) {
@@ -95,7 +91,7 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
                 meta
               });
             };
-            // 未开启标签页缓存，刷新页面重定向到顶级路由（参考标签页操作例子）
+            // 未开启标签页缓存，刷新页面重定向到顶级路由（参考标签页操作例子，只针对静态路由）
             if (to.meta?.realPath) {
               const routes = router.options.routes;
               const { refreshRedirect } = to.meta;
@@ -109,7 +105,7 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
               return router.push(refreshRedirect);
             } else {
               const { path } = to;
-              const index = remainingRouter.findIndex(v => {
+              const index = findIndex(remainingRouter, v => {
                 return v.path == path;
               });
               const routes =
@@ -118,19 +114,37 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
                   : router.options.routes;
               const route = findRouteByPath(path, routes);
               const routePartent = getParentPaths(path, routes);
-              handTag(
-                route.path,
-                routePartent[routePartent.length - 1],
-                route.name,
-                route.meta
-              );
-              return router.push(path);
+              // 未开启标签页缓存，刷新页面重定向到顶级路由（参考标签页操作例子，只针对动态路由）
+              if (routePartent.length === 0) {
+                const { name, meta } = findRouteByPath(
+                  route?.meta?.refreshRedirect,
+                  routes
+                );
+                handTag(
+                  route.meta?.refreshRedirect,
+                  getParentPaths(route.meta?.refreshRedirect, routes)[0],
+                  name,
+                  meta
+                );
+                return router.push(route.meta?.refreshRedirect);
+              } else {
+                handTag(
+                  route.path,
+                  routePartent[routePartent.length - 1],
+                  route.name,
+                  route.meta
+                );
+                return router.push(path);
+              }
             }
           }
-          router.push(to.path);
+          router.push(to.fullPath);
           // 刷新页面更新标签栏与页面路由匹配
           const localRoutes = storageLocal.getItem("responsive-tags");
-          const optionsRoutes = router.options?.routes[0].children;
+          const home = find(router.options?.routes, route => {
+            return route.path === "/";
+          });
+          const optionsRoutes = [home, ...router.options?.routes[0].children];
           const newLocalRoutes = [];
           optionsRoutes.forEach(ors => {
             localRoutes.forEach(lrs => {
@@ -139,10 +153,6 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
               }
             });
           });
-          storageLocal.setItem(
-            "responsive-tags",
-            uniqBy(newLocalRoutes, "path")
-          );
         });
       next();
     }

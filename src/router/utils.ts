@@ -1,9 +1,13 @@
 import {
+  RouterHistory,
   RouteRecordRaw,
   RouteComponent,
+  createWebHistory,
+  createWebHashHistory,
   RouteRecordNormalized
 } from "vue-router";
 import { router } from "./index";
+import { loadEnv } from "../../build";
 import Layout from "/@/layout/index.vue";
 import { useTimeoutFn } from "@vueuse/core";
 import { RouteConfigs } from "/@/layout/types";
@@ -228,7 +232,11 @@ const addAsyncRoutes = (arrRoutes: Array<RouteRecordRaw>) => {
     } else if (v.component) {
       v.component = fileImport(v.component);
     } else {
-      v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
+      if (v.meta.realPath) {
+        v.component = modulesRoutes[`/src/views${v.meta.realPath}/index.vue`];
+      } else {
+        v.component = modulesRoutes[`/src/views${v.path}/index.vue`];
+      }
     }
     if (v.children) {
       addAsyncRoutes(v.children);
@@ -239,11 +247,57 @@ const addAsyncRoutes = (arrRoutes: Array<RouteRecordRaw>) => {
 export const fileImport = file => {
   return () => import(`/@/views/${file}.vue`);
 };
+
+// 获取路由历史模式 https://next.router.vuejs.org/zh/guide/essentials/history-mode.html
+const getHistoryMode = (): RouterHistory => {
+  const routerHistory = loadEnv().VITE_ROUTER_HISTORY;
+  // len为1 代表只有历史模式 为2 代表历史模式中存在base参数 https://next.router.vuejs.org/zh/api/#%E5%8F%82%E6%95%B0-1
+  const historyMode = routerHistory.split(",");
+  const leftMode = historyMode[0];
+  const rightMode = historyMode[1];
+  // no param
+  if (historyMode.length === 1) {
+    if (leftMode === "hash") {
+      return createWebHashHistory("");
+    } else if (leftMode === "h5") {
+      return createWebHistory("");
+    }
+  } //has param
+  else if (historyMode.length === 2) {
+    if (leftMode === "hash") {
+      return createWebHashHistory(rightMode);
+    } else if (leftMode === "h5") {
+      return createWebHistory(rightMode);
+    }
+  }
+};
+
+// 是否有权限
+const hasPermissions = (value: Array<string>): boolean => {
+  if (value && value instanceof Array && value.length > 0) {
+    const roles = usePermissionStoreHook().buttonAuth;
+    const permissionRoles = value;
+
+    const hasPermission = roles.some(role => {
+      return permissionRoles.includes(role);
+    });
+
+    if (!hasPermission) {
+      return false;
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export {
   ascending,
   filterTree,
   initRouter,
   resetRouter,
+  hasPermissions,
+  getHistoryMode,
   addAsyncRoutes,
   delAliveRoutes,
   getParentPaths,
