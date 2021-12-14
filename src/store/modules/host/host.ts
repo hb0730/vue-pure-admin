@@ -20,6 +20,14 @@ export const hostStore = defineStore({
       return HostAPI.findPage(params);
     },
     /**
+     * 列表查询
+     * @param params 查询
+     * @returns 查询结果
+     */
+    find(params?: HostQuery): Promise<Result<HostModel[]>> {
+      return HostAPI.find(params);
+    },
+    /**
      * 测试连接
      * @param model 连接参数
      * @returns  是否成功

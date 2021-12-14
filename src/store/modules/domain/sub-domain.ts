@@ -15,6 +15,14 @@ export const subDomainStore = defineStore({
       return subDomainAPI.findPage(query);
     },
     /**
+     * 列表查询
+     * @param query 查询参数
+     * @returns 列表
+     */
+    find(query?: SubDomainQuery): Promise<Result<SubDomainModel[]>> {
+      return subDomainAPI.find(query);
+    },
+    /**
      * 保存
      * @param model 保存参数
      * @returns 是否成功

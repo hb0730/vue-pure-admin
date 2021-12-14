@@ -4,6 +4,7 @@ import { SubDomainModel, SubDomainQuery } from "./model/sub-domain";
 import { Page, Result } from "./model/result";
 enum API {
   findPage = "/sub/domain/find/page",
+  find = "/sub/domain/find",
   save = "/sub/domain/save",
   update = "/sub/domain/update/:id",
   delete = "/sub/domain/delete"
@@ -16,6 +17,14 @@ class SubDomain extends BaseRequest {
    */
   findPage(query?: SubDomainQuery): Promise<Result<Page<SubDomainModel>>> {
     return this.get<Result<Page<SubDomainModel>>>(API.findPage, query);
+  }
+  /**
+   * 列表查询
+   * @param query 查询参数
+   * @returns 列表
+   */
+  find(query?: SubDomainQuery): Promise<Result<SubDomainModel[]>> {
+    return this.get<Result<SubDomainModel[]>>(API.find, query);
   }
   /**
    * 保存

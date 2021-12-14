@@ -13,7 +13,8 @@ import { cookies } from "../utils/storage/cookie";
 import { PureHttpRequestConfig, PureHttpResoponse } from "../utils/http/types";
 import { downloadFileBlob } from "../utils/file";
 enum API {
-  findPage = "/host/get",
+  findPage = "/host/find/page",
+  find = "/host/find",
   testConnection = "/host/test",
   save = "/host/save",
   update = "/host/update",
@@ -31,6 +32,14 @@ class Host extends BaseRequest {
    */
   findPage(params?: HostQuery): Promise<Result<Page<HostModel>>> {
     return this.get<Result<Page<HostModel>>>(API.findPage, params);
+  }
+  /**
+   * 列表查询
+   * @param params 查询
+   * @returns 查询结果
+   */
+  find(params?: HostQuery): Promise<Result<HostModel[]>> {
+    return this.get<Result<HostModel[]>>(API.find, params);
   }
   /**
    * 测试连接
