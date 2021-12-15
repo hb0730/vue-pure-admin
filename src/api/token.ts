@@ -33,8 +33,8 @@ class Token extends BaseRequest {
    * 刷新令牌
    * @returns
    */
-  refresh(): Promise<Result<TokenResultModel>> {
-    return this.post(API.Refresh, null);
+  refresh(token: string): Promise<Result<TokenResultModel>> {
+    return this.get(API.Refresh, { token: token });
   }
 }
 

@@ -5,31 +5,32 @@ import { warnMessage } from "/@/utils/message";
 import { userAPI } from "/@/api/user";
 import { router } from "/@/router";
 import { db } from "/@/utils/storage/db";
-import dayjs from "dayjs";
+import { optionStore } from "/@/store/modules/option";
 import { store } from "/@/store";
 import { routeStoreHok } from "./router";
 import { initRouter } from "/@/router/utils";
-interface TokenState {
-  userId?: number;
-  token?: string;
-  expire: number;
-}
 
 export const tokenStore = defineStore({
   id: "pure-token-store",
-  state: (): TokenState => ({
-    userId: undefined,
-    token: undefined,
-    expire: -1
-  }),
   actions: {
-    setToken(info: string | undefined) {
-      this.token = info ? info : "";
-      cookies.set("token", info, { expires: 30 });
+    getToken(): string | {} | undefined {
+      return cookies.get("token");
     },
-    setExpire(expire: string | undefined) {
-      this.expire = expire ? dayjs(expire).valueOf() : -1;
-      cookies.set("token-expire", this.expire + "", { expires: 365 });
+    setToken(info: string | undefined) {
+      const timeout = optionStore().getTokenTimeout();
+      const token = info ? info : "";
+      cookies.set("token", token, { expires: timeout.timeout });
+    },
+    getExpire(): string | {} | undefined {
+      return cookies.get("token-expire");
+    },
+    setExpire(info: string | undefined) {
+      const timeout = optionStore().getTokenTimeout();
+      const token = info ? info : "";
+      cookies.set("token-expire", token, { expires: timeout.maxRefreshTime });
+    },
+    getUserId(): string | {} | undefined {
+      return cookies.get("uuid");
     },
     setUserId(userId: number | undefined) {
       this.userId = userId ? userId : "";
@@ -61,7 +62,7 @@ export const tokenStore = defineStore({
         const result = await tokenAPI.login(username, password);
         if (result.code === 0) {
           this.setToken(result.data.token);
-          this.setExpire(result.data.expire);
+          this.setExpire(result.data.token);
           return this.afterLoginAction();
         } else {
           warnMessage(result.msg);
@@ -77,10 +78,10 @@ export const tokenStore = defineStore({
       return;
     },
     async refreshToken() {
-      const result = await tokenAPI.refresh();
+      const result = await tokenAPI.refresh(this.getExpire() as string);
       if (result.code === 0) {
         this.setToken(result.data.token);
-        this.setExpire(result.data.expire);
+        this.setExpire(result.data.token);
       } else {
         warnMessage("登录失效重新登录");
         setTimeout(() => {

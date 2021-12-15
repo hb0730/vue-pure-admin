@@ -17,15 +17,11 @@ const modulesRoutes = import.meta.glob("/src/views/*/*/*.vue");
 
 // 动态路由
 import { routeStoreHok } from "../store/modules/router";
-import { cookies } from "../utils/storage/cookie";
-import dayjs from "dayjs";
 import { tokenStore } from "../store/modules/token";
 
 export async function refreshToken() {
-  const expire = cookies.get("token-expire");
-  const expireDay = dayjs(Number(expire));
-  const nowDay = dayjs();
-  if (expireDay.valueOf() - nowDay.valueOf() <= 180000) {
+  const token = tokenStore().getToken();
+  if (!token) {
     tokenStore().refreshToken();
   }
 }

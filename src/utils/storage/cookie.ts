@@ -1,4 +1,4 @@
-import { loadEnvToMap } from "@build/";
+import { loadEnvToMap } from "@build/index";
 import { merge } from "lodash-es";
 import tsCookies from "typescript-cookie/dist/src/compat";
 

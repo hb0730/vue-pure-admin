@@ -16,7 +16,7 @@ import {
   handleAliveRoute,
   refreshToken
 } from "./utils";
-import { cookies } from "../utils/storage/cookie";
+import { tokenStore } from "../store/modules/token";
 
 // 创建路由实例
 export const router: Router = createRouter({
@@ -50,7 +50,7 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
       handleAliveRoute(newMatched);
     }
   }
-  const id = cookies.get("uuid");
+  const id = tokenStore().getUserId();
   NProgress.start();
   const externalLink = to?.redirectedFrom?.fullPath;
   if (!externalLink)

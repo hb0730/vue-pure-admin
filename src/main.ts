@@ -41,6 +41,7 @@ getServerConfig(app).then(async config => {
   await router.isReady();
 
   // option 请求
-  optionStore().getPasswordPublicKey();
+  optionStore().storagePasswordPublicKey();
+  optionStore().tokenTimeoutStorage();
   app.mount("#app");
 });
