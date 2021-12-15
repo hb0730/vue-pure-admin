@@ -30,7 +30,12 @@ export async function refreshToken() {
 const ascending = (arr: any[]) => {
   return arr.sort(
     (a: { meta: { rank: number } }, b: { meta: { rank: number } }) => {
-      return a?.meta?.rank - b?.meta?.rank;
+      // return a?.meta?.rank - b?.meta?.rank;
+      if (a?.meta?.rank == 0) {
+        return undefined;
+      } else {
+        return a?.meta?.rank - b?.meta?.rank;
+      }
     }
   );
 };
