@@ -20,7 +20,8 @@ const systemRouter = {
       meta: {
         title: "message.hsBaseinfo",
         i18n: true,
-        showLink: true
+        showLink: true,
+        rank: 0
       }
     },
     {
@@ -88,7 +89,8 @@ const tabsRouter = {
       meta: {
         title: "message.hstabs",
         showLink: true,
-        i18n: true
+        i18n: true,
+        rank: 0
       }
     },
     {
