@@ -77,7 +77,7 @@ onBeforeMount(() => {
 
 <template>
   <img :src="bg" class="wave" />
-  <div class="container">
+  <div class="login-container">
     <div class="img">
       <component :is="currentWeek"></component>
     </div>

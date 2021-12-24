@@ -28,6 +28,7 @@ UI 设计：<https://www.bilibili.com/video/BV17g411T7rq/>
 <p align="center">
   <img alt="PureAdmin Logo" width="100%" src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b4857fc7eb7d4c0f8deeefc644c1f7dd~tplv-k3u1fbpfcp-watermark.awebp?">
   <img alt="PureAdmin Logo" width="100%" src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/549c3184697f4d268a78c9833e5ec2ea~tplv-k3u1fbpfcp-watermark.awebp?">
+  <img alt="PureAdmin Logo" width="100%" src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/381fc957fac143db9f06efdd389d88a3~tplv-k3u1fbpfcp-watermark.awebp?">
 </p>
 
 ### 使用 Gitpod
@@ -121,17 +122,11 @@ pnpm build
 
 <img src="http://yiming_chang.gitee.io/manages/pay.jpg" width="150px" height="150px" />
 
-## 微信交流群
-
-扫下面的二维码加微信，拉你进群，有什么问题你可以和群友交流
-
-<img src="http://yiming_chang.gitee.io/manages/wechat.jpg" width="150px" height="150px" />
-
 ## 付费咨询、需求定制
 
-作者精力有限，需要提供技术服务的可扫下面的二维码加微信
+作者精力有限，需要提供技术服务的可扫下面的二维码加微信，添加请备注来意
 
-<img src="http://yiming_chang.gitee.io/manages/cost.jpg" width="150px" height="150px" />
+<img src="http://yiming_chang.gitee.io/manages/wechat.jpg" width="150px" height="150px" />
 
 ## 许可证
 

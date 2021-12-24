@@ -9,16 +9,22 @@ import {
   useCssModule,
   getCurrentInstance
 } from "vue";
+import rgbHex from "rgb-hex";
+import { find } from "lodash-es";
 import panel from "../panel/index.vue";
 import { getConfig } from "/@/config";
 import { useRouter } from "vue-router";
 import { emitter } from "/@/utils/mitt";
 import { templateRef } from "@vueuse/core";
+import dayIcon from "/@/assets/svg/day.svg";
 import { debounce } from "/@/utils/debounce";
+import darkIcon from "/@/assets/svg/dark.svg";
 import { themeColorsType } from "../../types";
 import { useAppStoreHook } from "/@/store/modules/app";
+import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 import { storageLocal, storageSession } from "/@/utils/storage";
 import { useMultiTagsStoreHook } from "/@/store/modules/multiTags";
+import { createNewStyle, writeNewStyle } from "../../theme/element-plus";
 import { toggleTheme } from "@zougt/vite-plugin-theme-preprocessor/dist/browser-utils";
 const router = useRouter();
 const { isSelect } = useCssModule();
@@ -66,6 +72,9 @@ if (unref(layoutTheme)) {
 // 默认灵动模式
 const markValue = ref(storageLocal.getItem("showModel") || "smart");
 const logoVal = ref(storageLocal.getItem("logoVal") || "1");
+
+const epThemeColor = ref(useEpThemeStoreHook().getEpThemeColor);
+
 const settings = reactive({
   greyVal: instance.sets.grey,
   weakVal: instance.sets.weak,
@@ -122,20 +131,14 @@ const multiTagsCacheChange = () => {
   };
   useMultiTagsStoreHook().multiTagsCacheChange(multiTagsCache);
 };
-//初始化项目配置
-nextTick(() => {
-  settings.greyVal &&
-    document.querySelector("html")?.setAttribute("class", "html-grey");
-  settings.weakVal &&
-    document.querySelector("html")?.setAttribute("class", "html-weakness");
-  settings.tabsVal && tagsChange();
-});
 // 清空缓存并返回登录页
 function onReset() {
-  storageLocal.clear();
-  storageSession.clear();
-  toggleClass(false, "html-grey", document.querySelector("html"));
-  toggleClass(false, "html-weakness", document.querySelector("html"));
+  toggleClass(getConfig().Grey, "html-grey", document.querySelector("html"));
+  toggleClass(
+    getConfig().Weak,
+    "html-weakness",
+    document.querySelector("html")
+  );
   useMultiTagsStoreHook().handleTags("equal", [
     {
       path: "/welcome",
@@ -149,6 +152,9 @@ function onReset() {
     }
   ]);
   useMultiTagsStoreHook().multiTagsCacheChange(getConfig().MultiTagsCache);
+  useEpThemeStoreHook().setEpThemeColor("#409EFF");
+  storageLocal.clear();
+  storageSession.clear();
   router.push("/login");
 }
 function onChange(label) {
@@ -201,7 +207,11 @@ const getThemeColor = computed(() => {
 function setLayoutModel(layout: string) {
   layoutTheme.value.layout = layout;
   window.document.body.setAttribute("layout", layout);
-  instance.layout = { layout, theme: layoutTheme.value.theme };
+  instance.layout = {
+    layout,
+    theme: layoutTheme.value.theme,
+    darkMode: instance.layout.darkMode
+  };
   useAppStoreHook().setLayout(layout);
 }
 // 设置导航主题色
@@ -210,13 +220,72 @@ function setLayoutThemeColor(theme: string) {
   toggleTheme({
     scopeName: `layout-theme-${theme}`
   });
-  instance.layout = { layout: useAppStoreHook().layout, theme };
+  instance.layout = {
+    layout: useAppStoreHook().layout,
+    theme,
+    darkMode: dataTheme.value
+  };
+
+  if (theme === "default" || theme === "light") {
+    setEpThemeColor("#409EFF");
+  } else {
+    const colors = find(themeColors.value, { themeColor: theme });
+    const color = "#" + rgbHex(colors.rgb);
+    setEpThemeColor(color);
+  }
 }
+
+// 设置ep主题色
+const setEpThemeColor = (color: string) => {
+  writeNewStyle(createNewStyle(color));
+  useEpThemeStoreHook().setEpThemeColor(color);
+};
+
+let dataTheme = ref<boolean>(instance.layout.darkMode);
+
+// 日间、夜间主题切换
+function dataThemeChange() {
+  const body = document.documentElement as HTMLElement;
+  if (dataTheme.value) {
+    body.setAttribute("data-theme", "dark");
+    setLayoutThemeColor("light");
+  } else {
+    body.setAttribute("data-theme", "");
+    instance.layout = {
+      layout: useAppStoreHook().layout,
+      theme: instance.layout.theme,
+      darkMode: dataTheme.value
+    };
+  }
+}
+
+//初始化项目配置
+nextTick(() => {
+  settings.greyVal &&
+    document.querySelector("html")?.setAttribute("class", "html-grey");
+  settings.weakVal &&
+    document.querySelector("html")?.setAttribute("class", "html-weakness");
+  settings.tabsVal && tagsChange();
+
+  writeNewStyle(createNewStyle(epThemeColor.value));
+  dataThemeChange();
+});
 </script>
 
 <template>
   <panel>
-    <el-divider>主题风格</el-divider>
+    <el-divider>主题</el-divider>
+    <el-switch
+      v-model="dataTheme"
+      inline-prompt
+      class="pure-datatheme"
+      :active-icon="dayIcon"
+      :inactive-icon="darkIcon"
+      @change="dataThemeChange"
+    >
+    </el-switch>
+
+    <el-divider>导航栏模式</el-divider>
     <ul class="pure-theme">
       <el-tooltip class="item" content="左侧菜单模式" placement="bottom">
         <li
@@ -241,8 +310,8 @@ function setLayoutThemeColor(theme: string) {
       </el-tooltip>
     </ul>
 
-    <el-divider>主题色</el-divider>
-    <ul class="theme-color">
+    <el-divider v-show="!dataTheme">主题色</el-divider>
+    <ul class="theme-color" v-show="!dataTheme">
       <li
         v-for="(item, index) in themeColors"
         :key="index"
@@ -261,7 +330,7 @@ function setLayoutThemeColor(theme: string) {
 
     <el-divider>界面显示</el-divider>
     <ul class="setting">
-      <li>
+      <li v-show="!dataTheme">
         <span>灰色模式</span>
         <el-switch
           v-model="settings.greyVal"
@@ -273,7 +342,7 @@ function setLayoutThemeColor(theme: string) {
         >
         </el-switch>
       </li>
-      <li>
+      <li v-show="!dataTheme">
         <span>色弱模式</span>
         <el-switch
           v-model="settings.weakVal"
@@ -366,6 +435,14 @@ function setLayoutThemeColor(theme: string) {
 :deep(.el-divider__text) {
   font-size: 16px;
   font-weight: 700;
+}
+
+.pure-datatheme {
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  display: block;
+  padding-top: 25px;
 }
 
 .pure-theme {

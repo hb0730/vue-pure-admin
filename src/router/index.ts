@@ -91,7 +91,7 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
               });
             };
             // 未开启标签页缓存，刷新页面重定向到顶级路由（参考标签页操作例子，只针对静态路由）
-            if (to.meta?.realPath) {
+            if (to.meta?.refreshRedirect) {
               const routes = router.options.routes;
               const { refreshRedirect } = to.meta;
               const { name, meta } = findRouteByPath(refreshRedirect, routes);
@@ -114,7 +114,11 @@ router.beforeEach(async (to: toRouteType, _from, next) => {
               const route = findRouteByPath(path, routes);
               const routePartent = getParentPaths(path, routes);
               // 未开启标签页缓存，刷新页面重定向到顶级路由（参考标签页操作例子，只针对动态路由）
-              if (path !== routes[0].path && routePartent.length === 0) {
+              if (
+                path !== routes[0].path &&
+                route?.meta?.rank !== 0 &&
+                routePartent.length === 0
+              ) {
                 const { name, meta } = findRouteByPath(
                   route?.meta?.refreshRedirect,
                   routes

@@ -51,6 +51,7 @@ import {
   ElEmpty,
   ElCollapse,
   ElCollapseItem,
+  ElTreeV2,
   // 指令
   ElLoading,
   ElInfiniteScroll
@@ -111,7 +112,8 @@ const components = [
   ElAvatar,
   ElEmpty,
   ElCollapse,
-  ElCollapseItem
+  ElCollapseItem,
+  ElTreeV2
 ];
 
 // https://element-plus.org/zh-CN/component/icon.html
